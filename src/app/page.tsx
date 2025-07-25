@@ -24,16 +24,16 @@ export default function Home() {
             <Dashboard />
           ) : (
             <div className="text-center animate-fadeIn py-16">
-              <h1 className="text-5xl font-bold tracking-tight font-headline bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-blue-500">
-                Build Your Professional Resume with Ease
+              <h1 className="text-5xl font-bold tracking-tight font-headline bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+                Welcome to Realtime Relay
               </h1>
               <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
-                Create, manage, and share your resume effortlessly. Our AI-powered tools will help you stand out.
+                Your dashboard for live data streams, powered by Firebase. Sign in to see the magic happen.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
-                <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-purple-500 text-primary-foreground hover:scale-105 hover:shadow-lg transition-all duration-300">
+                <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:scale-105 hover:shadow-lg transition-all duration-300">
                   <Link href="/auth">
-                    Get Started For Free
+                    Get Started
                   </Link>
                 </Button>
               </div>
