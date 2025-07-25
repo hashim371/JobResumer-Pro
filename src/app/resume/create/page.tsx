@@ -1,54 +1,98 @@
 
 "use client";
 
-import { useSearchParams } from 'next/navigation';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/auth-context';
+import { db } from '@/lib/firebase';
+import { ref, push, set } from 'firebase/database';
+import { Loader2 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 export default function CreateResumePage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const templateId = searchParams.get('template');
+  const { user, loading: authLoading } = useAuth();
 
-  // In a real app, you'd fetch template details based on the ID
-  // and render the appropriate editor.
-  // For now, we just show a confirmation.
+  useEffect(() => {
+    if (authLoading) {
+      return; 
+    }
+
+    if (!user) {
+      toast({
+        variant: 'destructive',
+        title: 'Authentication Required',
+        description: 'You must be signed in to create a resume.',
+      });
+      router.push('/auth');
+      return;
+    }
+
+    if (user && templateId) {
+      const createResume = async () => {
+        try {
+          const resumesRef = ref(db, `users/${user.uid}/resumes`);
+          const newResumeRef = push(resumesRef);
+          
+          const newResume = {
+            id: newResumeRef.key,
+            templateId: templateId,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            personalInfo: {
+              name: user.displayName || 'Your Name',
+              email: user.email || '',
+              phone: '',
+              location: '',
+              website: '',
+            },
+            summary: 'A brief professional summary about yourself.',
+            experience: [],
+            education: [],
+            skills: [],
+          };
+          
+          await set(newResumeRef, newResume);
+          
+          toast({
+            title: 'Resume Created!',
+            description: `You can now edit your new resume using the ${templateId} template.`,
+          });
+          
+          router.push(`/resume/${newResumeRef.key}/edit`);
+
+        } catch (error) {
+          console.error('Error creating resume:', error);
+          toast({
+            variant: 'destructive',
+            title: 'Error creating resume',
+            description: 'Could not create a new resume. Please try again.',
+          });
+          router.push('/templates');
+        }
+      };
+
+      createResume();
+    } else if (!templateId) {
+        toast({
+            variant: 'destructive',
+            title: 'No Template Selected',
+            description: 'Please select a template to continue.',
+        });
+        router.push('/templates');
+    }
+
+  }, [user, authLoading, templateId, router]);
+
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1 bg-muted/40">
-        <div className="container mx-auto px-4 py-8 md:py-16 flex items-center justify-center min-h-[calc(100vh-250px)]">
-          <div className="w-full max-w-2xl mx-auto animate-fadeIn">
-            <Card className="shadow-lg">
-              <CardHeader className="text-center">
-                <CardTitle className="text-3xl">Create Your Resume</CardTitle>
-                <CardDescription className="text-md pt-2">
-                  You've selected the <strong>{templateId}</strong> template.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6 text-center">
-                <p className="text-muted-foreground">
-                  This is where the resume editor for the '{templateId}' template would be.
-                  We'll build out the full editor in the next steps.
-                </p>
-                
-                <div className="flex justify-between items-center pt-4">
-                    <Button variant="outline" asChild>
-                        <Link href="/templates">Choose a different template</Link>
-                    </Button>
-                     <Button size="lg">
-                        Save and Continue
-                    </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+    <div className="flex h-screen w-full items-center justify-center bg-muted/40">
+        <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <p className="text-muted-foreground">Creating your resume...</p>
         </div>
-      </main>
-      <Footer />
     </div>
   );
 }
