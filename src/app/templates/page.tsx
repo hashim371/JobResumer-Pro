@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
 
-const templates = [
+export const templates = [
   { id: 'dublin', name: 'Dublin', category: 'Simple' },
   { id: 'tokyo', name: 'Tokyo', category: 'Two-column' },
   { id: 'new-york', name: 'New York', category: 'Simple' },
