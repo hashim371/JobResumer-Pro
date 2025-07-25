@@ -27,7 +27,7 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <ThemeProvider>
           <AuthProvider>
-            <div className="min-h-screen flex flex-col bg-background text-foreground">
+            <div className="min-h-screen flex flex-col bg-muted/5 text-foreground">
               {children}
             </div>
             <Toaster />
