@@ -31,30 +31,30 @@ const ResumePreview = ({ templateId }: { templateId: string }) => {
     const baseClasses = "bg-white text-gray-800 p-4 w-[400px] h-[565px] text-[8px] leading-tight flex flex-col font-sans";
 
     const renderHeader = (withPhoto = false) => (
-        <div className={`flex items-center ${withPhoto ? 'justify-start' : 'justify-center'} mb-4`}>
-            {withPhoto && <div className="w-12 h-12 rounded-full bg-gray-300 mr-4"></div>}
+        <div className={`flex items-center ${withPhoto ? 'justify-start' : 'justify-center'} mb-4 border-b border-gray-200 pb-2`}>
+            {withPhoto && <div className="w-12 h-12 rounded-full bg-gray-300 mr-4 shrink-0"></div>}
             <div className={withPhoto ? 'text-left' : 'text-center'}>
-                <div className="w-24 h-4 bg-gray-400 mb-1"></div>
-                <div className="w-16 h-3 bg-gray-300"></div>
+                <div className="font-bold text-[12px] text-gray-700">JOHN DOE</div>
+                <div className="text-gray-500">Software Engineer</div>
             </div>
         </div>
     );
 
     const renderSection = (title: string, lines = 3) => (
         <div className="mb-3">
-            <div className="w-20 h-3 bg-gray-500 mb-2"></div>
+            <div className="font-bold text-gray-600 border-b border-gray-200 pb-1 mb-1 text-[9px] uppercase tracking-wider">{title}</div>
             {Array.from({ length: lines }).map((_, i) => (
-                <div key={i} className={`h-2 mb-1 ${i % 2 === 0 ? 'w-full' : 'w-11/12'} bg-gray-300`}></div>
+                <div key={i} className={`h-1.5 mb-1 rounded-sm ${i % 2 === 0 ? 'w-full' : 'w-11/12'} bg-gray-200`}></div>
             ))}
         </div>
     );
 
     const renderExperience = () => (
          <div className="mb-3">
-            <div className="w-20 h-3 bg-gray-500 mb-2"></div>
-            <div className="w-16 h-2 bg-gray-400 mb-1"></div>
+            <div className="font-bold text-[9px] text-gray-700">Awesome Company</div>
+            <div className="text-gray-500 text-[7px] mb-1">Senior Developer | 2020 - Present</div>
             {Array.from({ length: 2 }).map((_, i) => (
-                <div key={i} className={`h-2 mb-1 ${i % 2 === 0 ? 'w-full' : 'w-11/12'} bg-gray-300`}></div>
+                <div key={i} className={`h-1.5 mb-1 rounded-sm ${i % 2 === 0 ? 'w-full' : 'w-11/12'} bg-gray-200`}></div>
             ))}
         </div>
     );
@@ -67,13 +67,13 @@ const ResumePreview = ({ templateId }: { templateId: string }) => {
                  <div className={`${baseClasses} flex-row`}>
                     <div className="w-1/3 pr-4 border-r border-gray-200">
                         {renderHeader(true)}
-                        <div className="h-full w-full bg-gray-100 p-2">
+                        <div className="pt-2">
                             {renderSection("Skills", 4)}
                             {renderSection("Education", 2)}
                         </div>
                     </div>
                     <div className="w-2/3 pl-4">
-                        <div className="w-32 h-4 bg-gray-400 mb-2"></div>
+                        <div className="font-bold text-gray-600 border-b border-gray-200 pb-1 mb-2 text-[9px] uppercase tracking-wider">Work Experience</div>
                         {renderExperience()}
                         {renderExperience()}
                     </div>
@@ -85,7 +85,6 @@ const ResumePreview = ({ templateId }: { templateId: string }) => {
              return (
                 <div className={`${baseClasses}`}>
                     {renderHeader(true)}
-                    <hr className="my-2 border-gray-200"/>
                     {renderSection("Professional Summary")}
                     {renderExperience()}
                     {renderExperience()}
@@ -96,8 +95,8 @@ const ResumePreview = ({ templateId }: { templateId: string }) => {
             return (
                  <div className={`${baseClasses}`}>
                     {renderHeader(false)}
-                     <hr className="my-2 border-gray-200"/>
                     {renderSection("Professional Summary")}
+                    <div className="font-bold text-gray-600 border-b border-gray-200 pb-1 mb-2 text-[9px] uppercase tracking-wider">Work Experience</div>
                     {renderExperience()}
                     {renderExperience()}
                     {renderSection("Skills")}
@@ -143,9 +142,9 @@ export default function TemplatesPage() {
             {filteredTemplates.map(template => (
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block">
                 <Card className="group overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
-                  <CardContent className="p-0 relative">
-                    <div className="overflow-hidden rounded-t-lg bg-gray-100">
-                        <div className="transform scale-[0.25] origin-top-left -translate-y-[282px] -translate-x-[200px] w-[800px] h-[1130px] flex items-center justify-center pointer-events-none">
+                  <CardContent className="p-0 relative h-96">
+                    <div className="overflow-hidden rounded-t-lg bg-gray-100 h-full">
+                        <div className="transform scale-[0.4] origin-top-left pointer-events-none">
                             <div className="shadow-2xl">
                                <ResumePreview templateId={template.id} />
                             </div>
