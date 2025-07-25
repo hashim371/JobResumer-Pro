@@ -6,27 +6,107 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
 
 const templates = [
-  { id: 'dublin', name: 'Dublin', category: 'Simple', image: 'https://placehold.co/400x565.png' },
-  { id: 'tokyo', name: 'Tokyo', category: 'Two-column', image: 'https://placehold.co/400x565.png' },
-  { id: 'new-york', name: 'New York', category: 'Simple', image: 'https://placehold.co/400x565.png' },
-  { id: 'geneva', name: 'Geneva', category: 'Picture', image: 'https://placehold.co/400x565.png' },
-  { id: 'sydney', name: 'Sydney', category: 'ATS', image: 'https://placehold.co/400x565.png' },
-  { id: 'paris', name: 'Paris', category: 'Google Docs', image: 'https://placehold.co/400x565.png' },
-  { id: 'london', name: 'London', category: 'Word', image: 'https://placehold.co/400x565.png' },
-  { id: 'madrid', name: 'Madrid', category: 'Picture', image: 'https://placehold.co/400x565.png' },
-  { id: 'berlin', name: 'Berlin', category: 'Two-column', image: 'https://placehold.co/400x565.png' },
-  { id: 'moscow', name: 'Moscow', category: 'Simple', image: 'https://placehold.co/400x565.png' },
-  { id: 'cairo', name: 'Cairo', category: 'ATS', image: 'https://placehold.co/400x565.png' },
-  { id: 'seoul', name: 'Seoul', category: 'Picture', image: 'https://placehold.co/400x565.png' },
+  { id: 'dublin', name: 'Dublin', category: 'Simple' },
+  { id: 'tokyo', name: 'Tokyo', category: 'Two-column' },
+  { id: 'new-york', name: 'New York', category: 'Simple' },
+  { id: 'geneva', name: 'Geneva', category: 'Picture' },
+  { id: 'sydney', name: 'Sydney', category: 'ATS' },
+  { id: 'paris', name: 'Paris', category: 'Google Docs' },
+  { id: 'london', name: 'London', category: 'Word' },
+  { id: 'madrid', name: 'Madrid', category: 'Picture' },
+  { id: 'berlin', name: 'Berlin', category: 'Two-column' },
+  { id: 'moscow', name: 'Moscow', category: 'Simple' },
+  { id: 'cairo', name: 'Cairo', category: 'ATS' },
+  { id: 'seoul', name: 'Seoul', category: 'Picture' },
 ];
 
 const filters = ['All templates', 'Simple', 'Two-column', 'Picture', 'ATS', 'Google Docs', 'Word'];
+
+const ResumePreview = ({ templateId }: { templateId: string }) => {
+    const baseClasses = "bg-white text-gray-800 p-4 w-[400px] h-[565px] text-[8px] leading-tight flex flex-col font-sans";
+
+    const renderHeader = (withPhoto = false) => (
+        <div className={`flex items-center ${withPhoto ? 'justify-start' : 'justify-center'} mb-4`}>
+            {withPhoto && <div className="w-12 h-12 rounded-full bg-gray-300 mr-4"></div>}
+            <div className={withPhoto ? 'text-left' : 'text-center'}>
+                <div className="w-24 h-4 bg-gray-400 mb-1"></div>
+                <div className="w-16 h-3 bg-gray-300"></div>
+            </div>
+        </div>
+    );
+
+    const renderSection = (title: string, lines = 3) => (
+        <div className="mb-3">
+            <div className="w-20 h-3 bg-gray-500 mb-2"></div>
+            {Array.from({ length: lines }).map((_, i) => (
+                <div key={i} className={`h-2 mb-1 ${i % 2 === 0 ? 'w-full' : 'w-11/12'} bg-gray-300`}></div>
+            ))}
+        </div>
+    );
+
+    const renderExperience = () => (
+         <div className="mb-3">
+            <div className="w-20 h-3 bg-gray-500 mb-2"></div>
+            <div className="w-16 h-2 bg-gray-400 mb-1"></div>
+            {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className={`h-2 mb-1 ${i % 2 === 0 ? 'w-full' : 'w-11/12'} bg-gray-300`}></div>
+            ))}
+        </div>
+    );
+
+
+    switch (templateId) {
+        case 'tokyo':
+        case 'berlin':
+            return (
+                 <div className={`${baseClasses} flex-row`}>
+                    <div className="w-1/3 pr-4 border-r border-gray-200">
+                        {renderHeader(true)}
+                        <div className="h-full w-full bg-gray-100 p-2">
+                            {renderSection("Skills", 4)}
+                            {renderSection("Education", 2)}
+                        </div>
+                    </div>
+                    <div className="w-2/3 pl-4">
+                        <div className="w-32 h-4 bg-gray-400 mb-2"></div>
+                        {renderExperience()}
+                        {renderExperience()}
+                    </div>
+                </div>
+            )
+        case 'geneva':
+        case 'madrid':
+        case 'seoul':
+             return (
+                <div className={`${baseClasses}`}>
+                    {renderHeader(true)}
+                    <hr className="my-2 border-gray-200"/>
+                    {renderSection("Professional Summary")}
+                    {renderExperience()}
+                    {renderExperience()}
+                    {renderSection("Education")}
+                </div>
+            )
+        default: // Simple, ATS, Word, Google Docs
+            return (
+                 <div className={`${baseClasses}`}>
+                    {renderHeader(false)}
+                     <hr className="my-2 border-gray-200"/>
+                    {renderSection("Professional Summary")}
+                    {renderExperience()}
+                    {renderExperience()}
+                    {renderSection("Skills")}
+                    {renderSection("Education")}
+                </div>
+            )
+    }
+}
+
 
 export default function TemplatesPage() {
   const [activeFilter, setActiveFilter] = useState('All templates');
@@ -64,15 +144,12 @@ export default function TemplatesPage() {
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block">
                 <Card className="group overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
                   <CardContent className="p-0 relative">
-                    <div className="overflow-hidden rounded-t-lg">
-                      <Image
-                        src={template.image}
-                        alt={`${template.name} resume template`}
-                        width={400}
-                        height={565}
-                        className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
-                        data-ai-hint="resume professional"
-                      />
+                    <div className="overflow-hidden rounded-t-lg bg-gray-100">
+                        <div className="transform scale-[0.25] origin-top-left -translate-y-[282px] -translate-x-[200px] w-[800px] h-[1130px] flex items-center justify-center pointer-events-none">
+                            <div className="shadow-2xl">
+                               <ResumePreview templateId={template.id} />
+                            </div>
+                        </div>
                     </div>
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4">
                         <div className="text-center">
