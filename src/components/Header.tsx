@@ -39,7 +39,7 @@ export function Header() {
         <div className="mr-4 flex">
           <Link href="/" className="flex items-center space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Z"/><path d="M12 2a5 5 0 0 0-5 5v1.5a6.5 6.5 0 1 0 13 0V7a5 5 0 0 0-5-5Z"/><path d="M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
-            <span className="font-bold">Realtime Relay</span>
+            <span className="font-bold">JobeResumer</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">

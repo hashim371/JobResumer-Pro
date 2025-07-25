@@ -96,7 +96,7 @@ export function Dashboard() {
 
   return (
     <div className="animate-fadeIn">
-      <h1 className="text-3xl font-bold mb-8 font-headline">Your Realtime Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8 font-headline">Your Dashboard</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card className="hover:shadow-lg transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -130,7 +130,7 @@ export function Dashboard() {
       <Card className="mt-8">
         <CardHeader>
           <CardTitle>Update Your Info</CardTitle>
-          <CardDescription>See the change to your name reflect in realtime above!</CardDescription>
+          <CardDescription>Update your name below.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>

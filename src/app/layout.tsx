@@ -5,8 +5,8 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Realtime Relay',
-  description: 'A realtime dashboard with Firebase.',
+  title: 'JobeResumer',
+  description: 'Create and manage your resumes with ease.',
 };
 
 export default function RootLayout({
