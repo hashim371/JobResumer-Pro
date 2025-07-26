@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -40,7 +41,6 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
 
   // Different Template Layouts
   switch (templateId) {
-    case 'tokyo':
     case 'berlin':
       return (
         <div className="p-8 font-sans bg-gray-100 text-gray-800 min-h-full">

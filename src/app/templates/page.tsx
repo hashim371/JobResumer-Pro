@@ -13,7 +13,6 @@ import { ResumePreview } from '@/components/ResumePreview';
 
 export const templates = [
   { id: 'dublin', name: 'Dublin', category: 'Simple' },
-  { id: 'tokyo', name: 'Tokyo', category: 'Two-column' },
   { id: 'new-york', name: 'New York', category: 'Simple' },
   { id: 'geneva', name: 'Geneva', category: 'Picture' },
   { id: 'sydney', name: 'Sydney', category: 'ATS' },
