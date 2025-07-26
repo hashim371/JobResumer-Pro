@@ -43,63 +43,67 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
   switch (templateId) {
     case 'tokyo':
     case 'berlin':
-       // Creative, colorful, two-column layout
+       // Redesigned premium two-column layout
        return (
-        <div className="font-sans bg-white min-h-full text-sm leading-relaxed flex text-gray-800">
-            {/* Left Sidebar */}
-            <div className="w-1/3 bg-slate-800 text-white p-6 flex flex-col relative overflow-hidden">
-                <div 
-                    className="absolute inset-0 bg-slate-900 opacity-20"
-                    style={{
-                        backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'ffffff\' fill-opacity=\'0.1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
-                    }}
-                ></div>
-                <div className="text-center z-10 mb-6 mt-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-white break-words">{personalInfo?.name}</h1>
-                    <p className="text-slate-300">Software Engineer</p>
-                </div>
-                <div className="space-y-4 z-10 break-words">
-                    <div>
-                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2">Contact</h3>
-                        <p className="text-xs break-words">{personalInfo.email}</p>
-                        <p className="text-xs break-words">{personalInfo.phone}</p>
-                        <p className="text-xs break-words">{personalInfo.location}</p>
-                    </div>
-                     <div>
-                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2">Skills</h3>
-                        <ul className="text-xs list-disc list-inside">
-                            {skills?.slice(0, 5).map((skill: any) => <li key={skill.name}>{skill.name}</li>)}
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-
-            {/* Main Content */}
-            <div className="w-2/3 p-8 break-words overflow-hidden">
-                <div className="mb-6">
-                    <h2 className="text-2xl font-bold text-slate-800 mb-2">Professional Summary</h2>
-                    <p className="text-sm text-gray-600">{summary}</p>
-                </div>
-                <div className="mb-6">
-                    <h3 className="text-lg font-bold text-gray-700 border-b-2 border-slate-200 pb-1 mb-3">Experience</h3>
+        <div className="font-sans bg-white min-h-full text-sm leading-relaxed text-gray-800 p-8 flex gap-8">
+            {/* Main Content (Left Column) */}
+            <div className="w-2/3">
+                <header className="mb-8">
+                    <h1 className="text-5xl font-bold text-gray-900 tracking-tight break-words">{personalInfo?.name}</h1>
+                    <p className="text-xl text-blue-700 font-medium mt-1">Software Engineer</p>
+                </header>
+                
+                <section className="mb-6">
+                    <h2 className="text-lg font-bold uppercase text-blue-800 tracking-wider border-b-2 border-blue-200 pb-2 mb-3">About Me</h2>
+                    <p className="text-sm text-gray-700 break-words">{summary}</p>
+                </section>
+                
+                <section className="mb-6">
+                    <h2 className="text-lg font-bold uppercase text-blue-800 tracking-wider border-b-2 border-blue-200 pb-2 mb-3">Experience</h2>
                     {experience?.map((exp: any, i:number) => (
+                        <div key={i} className="mb-4 break-inside-avoid">
+                            <div className="flex justify-between items-baseline">
+                                <h3 className="text-md font-semibold text-gray-800 break-words">{exp.jobTitle}</h3>
+                                <p className="text-xs text-gray-500 font-medium whitespace-nowrap pl-4">{exp.startDate} - {exp.endDate}</p>
+                            </div>
+                            <h4 className="text-sm font-medium text-gray-600 break-words">{exp.company}</h4>
+                            <p className="text-sm text-gray-700 mt-1 break-words">{exp.description}</p>
+                        </div>
+                    ))}
+                </section>
+                
+                <section>
+                    <h2 className="text-lg font-bold uppercase text-blue-800 tracking-wider border-b-2 border-blue-200 pb-2 mb-3">Education</h2>
+                    {education?.map((edu:any, i:number) => (
                         <div key={i} className="mb-3">
-                            <p className="font-semibold">{exp.jobTitle} at {exp.company}</p>
-                            <p className="text-xs text-gray-500">{exp.startDate} - {exp.endDate}</p>
-                            <p className="text-sm mt-1">{exp.description}</p>
+                            <h3 className="text-md font-semibold text-gray-800 break-words">{edu.degree}</h3>
+                            <p className="text-sm text-gray-700 break-words">{edu.school}</p>
+                            <p className="text-xs text-gray-500 font-medium">{edu.graduationDate}</p>
                         </div>
                     ))}
-                </div>
-                <div className="mb-6">
-                    <h3 className="text-lg font-bold text-gray-700 border-b-2 border-slate-200 pb-1 mb-3">Education</h3>
-                     {education?.map((edu: any, i:number) => (
-                        <div key={i}>
-                            <p className="font-semibold">{edu.degree}</p>
-                            <p className="text-sm text-gray-600">{edu.school} ({edu.graduationDate})</p>
-                        </div>
-                    ))}
-                </div>
+                </section>
+            </div>
+            
+            {/* Sidebar (Right Column) */}
+            <div className="w-1/3 pl-8 border-l-2 border-gray-100">
+                 <section className="mb-6">
+                    <h2 className="text-lg font-bold uppercase text-blue-800 tracking-wider pb-2 mb-3">Contact</h2>
+                    <div className="space-y-2 text-sm">
+                        {personalInfo?.email && <p className="flex items-center gap-2 break-all"><span>📧</span> {personalInfo.email}</p>}
+                        {personalInfo?.phone && <p className="flex items-center gap-2 break-all"><span>📞</span> {personalInfo.phone}</p>}
+                        {personalInfo?.location && <p className="flex items-center gap-2 break-all"><span>📍</span> {personalInfo.location}</p>}
+                        {personalInfo?.website && <p className="flex items-center gap-2 break-all"><span>🌐</span> {personalInfo.website}</p>}
+                    </div>
+                </section>
+
+                <section>
+                    <h2 className="text-lg font-bold uppercase text-blue-800 tracking-wider pb-2 mb-3">Skills</h2>
+                    <div className="flex flex-wrap gap-2">
+                        {skills?.map((skill: any) => (
+                            <span key={skill.name} className="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">{skill.name}</span>
+                        ))}
+                    </div>
+                </section>
             </div>
         </div>
       );
@@ -175,15 +179,15 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
       return (
         <div className="p-8 font-sans bg-white text-slate-800 min-h-full text-sm leading-relaxed">
             {/* Header */}
-            <div className="flex items-center justify-between bg-slate-700 text-white p-6 -mx-8 -mt-8 mb-8">
+            <div className="flex items-start justify-between bg-slate-700 text-white p-6 -mx-8 -mt-8 mb-8">
                  <div className="w-3/4">
                     <h1 className="text-4xl font-bold tracking-tight break-words">{personalInfo?.name}</h1>
                     <p className="text-lg text-slate-300 mt-1">Software Engineer</p>
                 </div>
-                 <div className="w-1/4 text-right text-xs flex flex-col items-end break-words">
-                     <p>{personalInfo?.email}</p>
-                     <p>{personalInfo?.phone}</p>
-                     <p>{personalInfo?.location}</p>
+                 <div className="w-1/4 text-right text-xs flex flex-col items-end gap-1 break-words">
+                     <p className="break-all">{personalInfo?.email}</p>
+                     <p className="break-all">{personalInfo?.phone}</p>
+                     <p className="break-all">{personalInfo?.location}</p>
                 </div>
             </div>
 
