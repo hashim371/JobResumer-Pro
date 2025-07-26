@@ -42,13 +42,8 @@ const improveResumeSectionFlow = ai.defineFlow(
     outputSchema: ImproveResumeSectionOutputSchema,
   },
   async (input) => {
-    // The 'input' object coming into the flow might be tainted by server action serialization.
-    // Create a fresh, clean object to pass to the prompt to avoid "Unsupported Part type" errors.
-    const cleanInput = {
-      text: input.text,
-      section: input.section,
-    };
-    const {output} = await prompt(cleanInput);
+    // This flow now expects a clean input object.
+    const {output} = await prompt(input);
     return output!;
   }
 );
@@ -58,6 +53,11 @@ export async function improveResumeSection(input: ImproveResumeSectionInput): Pr
   if (!input.text.trim()) {
       return { improvedText: '' };
   }
-  // The exported server action calls the internal flow.
-  return improveResumeSectionFlow(input);
+  // The exported server action extracts the primitive values from the potentially
+  // tainted input object and calls the internal flow with a new, clean object.
+  // This is the correct way to avoid the "Unsupported Part type" error.
+  return improveResumeSectionFlow({
+    text: input.text,
+    section: input.section
+  });
 }
