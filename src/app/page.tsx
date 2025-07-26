@@ -8,7 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { CheckCircle, Briefcase, DraftingCompass, Star } from "lucide-react";
+import { CheckCircle, DraftingCompass, Star } from "lucide-react";
 
 const companyLogos: { [key: string]: React.ReactNode } = {
     Google: (
@@ -29,11 +29,6 @@ export default function Home() {
       icon: <DraftingCompass className="h-10 w-10 text-accent" />,
       title: "Stunning Templates",
       description: "Choose from a variety of professionally designed templates that are proven to get noticed."
-    },
-    {
-      icon: <Briefcase className="h-10 w-10 text-accent" />,
-      title: "AI-Powered Assistant",
-      description: "Our AI helps you write compelling summary and experience sections, tailored to your industry."
     },
     {
       icon: <CheckCircle className="h-10 w-10 text-accent" />,
@@ -116,7 +111,7 @@ export default function Home() {
                 <h2 className="text-3xl font-bold tracking-tight">Why Choose Us?</h2>
                 <p className="mt-4 text-lg text-muted-foreground">Everything you need to craft the perfect resume.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {features.map((feature, index) => (
                 <Card key={index} className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <div className="flex justify-center mb-4">{feature.icon}</div>
