@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef, use } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
 import { ref, onValue, update } from 'firebase/database';
@@ -174,22 +174,8 @@ export default function ResumeEditPage() {
         });
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-        const ratio = canvasWidth / canvasHeight;
-
-        let finalWidth = pdfWidth;
-        let finalHeight = finalWidth / ratio;
-
-        if (finalHeight > pdfHeight) {
-            finalHeight = pdfHeight;
-            finalWidth = finalHeight * ratio;
-        }
-
-        const x = (pdfWidth - finalWidth) / 2;
-        const y = 0;
-
-        pdf.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight);
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save(`${resumeData?.personalInfo?.name || 'resume'}.pdf`);
 
         // Restore styles
