@@ -60,8 +60,7 @@ type ResumeData = z.infer<typeof resumeSchema>;
 
 export default function ResumeEditPage() {
   const router = useRouter();
-  const params = use(useParams());
-  const resumeId = params.id as string;
+  const { id: resumeId } = useParams();
   const { user, loading: authLoading } = useAuth();
   const [resumeData, setResumeData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -115,7 +114,7 @@ export default function ResumeEditPage() {
     setIsSaving(true);
     try {
         const updates = { ...watchedData, updatedAt: new Date().toISOString() };
-        await update(ref(db, `users/${user.uid}/resumes/${resumeId}`), updates);
+        await update(ref(db, `users/${user.uid}/resumes/${resumeId as string}`), updates);
         toast({ title: 'Saved!', description: 'Your resume has been updated.' });
     } catch (err: any) {
         toast({ variant: 'destructive', title: 'Save Error', description: err.message });
