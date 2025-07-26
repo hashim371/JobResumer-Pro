@@ -9,11 +9,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Sparkles } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Sparkles, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { toast } from '@/hooks/use-toast';
@@ -71,7 +71,6 @@ export default function ResumeEditPage() {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-
   const form = useForm<ResumeData>({
     resolver: zodResolver(resumeSchema),
     defaultValues: {
@@ -113,21 +112,19 @@ export default function ResumeEditPage() {
   
   const watchedData = form.watch();
 
-  useEffect(() => {
-    if (!resumeData) return; // Don't save on initial load
-    const handler = setTimeout(() => {
-      setIsSaving(true);
-      const updates = { ...watchedData, updatedAt: new Date().toISOString() };
-      update(ref(db, `users/${user!.uid}/resumes/${resumeId}`), updates)
-        .then(() => setIsSaving(false))
-        .catch(err => {
-            toast({ variant: 'destructive', title: 'Save Error', description: err.message });
-            setIsSaving(false);
-        });
-    }, 1000); // Debounce time
-
-    return () => clearTimeout(handler);
-  }, [watchedData, resumeId, user, resumeData]);
+  const handleSave = async () => {
+    if (!user) return;
+    setIsSaving(true);
+    try {
+        const updates = { ...watchedData, updatedAt: new Date().toISOString() };
+        await update(ref(db, `users/${user.uid}/resumes/${resumeId}`), updates);
+        toast({ title: 'Saved!', description: 'Your resume has been updated.' });
+    } catch (err: any) {
+        toast({ variant: 'destructive', title: 'Save Error', description: err.message });
+    } finally {
+        setIsSaving(false);
+    }
+  };
 
 
   const handleDownload = () => {
@@ -230,10 +227,10 @@ export default function ResumeEditPage() {
                 Editing: {templates.find(t => t.id === resumeData.templateId)?.name || 'Resume'}
             </div>
             <div className="flex items-center gap-4">
-                <div className="text-sm text-muted-foreground flex items-center gap-2">
-                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin"/> : null}
-                    {isSaving ? 'Saving...' : 'Saved'}
-                </div>
+                <Button onClick={handleSave} disabled={isSaving}>
+                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
+                    {isSaving ? 'Saving...' : 'Save'}
+                </Button>
                  <Button onClick={handleDownload}>
                     <Download className="mr-2 h-4 w-4" /> Download PDF
                 </Button>
