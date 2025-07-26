@@ -21,10 +21,6 @@ const ImproveResumeSectionOutputSchema = z.object({
 });
 export type ImproveResumeSectionOutput = z.infer<typeof ImproveResumeSectionOutputSchema>;
 
-export async function improveResumeSection(input: ImproveResumeSectionInput): Promise<ImproveResumeSectionOutput> {
-  return improveResumeSectionFlow(input);
-}
-
 const prompt = ai.definePrompt({
   name: 'improveResumeSectionPrompt',
   input: { schema: ImproveResumeSectionInputSchema },
@@ -46,10 +42,17 @@ const improveResumeSectionFlow = ai.defineFlow(
     outputSchema: ImproveResumeSectionOutputSchema,
   },
   async (input) => {
-    if (!input.text.trim()) {
-        return { improvedText: '' };
-    }
     const {output} = await prompt(input);
     return output!;
   }
 );
+
+
+export async function improveResumeSection(input: ImproveResumeSectionInput): Promise<ImproveResumeSectionOutput> {
+  if (!input.text.trim()) {
+      return { improvedText: '' };
+  }
+  // This is the fix: By explicitly calling the flow with a new object, 
+  // we ensure the data is not tainted by the server action's serialization.
+  return improveResumeSectionFlow({ text: input.text, section: input.section });
+}
