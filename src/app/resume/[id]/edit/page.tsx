@@ -6,10 +6,10 @@ import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
 import { ref, onValue, update } from 'firebase/database';
 import { useParams, useRouter } from 'next/navigation';
-import { useForm, useFieldArray, Path } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Sparkles, Save } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,7 +20,6 @@ import { toast } from '@/hooks/use-toast';
 import { ResumePreview } from '@/components/ResumePreview';
 import { templates } from '@/app/templates/page';
 import Link from 'next/link';
-import { improveResumeSection } from '@/ai/flows/improve-resume-flow';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -67,7 +66,6 @@ export default function ResumeEditPage() {
   const [resumeData, setResumeData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [aiLoading, setAiLoading] = useState<string | null>(null);
 
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -188,26 +186,6 @@ export default function ResumeEditPage() {
     });
   };
 
-  const handleImproveWithAI = async (fieldName: Path<ResumeData>, section: string) => {
-    const aiKey = fieldName;
-    setAiLoading(aiKey);
-    try {
-        const currentValue = form.getValues(fieldName);
-        if (typeof currentValue !== 'string' || !currentValue.trim()) {
-            toast({ variant: 'destructive', title: 'Cannot improve empty text.' });
-            return;
-        }
-        const result = await improveResumeSection({ text: currentValue, section });
-        form.setValue(fieldName, result.improvedText);
-        toast({ title: 'Content Improved!', description: 'The AI assistant has updated the content.' });
-    } catch (error) {
-        console.error("Error improving with AI:", error);
-        toast({ variant: 'destructive', title: 'AI Error', description: 'Could not improve the content.' });
-    } finally {
-        setAiLoading(null);
-    }
-  };
-
   if (loading) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
   }
@@ -266,10 +244,6 @@ export default function ResumeEditPage() {
                                     <FormItem>
                                         <div className="flex justify-between items-center">
                                             <FormLabel>Summary</FormLabel>
-                                            <Button type="button" size="sm" variant="ghost" onClick={() => handleImproveWithAI('summary', 'summary')} disabled={!!aiLoading}>
-                                                {aiLoading === 'summary' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
-                                                Improve with AI
-                                            </Button>
                                         </div>
                                         <FormControl><Textarea rows={5} {...field} /></FormControl>
                                         <FormMessage />
@@ -295,10 +269,6 @@ export default function ResumeEditPage() {
                                                 <FormItem>
                                                     <div className="flex justify-between items-center">
                                                         <FormLabel>Description</FormLabel>
-                                                        <Button type="button" size="sm" variant="ghost" onClick={() => handleImproveWithAI(`experience.${index}.description`, 'experience')} disabled={!!aiLoading}>
-                                                            {aiLoading === `experience.${index}.description` ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
-                                                            Improve with AI
-                                                        </Button>
                                                     </div>
                                                     <FormControl><Textarea {...field} placeholder="Describe your responsibilities and achievements." /></FormControl>
                                                     <FormMessage />
