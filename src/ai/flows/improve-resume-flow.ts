@@ -49,10 +49,7 @@ const improveResumeSectionFlow = ai.defineFlow(
     if (!input.text.trim()) {
         return { improvedText: '' };
     }
-    const {output} = await prompt({
-      text: input.text,
-      section: input.section,
-    });
+    const {output} = await prompt(input);
     return output!;
   }
 );
