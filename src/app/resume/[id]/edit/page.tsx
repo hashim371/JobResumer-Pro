@@ -9,7 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, PlusCircle, Trash2, Download, ArrowLeft } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,6 +20,7 @@ import { toast } from '@/hooks/use-toast';
 import { ResumePreview } from '@/components/ResumePreview';
 import { templates } from '@/app/templates/page';
 import Link from 'next/link';
+import { improveResumeSection } from '@/ai/flows/improve-resume-flow';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -66,6 +67,7 @@ export default function ResumeEditPage() {
   const [resumeData, setResumeData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [aiLoading, setAiLoading] = useState<string | null>(null);
 
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -189,6 +191,26 @@ export default function ResumeEditPage() {
     });
   };
 
+  const handleImproveWithAI = async (fieldName: any, section: string) => {
+    const aiKey = `${section}-${(fieldName.match(/\d+/) || ['0'])[0]}`;
+    setAiLoading(aiKey);
+    try {
+        const currentValue = form.getValues(fieldName);
+        if (!currentValue || !currentValue.trim()) {
+            toast({ variant: 'destructive', title: 'Cannot improve empty text.' });
+            return;
+        }
+        const result = await improveResumeSection({ text: currentValue, section });
+        form.setValue(fieldName, result.improvedText);
+        toast({ title: 'Content Improved!', description: 'The AI assistant has updated the content.' });
+    } catch (error) {
+        console.error("Error improving with AI:", error);
+        toast({ variant: 'destructive', title: 'AI Error', description: 'Could not improve the content.' });
+    } finally {
+        setAiLoading(null);
+    }
+  };
+
   if (loading) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
   }
@@ -243,7 +265,19 @@ export default function ResumeEditPage() {
                          <AccordionItem value="summary">
                             <AccordionTrigger className="text-xl font-bold">Professional Summary</AccordionTrigger>
                             <AccordionContent className="space-y-4 pt-4">
-                                 <FormField name="summary" control={form.control} render={({ field }) => (<FormItem><FormLabel>Summary</FormLabel><FormControl><Textarea rows={5} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                 <FormField name="summary" control={form.control} render={({ field }) => (
+                                    <FormItem>
+                                        <div className="flex justify-between items-center">
+                                            <FormLabel>Summary</FormLabel>
+                                            <Button type="button" size="sm" variant="ghost" onClick={() => handleImproveWithAI('summary', 'summary')} disabled={!!aiLoading}>
+                                                {aiLoading === 'summary-0' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
+                                                Improve with AI
+                                            </Button>
+                                        </div>
+                                        <FormControl><Textarea rows={5} {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                 )} />
                             </AccordionContent>
                         </AccordionItem>
 
@@ -260,7 +294,19 @@ export default function ResumeEditPage() {
                                                <FormField name={`experience.${index}.startDate`} control={form.control} render={({ field }) => (<FormItem><FormLabel>Start Date</FormLabel><FormControl><Input {...field} placeholder="e.g., Jan 2020" /></FormControl><FormMessage /></FormItem>)} />
                                                <FormField name={`experience.${index}.endDate`} control={form.control} render={({ field }) => (<FormItem><FormLabel>End Date</FormLabel><FormControl><Input {...field} placeholder="e.g., Present" /></FormControl><FormMessage /></FormItem>)} />
                                             </div>
-                                            <FormField name={`experience.${index}.description`} control={form.control} render={({ field }) => (<FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} placeholder="Describe your responsibilities and achievements." /></FormControl><FormMessage /></FormItem>)} />
+                                            <FormField name={`experience.${index}.description`} control={form.control} render={({ field }) => (
+                                                <FormItem>
+                                                    <div className="flex justify-between items-center">
+                                                        <FormLabel>Description</FormLabel>
+                                                        <Button type="button" size="sm" variant="ghost" onClick={() => handleImproveWithAI(`experience.${index}.description`, 'experience')} disabled={!!aiLoading}>
+                                                            {aiLoading === `experience-${index}` ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
+                                                            Improve with AI
+                                                        </Button>
+                                                    </div>
+                                                    <FormControl><Textarea {...field} placeholder="Describe your responsibilities and achievements." /></FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )} />
                                         </div>
                                         <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-muted-foreground hover:text-destructive" onClick={() => removeExperience(index)}><Trash2 className="h-4 w-4" /></Button>
                                     </Card>
