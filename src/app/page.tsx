@@ -87,7 +87,7 @@ export default function Home() {
                 </Button>
               </div>
                <div className="mt-16">
-                  <Image src="https://placehold.co/800x600.png" alt="Resume templates preview" width={800} height={600} className="rounded-lg shadow-2xl mx-auto" data-ai-hint="resume templates" />
+                  <Image src="https://storage.googleapis.com/aifire.appspot.com/images%2F6d53e6b8-a736-4712-9c3f-917f30de68c9.jpg" alt="Resume templates preview" width={800} height={600} className="rounded-lg shadow-2xl mx-auto" data-ai-hint="job interview" />
               </div>
             </div>
         </div>
@@ -188,3 +188,4 @@ export default function Home() {
     
 
     
+
