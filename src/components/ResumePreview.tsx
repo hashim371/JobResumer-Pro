@@ -47,27 +47,42 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
        return (
         <div className="font-sans bg-white min-h-full text-sm leading-relaxed flex text-gray-800">
             {/* Left Sidebar */}
-            <div className="w-1/3 bg-blue-800 text-white p-6 flex flex-col relative overflow-hidden">
+            <div className="w-1/3 bg-slate-800 text-white p-6 flex flex-col relative overflow-hidden">
                 <div 
-                    className="absolute inset-0 bg-blue-900 opacity-20"
+                    className="absolute inset-0 bg-slate-900 opacity-20"
                     style={{
                         backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
                     }}
                 ></div>
-                <div className="w-24 h-24 rounded-full bg-white mx-auto mb-6 flex-shrink-0 shadow-lg border-4 border-blue-400"></div>
-                <div className="text-center z-10">
-                    <h1 className="text-3xl font-bold tracking-tighter text-white transform -rotate-90 origin-bottom-left absolute left-6 bottom-1/3 whitespace-nowrap" style={{writingMode: 'vertical-rl'}}>{personalInfo?.name.toUpperCase()}</h1>
+                <div className="w-24 h-24 rounded-full bg-white mx-auto mb-6 flex-shrink-0 shadow-lg border-4 border-slate-400"></div>
+                <div className="text-center z-10 mb-6">
+                    <h1 className="text-3xl font-bold tracking-tight text-white">{personalInfo?.name}</h1>
+                    <p className="text-slate-300">Software Engineer</p>
                 </div>
+                <div className="space-y-4 z-10">
+                    <div>
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2">Contact</h3>
+                        <p className="text-xs">{personalInfo.email}</p>
+                        <p className="text-xs">{personalInfo.phone}</p>
+                    </div>
+                     <div>
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2">Skills</h3>
+                        <ul className="text-xs list-disc list-inside">
+                            {skills?.slice(0, 5).map((skill: any) => <li key={skill.name}>{skill.name}</li>)}
+                        </ul>
+                    </div>
+                </div>
+
             </div>
 
             {/* Main Content */}
             <div className="w-2/3 p-8">
                 <div className="mb-6">
-                    <h2 className="text-3xl font-extrabold text-blue-800 mb-2">Hello.</h2>
+                    <h2 className="text-2xl font-bold text-slate-800 mb-2">Professional Summary</h2>
                     <p className="text-sm text-gray-600">{summary}</p>
                 </div>
                 <div className="mb-6">
-                    <h3 className="text-lg font-bold text-gray-700 border-b-2 border-blue-200 pb-1 mb-3">Experience</h3>
+                    <h3 className="text-lg font-bold text-gray-700 border-b-2 border-slate-200 pb-1 mb-3">Experience</h3>
                     {experience?.map((exp: any, i:number) => (
                         <div key={i} className="mb-3">
                             <p className="font-semibold">{exp.jobTitle} at {exp.company}</p>
@@ -77,26 +92,13 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     ))}
                 </div>
                 <div className="mb-6">
-                    <h3 className="text-lg font-bold text-gray-700 border-b-2 border-blue-200 pb-1 mb-3">Education</h3>
+                    <h3 className="text-lg font-bold text-gray-700 border-b-2 border-slate-200 pb-1 mb-3">Education</h3>
                      {education?.map((edu: any, i:number) => (
                         <div key={i}>
                             <p className="font-semibold">{edu.degree}</p>
                             <p className="text-sm text-gray-600">{edu.school} ({edu.graduationDate})</p>
                         </div>
                     ))}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                     <div>
-                        <h3 className="text-lg font-bold text-gray-700 border-b-2 border-blue-200 pb-1 mb-3">Skills</h3>
-                        <ul className="list-disc list-inside text-sm">
-                            {skills?.slice(0, 3).map((skill: any) => <li key={skill.name}>{skill.name}</li>)}
-                        </ul>
-                    </div>
-                     <div>
-                        <h3 className="text-lg font-bold text-gray-700 border-b-2 border-blue-200 pb-1 mb-3">Contact</h3>
-                        <p className="text-sm">{personalInfo.email}</p>
-                        <p className="text-sm">{personalInfo.phone}</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -137,6 +139,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 </div>
                  <div className="w-px bg-gray-200"></div>
                 <div className="w-1/3 pt-20">
+                     <div className="w-24 h-24 rounded-full bg-slate-200 mx-auto mb-6 flex-shrink-0 shadow-lg"></div>
                      <div className="mb-6">
                         <h2 className="text-xs font-bold uppercase tracking-widest text-teal-700 mb-3">Contact</h2>
                         <div className="w-16 border-b-2 border-teal-200 mb-3"></div>
