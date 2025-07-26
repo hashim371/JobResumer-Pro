@@ -73,10 +73,10 @@ export default function TemplatesPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 animate-fadeIn">
             {filteredTemplates.map(template => (
-              <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block">
-                <Card className="group overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
-                  <CardContent className="p-0 relative aspect-[8.5/11] bg-gray-100 overflow-hidden flex items-center justify-center">
-                    <div className="absolute inset-0 transform scale-[0.2] origin-top-left">
+              <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block group">
+                <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
+                  <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-gray-100">
+                    <div className="absolute inset-0 transform scale-[0.2] origin-top-left w-[500%] h-[500%]">
                         <ResumePreview templateId={template.id} />
                     </div>
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4">
