@@ -99,11 +99,9 @@ export default function MyResumesPage() {
                         <CardContent className="p-0 relative aspect-[8.5/11] flex-shrink-0">
                            <div className="absolute inset-0 overflow-hidden rounded-t-lg bg-gray-100">
                                 <div 
-                                className="transform origin-top-left pointer-events-none bg-white"
+                                className="transform origin-top-left pointer-events-none bg-white w-[8.5in] h-[11in]"
                                 style={{
                                     transform: 'scale(0.20)',
-                                    width: '8.5in',
-                                    height: '11in',
                                 }}
                                 >
                                 <ResumePreview templateId={resume.templateId} data={resume} />
