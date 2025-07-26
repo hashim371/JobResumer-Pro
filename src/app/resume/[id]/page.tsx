@@ -15,7 +15,8 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export default function ResumeViewPage() {
-    const { id: resumeId } = useParams();
+    const params = useParams();
+    const resumeId = params.id as string;
     const router = useRouter();
     const { user, loading: authLoading } = useAuth();
     const [resumeData, setResumeData] = useState<any>(null);
@@ -32,7 +33,7 @@ export default function ResumeViewPage() {
 
         if (!resumeId) return;
 
-        const resumeRef = ref(db, `users/${user.uid}/resumes/${resumeId as string}`);
+        const resumeRef = ref(db, `users/${user.uid}/resumes/${resumeId}`);
         const unsubscribe = onValue(resumeRef, (snapshot) => {
             if (snapshot.exists()) {
                 setResumeData(snapshot.val());
