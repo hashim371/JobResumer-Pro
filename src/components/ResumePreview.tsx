@@ -56,14 +56,15 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 ></div>
                 <div className="w-24 h-24 rounded-full bg-white mx-auto mb-6 flex-shrink-0 shadow-lg border-4 border-slate-400"></div>
                 <div className="text-center z-10 mb-6">
-                    <h1 className="text-3xl font-bold tracking-tight text-white">{personalInfo?.name}</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-white break-words">{personalInfo?.name}</h1>
                     <p className="text-slate-300">Software Engineer</p>
                 </div>
-                <div className="space-y-4 z-10">
+                <div className="space-y-4 z-10 break-words">
                     <div>
                         <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2">Contact</h3>
                         <p className="text-xs">{personalInfo.email}</p>
                         <p className="text-xs">{personalInfo.phone}</p>
+                        <p className="text-xs">{personalInfo.location}</p>
                     </div>
                      <div>
                         <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2">Skills</h3>
@@ -76,7 +77,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
             </div>
 
             {/* Main Content */}
-            <div className="w-2/3 p-8">
+            <div className="w-2/3 p-8 break-words">
                 <div className="mb-6">
                     <h2 className="text-2xl font-bold text-slate-800 mb-2">Professional Summary</h2>
                     <p className="text-sm text-gray-600">{summary}</p>
