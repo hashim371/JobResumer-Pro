@@ -446,15 +446,15 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
       return (
         <div className="font-sans min-h-full flex text-sm">
           <div className="w-1/3 bg-orange-500 text-white p-8 flex flex-col">
-            <h1 className="text-3xl font-bold mb-2 break-words">{personalInfo?.name}</h1>
+            <h1 className="text-3xl font-bold mb-2">{personalInfo?.name}</h1>
             <p className="text-md text-orange-100 mb-8">Software Engineer</p>
             <div className="mb-6">
               <h2 className="text-md font-semibold uppercase tracking-wider mb-2">Contact</h2>
               <div className="text-xs space-y-1 text-orange-100">
-                <p className="break-words">{personalInfo?.email}</p>
-                <p className="break-words">{personalInfo?.phone}</p>
-                <p className="break-words">{personalInfo?.location}</p>
-                <p className="break-words">{personalInfo?.website}</p>
+                <p>{personalInfo?.email}</p>
+                <p>{personalInfo?.phone}</p>
+                <p>{personalInfo?.location}</p>
+                <p>{personalInfo?.website}</p>
               </div>
             </div>
             <div className="mb-6">
