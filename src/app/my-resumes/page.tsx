@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
 import { ref, onValue, remove } from 'firebase/database';
 import { useRouter } from 'next/navigation';
-import { Loader2, Plus, Trash2, Edit, FileText } from 'lucide-react';
+import { Loader2, Plus, Trash2, Edit, FileText, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ResumePreview } from '@/components/ResumePreview';
@@ -95,6 +95,7 @@ export default function MyResumesPage() {
                  const template = templates.find(t => t.id === resume.templateId);
                  return (
                     <Card key={resume.id} className="group flex flex-col">
+                      <Link href={`/resume/${resume.id}`}>
                         <CardContent className="p-0 relative aspect-[8.5/11] flex-shrink-0">
                            <div className="absolute inset-0 overflow-hidden rounded-t-lg bg-gray-100">
                                 <div 
@@ -108,7 +109,11 @@ export default function MyResumesPage() {
                                 <ResumePreview templateId={resume.templateId} data={resume} />
                                 </div>
                             </div>
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <Eye className="h-12 w-12 text-white" />
+                            </div>
                         </CardContent>
+                       </Link>
                        <CardHeader className="flex-grow">
                           <CardTitle className="truncate">{resume.personalInfo?.name || "Untitled Resume"}</CardTitle>
                           <CardDescription>{template?.name || "Unknown"} Template</CardDescription>

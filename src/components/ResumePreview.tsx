@@ -38,7 +38,7 @@ interface ResumePreviewProps {
 }
 
 export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewProps) => {
-  const data = initialData && initialData.personalInfo && initialData.personalInfo.name ? initialData : mockData;
+  const data = initialData || mockData;
   const { personalInfo, summary, experience, education, skills } = data;
 
   // Different Template Layouts
