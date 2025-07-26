@@ -30,6 +30,8 @@ export default function ResumeViewPage() {
             return;
         }
 
+        if (!resumeId) return;
+
         const resumeRef = ref(db, `users/${user.uid}/resumes/${resumeId as string}`);
         const unsubscribe = onValue(resumeRef, (snapshot) => {
             if (snapshot.exists()) {
