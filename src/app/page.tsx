@@ -87,7 +87,7 @@ export default function Home() {
                 </Button>
               </div>
                <div className="mt-16">
-                  <img src="https://storage.googleapis.com/studio-assets/misc/resume-hero.jpg" alt="Person reviewing a resume document at a desk" width={800} height={600} className="rounded-lg shadow-2xl mx-auto" />
+                  <Image src="https://placehold.co/800x600.png" alt="Person reviewing a resume document at a desk" width={800} height={600} className="rounded-lg shadow-2xl mx-auto" data-ai-hint="resume professional" />
               </div>
             </div>
         </div>
