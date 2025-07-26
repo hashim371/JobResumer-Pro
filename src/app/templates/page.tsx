@@ -16,16 +16,18 @@ export const templates = [
   { id: 'new-york', name: 'New York', category: 'Simple' },
   { id: 'geneva', name: 'Geneva', category: 'Picture' },
   { id: 'sydney', name: 'Sydney', category: 'ATS' },
-  { id: 'paris', name: 'Paris', category: 'Google Docs' },
-  { id: 'london', name: 'London', category: 'Word' },
+  { id: 'paris', name: 'Paris', category: 'Classic' },
+  { id: 'london', name: 'London', category: 'Modern' },
   { id: 'madrid', name: 'Madrid', category: 'Picture' },
   { id: 'berlin', name: 'Berlin', category: 'Two-column' },
   { id: 'moscow', name: 'Moscow', category: 'Simple' },
   { id: 'cairo', name: 'Cairo', category: 'ATS' },
   { id: 'seoul', name: 'Seoul', category: 'Picture' },
+  { id: 'tokyo', name: 'Tokyo', category: 'Modern' },
+  { id: 'rome', name: 'Rome', category: 'Classic' },
 ];
 
-const filters = ['All templates', 'Simple', 'Two-column', 'Picture', 'ATS', 'Google Docs', 'Word'];
+const filters = ['All templates', 'Simple', 'Two-column', 'Picture', 'ATS', 'Modern', 'Classic'];
 
 
 export default function TemplatesPage() {
