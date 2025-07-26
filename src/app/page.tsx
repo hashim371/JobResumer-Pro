@@ -87,7 +87,7 @@ export default function Home() {
                 </Button>
               </div>
                <div className="mt-16">
-                  <Image src="https://placehold.co/800x600.png" alt="Person reviewing a resume document at a desk" width={800} height={600} className="rounded-lg shadow-2xl mx-auto" data-ai-hint="resume professional" />
+                  <Image src="https://images.google.com/doc/forms/d/1G1nZ3jB2yO2y0H-g8z9g8jA5f7x8c9v6/image/jh4jfj34j5h4j.jpg" alt="Person reviewing a resume document at a desk" width={800} height={600} className="rounded-lg shadow-2xl mx-auto" />
               </div>
             </div>
         </div>
