@@ -42,8 +42,8 @@ const improveResumeSectionFlow = ai.defineFlow(
     outputSchema: ImproveResumeSectionOutputSchema,
   },
   async (input) => {
-    // Final fix: The 'input' object coming into the flow is still tainted.
-    // We must create a fresh, clean object to pass to the prompt.
+    // The 'input' object coming into the flow might be tainted by server action serialization.
+    // Create a fresh, clean object to pass to the prompt to avoid "Unsupported Part type" errors.
     const { text, section } = input;
     const {output} = await prompt({ text, section });
     return output!;
@@ -55,5 +55,6 @@ export async function improveResumeSection(input: ImproveResumeSectionInput): Pr
   if (!input.text.trim()) {
       return { improvedText: '' };
   }
+  // The exported server action calls the internal flow.
   return improveResumeSectionFlow(input);
 }
