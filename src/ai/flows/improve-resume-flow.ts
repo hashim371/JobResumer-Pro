@@ -10,16 +10,16 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const ImproveResumeSectionInputSchema = z.object({
+const ImproveResumeSectionInputSchema = z.object({
   text: z.string().describe('The text to improve.'),
   section: z.string().describe("The resume section the text belongs to (e.g., 'summary', 'experience')."),
 });
-export type ImproveResumeSectionInput = z.infer<typeof ImproveResumeSectionInputSchema>;
+type ImproveResumeSectionInput = z.infer<typeof ImproveResumeSectionInputSchema>;
 
-export const ImproveResumeSectionOutputSchema = z.object({
+const ImproveResumeSectionOutputSchema = z.object({
   improvedText: z.string().describe('The improved resume section text.'),
 });
-export type ImproveResumeSectionOutput = z.infer<typeof ImproveResumeSectionOutputSchema>;
+type ImproveResumeSectionOutput = z.infer<typeof ImproveResumeSectionOutputSchema>;
 
 export async function improveResumeSection(input: ImproveResumeSectionInput): Promise<ImproveResumeSectionOutput> {
   return improveResumeSectionFlow(input);
