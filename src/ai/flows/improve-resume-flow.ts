@@ -44,8 +44,11 @@ const improveResumeSectionFlow = ai.defineFlow(
   async (input) => {
     // The 'input' object coming into the flow might be tainted by server action serialization.
     // Create a fresh, clean object to pass to the prompt to avoid "Unsupported Part type" errors.
-    const { text, section } = input;
-    const {output} = await prompt({ text, section });
+    const cleanInput = {
+      text: input.text,
+      section: input.section,
+    };
+    const {output} = await prompt(cleanInput);
     return output!;
   }
 );
