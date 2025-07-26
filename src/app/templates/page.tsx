@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, FileText } from 'lucide-react';
 import { ResumePreview } from '@/components/ResumePreview';
 
 export const templates = [
@@ -75,21 +75,8 @@ export default function TemplatesPage() {
             {filteredTemplates.map(template => (
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block">
                 <Card className="group overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
-                  <CardContent className="p-0 relative aspect-[8.5/11] bg-gray-100 overflow-hidden">
-                     <div
-                        className="pointer-events-none"
-                        style={{
-                            width: '163.2px', /* 8.5in * 0.2 * 96dpi */
-                            height: '211.2px', /* 11in * 0.2 * 96dpi */
-                        }}
-                    >
-                        <div 
-                            className="transform origin-top-left bg-white w-[8.5in] h-[11in]"
-                            style={{ transform: 'scale(0.2)' }}
-                        >
-                            <ResumePreview templateId={template.id} />
-                        </div>
-                    </div>
+                  <CardContent className="p-0 relative aspect-[8.5/11] bg-gray-100 overflow-hidden flex items-center justify-center">
+                     <FileText className="w-16 h-16 text-gray-300" />
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4">
                         <div className="text-center">
                            <Button asChild className="rounded-full bg-white/90 text-gray-900 font-semibold hover:bg-white">

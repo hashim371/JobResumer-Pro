@@ -96,21 +96,8 @@ export default function MyResumesPage() {
                  return (
                     <Card key={resume.id} className="group flex flex-col">
                       <Link href={`/resume/${resume.id}`}>
-                        <CardContent className="p-0 relative aspect-[8.5/11] flex-shrink-0 bg-gray-100 overflow-hidden rounded-t-lg">
-                           <div
-                                className="pointer-events-none"
-                                style={{
-                                    width: '163.2px', /* 8.5in * 0.2 * 96dpi */
-                                    height: '211.2px', /* 11in * 0.2 * 96dpi */
-                                }}
-                            >
-                                <div 
-                                    className="transform origin-top-left bg-white w-[8.5in] h-[11in]"
-                                    style={{ transform: 'scale(0.2)' }}
-                                >
-                                    <ResumePreview templateId={resume.templateId} data={resume} />
-                                </div>
-                            </div>
+                        <CardContent className="p-0 relative aspect-[8.5/11] flex-shrink-0 bg-gray-100 overflow-hidden rounded-t-lg flex items-center justify-center">
+                            <FileText className="w-16 h-16 text-gray-300" />
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Eye className="h-12 w-12 text-white" />
                             </div>
