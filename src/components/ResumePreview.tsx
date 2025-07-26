@@ -157,6 +157,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
     case 'rome':
     case 'athens':
     case 'vienna':
+    case 'istanbul':
         return (
             <div className="p-10 font-serif bg-white text-gray-900 min-h-full text-[10.5pt] leading-normal">
                 <div className="text-center">
@@ -209,6 +210,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
     case 'london':
     case 'tokyo':
     case 'helsinki':
+    case 'shanghai':
         return (
              <div className="p-8 font-sans bg-white text-gray-800 min-h-full text-sm">
                 <div className="grid grid-cols-3 gap-8">
@@ -269,6 +271,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
 
     case 'berlin': 
     case 'oslo':
+    case 'toronto':
       return (
         <div className="font-sans bg-white text-gray-800 min-h-full flex text-sm">
           <div className="w-1/3 bg-gray-100 p-8 text-gray-800 flex flex-col">
@@ -663,6 +666,370 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
               </section>
           </div>
         );
+    case 'singapore':
+        return (
+            <div className="p-8 font-sans bg-white text-gray-800 min-h-full text-sm">
+                <div className="flex justify-between items-start pb-4 border-b-2 border-red-500">
+                    <div>
+                        <h1 className="text-4xl font-extrabold text-red-700">{personalInfo?.name}</h1>
+                        <p className="text-lg font-light text-gray-600 mt-1">{personalInfo?.role}</p>
+                    </div>
+                    <div className="text-right text-xs text-gray-600 space-y-1">
+                        <p>{personalInfo?.email}</p>
+                        <p>{personalInfo?.phone}</p>
+                        <p>{personalInfo?.location}</p>
+                    </div>
+                </div>
+
+                <div className="mt-6">
+                    <h2 className="text-sm font-bold uppercase text-red-600 tracking-widest mb-2">Summary</h2>
+                    <p className="leading-relaxed">{summary}</p>
+                </div>
+
+                <div className="mt-6">
+                    <h2 className="text-sm font-bold uppercase text-red-600 tracking-widest mb-3">Experience</h2>
+                    {experience?.map((exp: any, i: number) => (
+                        <div key={i} className="mb-4">
+                            <div className="flex justify-between items-baseline">
+                                <h3 className="text-md font-semibold text-gray-900">{exp.jobTitle}, <span className="font-normal italic">{exp.company}</span></h3>
+                                <p className="text-xs text-gray-500 font-mono">{exp.startDate} - {exp.endDate}</p>
+                            </div>
+                            <p className="mt-1 leading-relaxed text-gray-700 text-xs">{exp.description}</p>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="mt-6 grid grid-cols-2 gap-x-12">
+                    <div>
+                        <h2 className="text-sm font-bold uppercase text-red-600 tracking-widest mb-3">Education</h2>
+                        {education?.map((edu: any, i: number) => (
+                            <div key={i} className="mb-2">
+                                <h3 className="text-md font-semibold">{edu.degree}</h3>
+                                <p className="text-sm">{edu.school}</p>
+                                <p className="text-xs text-gray-500">{edu.graduationDate}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div>
+                        <h2 className="text-sm font-bold uppercase text-red-600 tracking-widest mb-3">Skills</h2>
+                        <div className="flex flex-wrap gap-2">
+                            {skills?.map((skill: any, i: number) => (
+                                <span key={i} className="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded-full">{skill.name}</span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    case 'kyoto':
+        return (
+            <div className="p-10 font-serif bg-cream-50 text-gray-700 min-h-full text-sm leading-relaxed">
+                <div className="text-center mb-10">
+                    <h1 className="text-4xl font-thin tracking-widest">{personalInfo?.name}</h1>
+                    <p className="text-lg text-gray-500 mt-2 tracking-wider">{personalInfo?.role}</p>
+                </div>
+
+                <div className="flex justify-center text-xs gap-x-6 mb-8 text-gray-500">
+                    <span>{personalInfo?.phone}</span>
+                    <span>{personalInfo?.email}</span>
+                    <span>{personalInfo?.location}</span>
+                </div>
+
+                <div className="mb-6 border-t border-gray-300 pt-6">
+                    <p className="text-center text-xs italic">{summary}</p>
+                </div>
+
+                <div className="mb-6">
+                    <h2 className="text-center text-xs font-bold tracking-[0.3em] uppercase text-gray-500 mb-4">EXPERIENCE</h2>
+                    {experience?.map((exp: any, i: number) => (
+                        <div key={i} className="mb-4 text-center">
+                            <h3 className="font-bold">{exp.jobTitle} at {exp.company}</h3>
+                            <p className="text-xs text-gray-500 mb-1">{exp.startDate} - {exp.endDate}</p>
+                            <p className="text-xs text-gray-600">{exp.description}</p>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-2 gap-x-12 border-t border-gray-300 pt-6">
+                    <div>
+                        <h2 className="text-center text-xs font-bold tracking-[0.3em] uppercase text-gray-500 mb-4">EDUCATION</h2>
+                        {education?.map((edu: any, i: number) => (
+                            <div key={i} className="mb-2 text-center">
+                                <h3 className="font-bold">{edu.degree}</h3>
+                                <p className="text-xs">{edu.school}</p>
+                                <p className="text-xs text-gray-500">{edu.graduationDate}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div>
+                        <h2 className="text-center text-xs font-bold tracking-[0.3em] uppercase text-gray-500 mb-4">SKILLS</h2>
+                        <p className="text-center text-xs">{skills?.map((skill: any) => skill.name).join(' / ')}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    case 'dubai':
+        return (
+            <div className="p-8 font-sans bg-gray-900 text-white min-h-full text-sm flex">
+                <div className="w-1/3 bg-gray-800 p-6 flex flex-col justify-between">
+                    <div>
+                        <h1 className="text-4xl font-bold text-amber-400">{personalInfo?.name}</h1>
+                        <p className="text-lg text-gray-300 mt-1">{personalInfo?.role}</p>
+                    </div>
+                    <div>
+                        <div className="mb-6">
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-2">Contact</h2>
+                            <div className="text-xs space-y-1">
+                                <p>{personalInfo?.email}</p>
+                                <p>{personalInfo?.phone}</p>
+                                <p>{personalInfo?.location}</p>
+                            </div>
+                        </div>
+                        <div className="mb-6">
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-2">Skills</h2>
+                            <div className="flex flex-wrap gap-2 text-xs">
+                                {skills?.map((skill: any, i: number) => (
+                                    <span key={i} className="bg-gray-700 text-amber-300 px-2 py-1 rounded">{skill.name}</span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="w-2/3 p-8">
+                    <section className="mb-6">
+                        <h2 className="text-xl font-bold text-amber-400 border-b-2 border-amber-500 pb-2 mb-3">Summary</h2>
+                        <p className="leading-relaxed text-gray-300">{summary}</p>
+                    </section>
+                    <section className="mb-6">
+                        <h2 className="text-xl font-bold text-amber-400 border-b-2 border-amber-500 pb-2 mb-3">Experience</h2>
+                        {experience?.map((exp: any, i: number) => (
+                            <div key={i} className="mb-4">
+                                <h3 className="text-md font-bold">{exp.jobTitle}</h3>
+                                <p className="text-sm text-gray-400 italic">{exp.company} / {exp.startDate} - {exp.endDate}</p>
+                                <p className="mt-1 text-xs text-gray-300">{exp.description}</p>
+                            </div>
+                        ))}
+                    </section>
+                    <section>
+                        <h2 className="text-xl font-bold text-amber-400 border-b-2 border-amber-500 pb-2 mb-3">Education</h2>
+                        {education?.map((edu: any, i: number) => (
+                            <div key={i} className="mb-2">
+                                <h3 className="text-md font-bold">{edu.degree}</h3>
+                                <p className="text-sm text-gray-400">{edu.school}</p>
+                                <p className="text-xs text-gray-500">{edu.graduationDate}</p>
+                            </div>
+                        ))}
+                    </section>
+                </div>
+            </div>
+        );
+    case 'mumbai':
+        return (
+            <div className="p-8 font-sans bg-white text-gray-800 min-h-full text-sm">
+                <div className="relative text-center pb-4">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500"></div>
+                    <h1 className="text-4xl font-bold text-gray-900 mt-8">{personalInfo?.name}</h1>
+                    <p className="text-lg text-purple-600">{personalInfo?.role}</p>
+                    <div className="flex justify-center text-xs gap-4 mt-2 text-gray-500">
+                        <span>{personalInfo?.phone}</span>
+                        <span>{personalInfo?.email}</span>
+                        <span>{personalInfo?.location}</span>
+                    </div>
+                </div>
+                <section className="mt-6">
+                    <h2 className="text-md font-bold text-purple-700 tracking-wider mb-2">SUMMARY</h2>
+                    <p className="leading-relaxed text-xs border-l-2 border-purple-200 pl-4">{summary}</p>
+                </section>
+                <section className="mt-6">
+                    <h2 className="text-md font-bold text-pink-700 tracking-wider mb-2">EXPERIENCE</h2>
+                    {experience?.map((exp: any, i: number) => (
+                        <div key={i} className="mb-3">
+                            <h3 className="font-semibold text-md">{exp.jobTitle} at <span className="text-pink-600">{exp.company}</span></h3>
+                            <p className="text-xs text-gray-500">{exp.startDate} - {exp.endDate}</p>
+                            <p className="text-xs mt-1">{exp.description}</p>
+                        </div>
+                    ))}
+                </section>
+                <section className="mt-6 grid grid-cols-2 gap-8">
+                    <div>
+                        <h2 className="text-md font-bold text-orange-700 tracking-wider mb-2">EDUCATION</h2>
+                        {education?.map((edu: any, i: number) => (
+                            <div key={i} className="mb-2">
+                                <h3 className="font-semibold text-md">{edu.degree}</h3>
+                                <p className="text-xs">{edu.school} ({edu.graduationDate})</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div>
+                        <h2 className="text-md font-bold text-green-700 tracking-wider mb-2">SKILLS</h2>
+                        <div className="flex flex-wrap gap-2 text-xs">
+                            {skills?.map((skill: any, i: number) => (
+                                <span key={i} className="bg-green-100 text-green-800 px-3 py-1 rounded-full">{skill.name}</span>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        );
+    case 'rio':
+        return (
+            <div className="p-8 font-sans bg-white text-gray-800 min-h-full text-sm relative overflow-hidden">
+                <div className="absolute -top-16 -left-16 w-48 h-48 bg-yellow-300 rounded-full opacity-50"></div>
+                <div className="absolute -bottom-24 -right-12 w-64 h-64 bg-green-300 rounded-full opacity-50"></div>
+                <div className="relative z-10">
+                    <header className="text-left mb-8">
+                        <h1 className="text-5xl font-extrabold text-blue-800">{personalInfo?.name}</h1>
+                        <p className="text-xl text-gray-600">{personalInfo?.role}</p>
+                    </header>
+                    <div className="grid grid-cols-3 gap-8">
+                        <div className="col-span-2">
+                            <section className="mb-6">
+                                <h2 className="text-lg font-bold text-blue-700 mb-2">Summary</h2>
+                                <p className="text-xs leading-relaxed">{summary}</p>
+                            </section>
+                            <section>
+                                <h2 className="text-lg font-bold text-blue-700 mb-2">Experience</h2>
+                                {experience?.map((exp: any, i: number) => (
+                                    <div key={i} className="mb-3">
+                                        <h3 className="font-bold">{exp.jobTitle}</h3>
+                                        <p className="text-sm italic text-gray-600">{exp.company} | {exp.startDate} - {exp.endDate}</p>
+                                        <p className="text-xs mt-1">{exp.description}</p>
+                                    </div>
+                                ))}
+                            </section>
+                        </div>
+                        <div className="col-span-1 text-xs space-y-6">
+                            <section>
+                                <h2 className="font-bold text-green-700 mb-2">CONTACT</h2>
+                                <p>{personalInfo?.email}</p>
+                                <p>{personalInfo?.phone}</p>
+                                <p>{personalInfo?.location}</p>
+                            </section>
+                            <section>
+                                <h2 className="font-bold text-green-700 mb-2">EDUCATION</h2>
+                                {education?.map((edu: any, i: number) => (
+                                    <div key={i}>
+                                        <h3 className="font-semibold">{edu.degree}</h3>
+                                        <p>{edu.school}</p>
+                                        <p>{edu.graduationDate}</p>
+                                    </div>
+                                ))}
+                            </section>
+                            <section>
+                                <h2 className="font-bold text-green-700 mb-2">SKILLS</h2>
+                                <div className="flex flex-wrap gap-1">
+                                    {skills?.map((skill: any, i: number) => <span key={i} className="bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded text-[10px]">{skill.name}</span>)}
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    case 'zurich':
+        return (
+            <div className="p-8 font-sans bg-gray-50 text-gray-900 min-h-full text-sm">
+                <header className="flex justify-between items-center pb-4 border-b border-gray-300">
+                    <h1 className="text-3xl font-semibold tracking-tighter">{personalInfo?.name}</h1>
+                    <p className="text-md text-gray-600">{personalInfo?.role}</p>
+                </header>
+                <div className="grid grid-cols-12 gap-8 mt-6 text-xs">
+                    <div className="col-span-4 space-y-6">
+                        <section>
+                            <h2 className="font-bold tracking-widest text-gray-500 uppercase mb-2 text-[10px]">Info</h2>
+                            <p>{personalInfo?.email}</p>
+                            <p>{personalInfo?.phone}</p>
+                            <p>{personalInfo?.location}</p>
+                        </section>
+                        <section>
+                            <h2 className="font-bold tracking-widest text-gray-500 uppercase mb-2 text-[10px]">Skills</h2>
+                            <div className="flex flex-col gap-1">
+                                {skills?.map((skill: any, i: number) => <p key={i}>{skill.name}</p>)}
+                            </div>
+                        </section>
+                        <section>
+                            <h2 className="font-bold tracking-widest text-gray-500 uppercase mb-2 text-[10px]">Education</h2>
+                             {education?.map((edu: any, i: number) => (
+                                <div key={i}>
+                                    <h3 className="font-semibold">{edu.degree}</h3>
+                                    <p className="text-gray-600">{edu.school}</p>
+                                    <p className="text-gray-600">{edu.graduationDate}</p>
+                                </div>
+                            ))}
+                        </section>
+                    </div>
+                    <div className="col-span-8">
+                        <section className="mb-6">
+                            <h2 className="font-bold tracking-widest text-gray-500 uppercase mb-2 text-[10px]">Summary</h2>
+                            <p className="leading-relaxed">{summary}</p>
+                        </section>
+                        <section>
+                             <h2 className="font-bold tracking-widest text-gray-500 uppercase mb-2 text-[10px]">Experience</h2>
+                            {experience?.map((exp: any, i: number) => (
+                                <div key={i} className="mb-4">
+                                    <h3 className="font-semibold text-sm">{exp.jobTitle}</h3>
+                                    <p className=" text-gray-600">{exp.company}</p>
+                                    <p className="text-gray-500 text-[10px]">{exp.startDate} - {exp.endDate}</p>
+                                    <p className="mt-1 leading-relaxed">{exp.description}</p>
+                                </div>
+                            ))}
+                        </section>
+                    </div>
+                </div>
+            </div>
+        );
+     case 'mexico-city':
+      return (
+        <div className="font-sans min-h-full flex text-sm">
+          <div className="w-1/3 bg-blue-800 text-white p-8 flex flex-col items-center text-center">
+            <div className="w-24 h-24 mb-4">
+              <img src={'https://placehold.co/120x120.png'} alt="Portrait" className="rounded-full shadow-md border-4 border-white" data-ai-hint="professional portrait" />
+            </div>
+            <h1 className="text-2xl font-bold">{personalInfo?.name}</h1>
+            <p className="text-sm text-blue-200">{personalInfo?.role}</p>
+            <div className="text-xs space-y-4 mt-8">
+              <section>
+                <h2 className="font-bold uppercase tracking-wider mb-2">Contact</h2>
+                <p>{personalInfo?.email}</p>
+                <p>{personalInfo?.phone}</p>
+                <p>{personalInfo?.location}</p>
+              </section>
+              <section>
+                <h2 className="font-bold uppercase tracking-wider mb-2">Education</h2>
+                {education?.map((edu: any, i: number) => (
+                  <div key={i}>
+                    <h3 className="font-semibold">{edu.degree}</h3>
+                    <p>{edu.school}</p>
+                    <p>{edu.graduationDate}</p>
+                  </div>
+                ))}
+              </section>
+            </div>
+          </div>
+          <div className="w-2/3 p-8 bg-white">
+            <section className="mb-6">
+              <h2 className="text-xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-3">Summary</h2>
+              <p className="leading-relaxed">{summary}</p>
+            </section>
+            <section className="mb-6">
+              <h2 className="text-xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-3">Experience</h2>
+              {experience?.map((exp: any, i: number) => (
+                <div key={i} className="mb-4">
+                  <h3 className="text-md font-bold">{exp.jobTitle} at <span className="text-blue-700">{exp.company}</span></h3>
+                  <p className="text-xs text-gray-500">{exp.startDate} - {exp.endDate}</p>
+                  <p className="mt-1 leading-relaxed text-xs">{exp.description}</p>
+                </div>
+              ))}
+            </section>
+             <section>
+              <h2 className="text-xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-3">Skills</h2>
+              <div className="flex flex-wrap gap-2 text-xs">
+                 {skills?.map((skill: any, i: number) => <span key={i} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-md">{skill.name}</span>)}
+              </div>
+            </section>
+          </div>
+        </div>
+      );
     case 'dublin': // Simple
     default:
       return (

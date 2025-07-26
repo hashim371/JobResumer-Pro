@@ -35,9 +35,19 @@ export const templates = [
   { id: 'copenhagen', name: 'Copenhagen', category: 'Simple' },
   { id: 'prague', name: 'Prague', category: 'Simple' },
   { id: 'warsaw', name: 'Warsaw', category: 'Simple' },
+  { id: 'singapore', name: 'Singapore', category: 'Modern' },
+  { id: 'kyoto', name: 'Kyoto', category: 'Elegant' },
+  { id: 'dubai', name: 'Dubai', category: 'Bold' },
+  { id: 'toronto', name: 'Toronto', category: 'Professional' },
+  { id: 'mumbai', name: 'Mumbai', category: 'Creative' },
+  { id: 'rio', name: 'Rio', category: 'Dynamic' },
+  { id: 'zurich', name: 'Zurich', category: 'Minimalist' },
+  { id: 'istanbul', name: 'Istanbul', category: 'Classic' },
+  { id: 'shanghai', name: 'Shanghai', category: 'Modern' },
+  { id: 'mexico-city', name: 'Mexico City', category: 'Artistic' },
 ];
 
-const filters = ['All templates', 'Simple', 'Two-column', 'Picture', 'ATS', 'Modern', 'Classic'];
+const filters = ['All templates', 'Simple', 'Two-column', 'Picture', 'ATS', 'Modern', 'Classic', 'Elegant', 'Bold', 'Professional', 'Creative', 'Dynamic', 'Minimalist', 'Artistic'];
 
 
 export default function TemplatesPage() {
@@ -75,9 +85,11 @@ export default function TemplatesPage() {
             {filteredTemplates.map(template => (
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block group">
                 <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
-                  <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-gray-100">
-                    <div className="absolute inset-0 transform scale-[0.2] origin-top-left w-[500%] h-[500%]">
-                        <ResumePreview templateId={template.id} />
+                 <div className="p-0 relative aspect-[8.5/11] w-full bg-gray-100 overflow-hidden">
+                    <div
+                      className="absolute inset-0 transform scale-[0.2] origin-top-left w-[500%] h-[500%] transition-transform duration-300 ease-in-out group-hover:scale-[0.22]"
+                    >
+                      <ResumePreview templateId={template.id} />
                     </div>
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4">
                         <div className="text-center">
@@ -86,7 +98,7 @@ export default function TemplatesPage() {
                           </Button>
                         </div>
                     </div>
-                  </CardContent>
+                  </div>
                   <CardFooter className="p-4 bg-card flex flex-col items-start">
                       <h3 className="font-semibold text-lg text-card-foreground">{template.name}</h3>
                       <Badge variant="secondary" className="mt-2">{template.category}</Badge>
