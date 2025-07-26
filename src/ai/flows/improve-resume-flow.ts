@@ -27,8 +27,8 @@ export async function improveResumeSection(input: ImproveResumeSectionInput): Pr
 
 const prompt = ai.definePrompt({
   name: 'improveResumeSectionPrompt',
-  input: {schema: ImproveResumeSectionInputSchema},
-  output: {schema: ImproveResumeSectionOutputSchema},
+  inputSchema: ImproveResumeSectionInputSchema,
+  outputSchema: ImproveResumeSectionOutputSchema,
   prompt: `You are an expert resume writer and career coach. Your task is to revise the following text for a resume's '{{section}}' section.
 
 Rewrite the text to be more professional, concise, and impactful. Use strong action verbs and focus on quantifiable achievements where possible. Ensure the tone is appropriate for a professional resume.
