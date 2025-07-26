@@ -25,6 +25,16 @@ export const templates = [
   { id: 'seoul', name: 'Seoul', category: 'Picture' },
   { id: 'tokyo', name: 'Tokyo', category: 'Modern' },
   { id: 'rome', name: 'Rome', category: 'Classic' },
+  { id: 'vienna', name: 'Vienna', category: 'Classic' },
+  { id: 'amsterdam', name: 'Amsterdam', category: 'Two-column' },
+  { id: 'stockholm', name: 'Stockholm', category: 'Modern' },
+  { id: 'athens', name: 'Athens', category: 'Classic' },
+  { id: 'helsinki', name: 'Helsinki', category: 'Modern' },
+  { id: 'oslo', name: 'Oslo', category: 'Two-column' },
+  { id: 'lisbon', name: 'Lisbon', category: 'Simple' },
+  { id: 'copenhagen', name: 'Copenhagen', category: 'Simple' },
+  { id: 'prague', name: 'Prague', category: 'Simple' },
+  { id: 'warsaw', name: 'Warsaw', category: 'Simple' },
 ];
 
 const filters = ['All templates', 'Simple', 'Two-column', 'Picture', 'ATS', 'Modern', 'Classic'];
