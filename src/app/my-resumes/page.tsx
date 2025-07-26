@@ -51,7 +51,10 @@ export default function MyResumesPage() {
     const unsubscribe = onValue(resumesRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
-        const resumeList = Object.values(data) as Resume[];
+        const resumeList = Object.keys(data).map(key => ({
+            id: key,
+            ...data[key]
+        })) as Resume[];
         setResumes(resumeList.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
       } else {
         setResumes([]);
@@ -96,8 +99,8 @@ export default function MyResumesPage() {
                  return (
                     <Card key={resume.id} className="group flex flex-col">
                       <Link href={`/resume/${resume.id}`} className="block overflow-hidden rounded-t-lg">
-                        <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-gray-100">
-                            <div className="absolute inset-0 transform scale-[0.2] origin-top-left w-[500%] h-[500%]">
+                         <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
+                            <div className="absolute inset-0 transform scale-[0.20] origin-top-left" style={{width: '500%', height: '500%'}}>
                                 <ResumePreview templateId={resume.templateId} data={resume} />
                             </div>
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">

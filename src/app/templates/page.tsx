@@ -85,9 +85,10 @@ export default function TemplatesPage() {
             {filteredTemplates.map(template => (
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block group">
                 <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
-                 <div className="p-0 relative aspect-[8.5/11] w-full bg-gray-100 overflow-hidden">
+                 <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                     <div
-                      className="absolute inset-0 transform scale-[0.2] origin-top-left w-[500%] h-[500%] transition-transform duration-300 ease-in-out group-hover:scale-[0.22]"
+                      className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"
+                      style={{width: '500%', height: '500%'}}
                     >
                       <ResumePreview templateId={template.id} />
                     </div>
@@ -98,7 +99,7 @@ export default function TemplatesPage() {
                           </Button>
                         </div>
                     </div>
-                  </div>
+                  </CardContent>
                   <CardFooter className="p-4 bg-card flex flex-col items-start">
                       <h3 className="font-semibold text-lg text-card-foreground">{template.name}</h3>
                       <Badge variant="secondary" className="mt-2">{template.category}</Badge>
