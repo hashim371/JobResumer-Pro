@@ -36,27 +36,29 @@ interface ResumePreviewProps {
 }
 
 export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewProps) => {
-  const data = initialData && initialData.personalInfo ? initialData : mockData;
+  const data = initialData && initialData.personalInfo && initialData.personalInfo.name ? initialData : mockData;
   const { personalInfo, summary, experience, education, skills } = data;
 
   const renderSimpleHeader = () => (
-    <div className="text-center mb-6 border-b-2 border-gray-200 pb-4">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-800">{personalInfo?.name}</h1>
-        <div className="flex justify-center gap-4 mt-2 text-sm text-gray-600">
+    <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold tracking-tight text-slate-800">{personalInfo?.name}</h1>
+        <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-slate-600">
             <span>{personalInfo?.email}</span>
+            <span className="hidden sm:inline">|</span>
             <span>{personalInfo?.phone}</span>
+            <span className="hidden sm:inline">|</span>
             <span>{personalInfo?.location}</span>
-            {personalInfo?.website && <span>{personalInfo?.website}</span>}
+            {personalInfo?.website && <><span className="hidden sm:inline">|</span><span>{personalInfo?.website}</span></>}
         </div>
     </div>
   );
 
   const renderPictureHeader = () => (
-    <div className="flex items-center mb-6 border-b-2 border-gray-200 pb-4">
-        <div className="w-24 h-24 rounded-full bg-gray-300 mr-6 shrink-0 flex-shrink-0"></div>
-        <div>
-            <h1 className="text-4xl font-bold tracking-tight text-gray-800">{personalInfo?.name}</h1>
-            <div className="flex gap-4 mt-2 text-sm text-gray-600">
+    <div className="flex items-center mb-8">
+        <div className="w-28 h-28 rounded-full bg-slate-300 mr-8 shrink-0 flex-shrink-0"></div>
+        <div className="flex-grow">
+            <h1 className="text-5xl font-bold tracking-tight text-slate-800">{personalInfo?.name}</h1>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-slate-600">
                 <span>{personalInfo?.email}</span>
                 <span>{personalInfo?.phone}</span>
                 <span>{personalInfo?.location}</span>
@@ -66,28 +68,28 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
     </div>
   );
 
-  const renderSectionTitle = (title: string) => (
-    <h2 className="text-xl font-bold text-gray-700 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">{title}</h2>
+  const renderSectionTitle = (title: string, customClasses: string = "") => (
+    <h2 className={`text-lg font-bold text-slate-700 border-b-2 border-slate-300 pb-1 mb-4 uppercase tracking-wider ${customClasses}`}>{title}</h2>
   );
 
   const renderExperience = (exp: any) => (
-    <div key={exp.company + exp.jobTitle} className="mb-4">
+    <div key={exp.company + exp.jobTitle} className="mb-4 break-inside-avoid">
         <div className="flex justify-between items-baseline">
-            <h3 className="text-lg font-semibold text-gray-800">{exp.jobTitle}</h3>
-            <div className="text-sm text-gray-600">{exp.startDate} - {exp.endDate}</div>
+            <h3 className="text-md font-semibold text-slate-800">{exp.jobTitle}</h3>
+            <div className="text-xs text-slate-500 font-medium">{exp.startDate} - {exp.endDate}</div>
         </div>
-        <h4 className="text-md font-medium text-gray-700">{exp.company}</h4>
-        <p className="text-sm text-gray-600 mt-1">{exp.description}</p>
+        <h4 className="text-sm font-medium text-slate-600">{exp.company}</h4>
+        <p className="text-sm text-slate-600 mt-1">{exp.description}</p>
     </div>
   );
 
   const renderEducation = (edu: any) => (
-      <div key={edu.school + edu.degree} className="mb-2">
+      <div key={edu.school + edu.degree} className="mb-3 break-inside-avoid">
          <div className="flex justify-between items-baseline">
-            <h3 className="text-lg font-semibold text-gray-800">{edu.school}</h3>
-            <div className="text-sm text-gray-600">{edu.graduationDate}</div>
+            <h3 className="text-md font-semibold text-slate-800">{edu.school}</h3>
+            <div className="text-xs text-slate-500 font-medium">{edu.graduationDate}</div>
         </div>
-        <p className="text-md text-gray-700">{edu.degree}</p>
+        <p className="text-sm text-slate-700">{edu.degree}</p>
       </div>
   );
 
@@ -97,34 +99,34 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
     case 'tokyo':
     case 'berlin':
       return (
-        <div className="p-8 font-serif bg-white text-gray-800 min-h-full">
+        <div className="p-8 font-serif bg-white text-slate-800 min-h-full text-sm leading-relaxed">
             <div className="flex gap-8">
-                <div className="w-1/3 pr-8 border-r border-gray-200">
+                <div className="w-1/3 bg-slate-100 p-6 rounded-md">
                     <div className="text-center mb-6">
-                         <div className="w-24 h-24 rounded-full bg-gray-300 mx-auto mb-4"></div>
-                         <h1 className="text-3xl font-bold tracking-tight text-gray-800">{personalInfo?.name}</h1>
+                         <div className="w-24 h-24 rounded-full bg-slate-300 mx-auto mb-4"></div>
+                         <h1 className="text-2xl font-bold tracking-tight text-slate-800">{personalInfo?.name}</h1>
                     </div>
-                     <div className="flex flex-col text-center gap-1 mt-2 text-sm text-gray-600 mb-6">
+                     <div className="flex flex-col text-center gap-1 mt-2 text-xs text-slate-600 mb-6">
                         <span>{personalInfo?.email}</span>
                         <span>{personalInfo?.phone}</span>
                         <span>{personalInfo?.location}</span>
                         {personalInfo?.website && <span>{personalInfo?.website}</span>}
                     </div>
-
-                    {renderSectionTitle('Skills')}
-                    <ul className="list-disc list-inside text-sm text-gray-600">
+                    <hr className="my-6 border-slate-300"/>
+                    
+                    {renderSectionTitle('Skills', 'text-sm text-center')}
+                    <ul className="text-center text-xs text-slate-600 space-y-1">
                        {skills?.map((skill: any) => <li key={skill.name}>{skill.name}</li>)}
                     </ul>
-
-                    <div className="mt-4">
-                        {renderSectionTitle('Education')}
-                        {education?.map(renderEducation)}
-                    </div>
+                    
+                    <hr className="my-6 border-slate-300"/>
+                    {renderSectionTitle('Education', 'text-sm text-center')}
+                    {education?.map(renderEducation)}
                 </div>
 
                 <div className="w-2/3">
                     {renderSectionTitle('Professional Summary')}
-                    <p className="text-sm text-gray-600 mb-6">{summary}</p>
+                    <p className="text-xs text-slate-600 mb-6">{summary}</p>
                     {renderSectionTitle('Work Experience')}
                     {experience?.map(renderExperience)}
                 </div>
@@ -136,24 +138,27 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
     case 'madrid':
     case 'seoul':
         return (
-            <div className="p-8 font-sans bg-white text-gray-800 min-h-full">
+            <div className="p-10 font-sans bg-white text-slate-800 min-h-full text-sm leading-relaxed">
                 {renderPictureHeader()}
+                <hr className="border-t-2 border-slate-300 -mt-2 mb-6" />
                 <div>
                     {renderSectionTitle('Professional Summary')}
-                    <p className="text-sm text-gray-600 mb-6">{summary}</p>
+                    <p className="text-xs text-slate-600 mb-6">{summary}</p>
                 </div>
                 <div>
                     {renderSectionTitle('Work Experience')}
                     {experience?.map(renderExperience)}
                 </div>
-                <div className="mt-4">
-                    {renderSectionTitle('Education')}
-                    {education?.map(renderEducation)}
-                </div>
-                <div className="mt-4">
-                    {renderSectionTitle('Skills')}
-                    <div className="flex flex-wrap gap-2">
-                       {skills?.map((skill: any) => <span key={skill.name} className="bg-gray-200 text-gray-700 text-xs font-medium px-2.5 py-1 rounded-full">{skill.name}</span>)}
+                <div className="mt-6 grid grid-cols-2 gap-x-12">
+                    <div>
+                        {renderSectionTitle('Education')}
+                        {education?.map(renderEducation)}
+                    </div>
+                    <div>
+                        {renderSectionTitle('Skills')}
+                        <div className="flex flex-wrap gap-2 mt-2">
+                           {skills?.map((skill: any) => <span key={skill.name} className="bg-slate-200 text-slate-700 text-xs font-medium px-3 py-1 rounded-full">{skill.name}</span>)}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -161,24 +166,24 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
 
     default: // Simple, ATS, Word, Google Docs templates
       return (
-        <div className="p-8 font-sans bg-white text-gray-800 min-h-full">
+        <div className="p-10 font-sans bg-white text-slate-800 min-h-full text-sm leading-relaxed">
             {renderSimpleHeader()}
             <div>
                 {renderSectionTitle('Professional Summary')}
-                <p className="text-sm text-gray-600 mb-6">{summary}</p>
+                <p className="text-xs text-slate-600 mb-6">{summary}</p>
             </div>
             <div>
                 {renderSectionTitle('Work Experience')}
                 {experience?.map(renderExperience)}
             </div>
-            <div className="grid grid-cols-2 gap-8 mt-4">
-              <div>
+            <div className="mt-6 columns-2 gap-x-12">
+              <div className="break-inside-avoid">
                   {renderSectionTitle('Education')}
                   {education?.map(renderEducation)}
               </div>
-              <div>
+              <div className="break-inside-avoid">
                   {renderSectionTitle('Skills')}
-                  <ul className="list-disc list-inside text-sm text-gray-600">
+                  <ul className="list-disc list-inside text-sm text-slate-600 space-y-1">
                      {skills?.map((skill: any) => <li key={skill.name}>{skill.name}</li>)}
                   </ul>
               </div>
