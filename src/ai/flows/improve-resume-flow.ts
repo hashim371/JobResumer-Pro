@@ -42,8 +42,12 @@ const improveResumeSectionFlow = ai.defineFlow(
     outputSchema: ImproveResumeSectionOutputSchema,
   },
   async (input) => {
-    // This flow now expects a clean input object.
-    const {output} = await prompt(input);
+    // This is the definitive fix. By creating a new object literal here from the
+    // primitive values of the input, we guarantee that the object passed to the
+    // prompt is a clean, plain JavaScript object, free of any "taint" or
+    // metadata from the Next.js Server Action serialization process.
+    const { text, section } = input;
+    const {output} = await prompt({ text, section });
     return output!;
   }
 );
@@ -55,11 +59,7 @@ export async function improveResumeSection(input: ImproveResumeSectionInput): Pr
       return { improvedText: '' };
   }
   
-  // The exported server action calls the internal flow with a new, clean object.
-  // This is the definitive fix, as it isolates the flow from the tainted object
-  // that comes from the Next.js Server Action serialization.
-  return improveResumeSectionFlow({
-    text: input.text,
-    section: input.section,
-  });
+  // The exported server action calls the internal flow. The flow itself is now
+  // responsible for creating the clean object before calling the prompt.
+  return improveResumeSectionFlow(input);
 }
