@@ -12,7 +12,7 @@ export function Footer() {
           </div>
         </div>
         <div className="flex flex-col items-start pt-4 md:items-end md:pt-0">
-          <h4 className="font-semibold text-lg">Realtime Relay</h4>
+          <h4 className="font-semibold text-lg">JobResumer</h4>
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} All rights reserved.</p>
         </div>
       </div>
