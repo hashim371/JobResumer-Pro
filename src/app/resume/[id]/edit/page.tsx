@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, use } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
 import { ref, onValue, update } from 'firebase/database';
@@ -60,7 +60,7 @@ type ResumeData = z.infer<typeof resumeSchema>;
 
 export default function ResumeEditPage() {
   const router = useRouter();
-  const params = useParams();
+  const params = use(useParams());
   const resumeId = params.id as string;
   const { user, loading: authLoading } = useAuth();
   const [resumeData, setResumeData] = useState<any>(null);
