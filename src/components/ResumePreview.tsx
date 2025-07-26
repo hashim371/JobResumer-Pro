@@ -42,6 +42,164 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
 
   // Different Template Layouts
   switch (templateId) {
+    case 'new-york':
+        return (
+            <div className="p-8 font-sans bg-white text-gray-800 min-h-full text-sm">
+                <div className="text-center mb-8">
+                    <h1 className="text-4xl font-bold tracking-tight text-primary">{personalInfo?.name}</h1>
+                    <div className="flex justify-center gap-x-4 text-xs mt-2 text-gray-600">
+                        <span>{personalInfo?.phone}</span>
+                        <span className="text-primary">&bull;</span>
+                        <span className="break-words">{personalInfo?.email}</span>
+                        <span className="text-primary">&bull;</span>
+                        <span>{personalInfo?.location}</span>
+                        {personalInfo?.website && <><span className="text-primary">&bull;</span><span className="break-words">{personalInfo?.website}</span></>}
+                    </div>
+                </div>
+
+                <div className="mb-6">
+                    <h2 className="text-sm font-bold text-primary tracking-widest uppercase pb-2 border-b-2 border-primary/30 mb-3">Summary</h2>
+                    <p className="leading-relaxed">{summary}</p>
+                </div>
+
+                <div className="mb-6">
+                    <h2 className="text-sm font-bold text-primary tracking-widest uppercase pb-2 border-b-2 border-primary/30 mb-3">Experience</h2>
+                    {experience?.map((exp: any, i: number) => (
+                        <div key={i} className="mb-4">
+                            <div className="flex justify-between items-baseline">
+                                <h3 className="font-bold text-md">{exp.jobTitle} at {exp.company}</h3>
+                                <p className="text-xs font-mono">{exp.startDate} - {exp.endDate}</p>
+                            </div>
+                            <p className="mt-1 text-gray-700 leading-relaxed">{exp.description}</p>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-2 gap-x-12">
+                    <div className="mb-6">
+                        <h2 className="text-sm font-bold text-primary tracking-widest uppercase pb-2 border-b-2 border-primary/30 mb-3">Education</h2>
+                        {education?.map((edu: any, i: number) => (
+                            <div key={i} className="mb-2">
+                                <h3 className="font-bold">{edu.degree}</h3>
+                                <p>{edu.school}</p>
+                                <p className="text-xs text-gray-600">{edu.graduationDate}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div>
+                        <h2 className="text-sm font-bold text-primary tracking-widest uppercase pb-2 border-b-2 border-primary/30 mb-3">Skills</h2>
+                        <div className="flex flex-wrap gap-2">
+                            {skills?.map((skill: any, i: number) => (
+                                <span key={i} className="bg-primary/10 text-primary font-medium text-xs px-3 py-1 rounded">{skill.name}</span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+    case 'sydney': // ATS-friendly
+    case 'cairo':
+      return (
+        <div className="p-8 font-sans bg-white text-slate-800 min-h-full text-sm">
+            <h1 className="text-3xl font-bold text-slate-900">{personalInfo?.name}</h1>
+            <div className="flex flex-wrap gap-x-4 text-xs mt-1 text-slate-600">
+                <span>{personalInfo?.phone}</span>
+                <span>{personalInfo?.email}</span>
+                <span>{personalInfo?.location}</span>
+                <span>{personalInfo?.website}</span>
+            </div>
+
+            <section className="mt-6">
+                <h2 className="text-md font-bold uppercase text-slate-700 tracking-wider border-b border-slate-300 pb-1 mb-2">Professional Summary</h2>
+                <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
+            </section>
+            
+            <section className="mt-4">
+                <h2 className="text-md font-bold uppercase text-slate-700 tracking-wider border-b border-slate-300 pb-1 mb-2">Work Experience</h2>
+                {experience?.map((exp:any, i:number) => (
+                    <div key={i} className="mb-3">
+                        <div className="flex justify-between">
+                            <h3 className="text-sm font-bold text-slate-800">{exp.jobTitle}</h3>
+                            <div className="text-xs text-slate-500">{exp.startDate} - {exp.endDate}</div>
+                        </div>
+                        <h4 className="text-xs font-semibold text-slate-600 italic">{exp.company}</h4>
+                        <p className="text-slate-700 mt-1 text-xs">{exp.description}</p>
+                    </div>
+                ))}
+            </section>
+            
+             <section className="mt-4">
+                <h2 className="text-md font-bold uppercase text-slate-700 tracking-wider border-b border-slate-300 pb-1 mb-2">Education</h2>
+                {education?.map((edu:any, i:number) => (
+                    <div key={i} className="mb-2">
+                        <h3 className="text-sm font-bold text-slate-800">{edu.degree}</h3>
+                        <p className="text-xs text-slate-700">{edu.school}</p>
+                        <p className="text-xs text-slate-500">{edu.graduationDate}</p>
+                    </div>
+                ))}
+            </section>
+
+            <section className="mt-4">
+                <h2 className="text-md font-bold uppercase text-slate-700 tracking-wider border-b border-slate-300 pb-1 mb-2">Skills</h2>
+                <p className="text-xs text-slate-700">
+                    {skills?.map((skill: any) => skill.name).join(', ')}
+                </p>
+            </section>
+        </div>
+      );
+
+    case 'paris': // Google Docs style
+    case 'london': // Word style
+        return (
+            <div className="p-10 font-serif bg-white text-gray-800 min-h-full text-[10pt] leading-snug">
+                <div className="text-center">
+                    <h1 className="text-3xl font-normal">{personalInfo?.name}</h1>
+                    <div className="text-xs text-gray-600 mt-1">
+                        {personalInfo?.location} | {personalInfo?.phone} | {personalInfo?.email} | {personalInfo?.website}
+                    </div>
+                </div>
+
+                <div className="mt-5">
+                    <h2 className="text-[11pt] font-bold text-primary tracking-wide border-b border-gray-400 pb-px mb-1.5">SUMMARY</h2>
+                    <p>{summary}</p>
+                </div>
+
+                <div className="mt-4">
+                    <h2 className="text-[11pt] font-bold text-primary tracking-wide border-b border-gray-400 pb-px mb-1.5">EXPERIENCE</h2>
+                    {experience?.map((exp: any, i: number) => (
+                        <div key={i} className="mb-2.5">
+                            <div className="flex justify-between">
+                                <h3 className="font-bold">{exp.company}</h3>
+                                <p className="font-bold">{exp.startDate} - {exp.endDate}</p>
+                            </div>
+                            <p className="italic">{exp.jobTitle}</p>
+                            <p className="mt-0.5">{exp.description}</p>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="mt-4">
+                    <h2 className="text-[11pt] font-bold text-primary tracking-wide border-b border-gray-400 pb-px mb-1.5">EDUCATION</h2>
+                    {education?.map((edu: any, i: number) => (
+                         <div key={i} className="flex justify-between">
+                            <div>
+                                <h3 className="font-bold">{edu.school}</h3>
+                                <p>{edu.degree}</p>
+                            </div>
+                            <p>{edu.graduationDate}</p>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="mt-4">
+                    <h2 className="text-[11pt] font-bold text-primary tracking-wide border-b border-gray-400 pb-px mb-1.5">SKILLS</h2>
+                     <p>{skills?.map((skill: any) => skill.name).join(' | ')}</p>
+                </div>
+            </div>
+        )
+
     case 'berlin': // Two-Column
       return (
         <div className="font-sans bg-white text-gray-800 min-h-full flex text-sm">
@@ -146,8 +304,68 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 </div>
             </div>
         )
+    
+    case 'moscow':
+        return (
+             <div className="p-8 font-sans bg-white text-gray-800 min-h-full text-sm">
+                <div className="grid grid-cols-3 gap-8">
+                    <div className="col-span-2">
+                        <h1 className="text-5xl font-extrabold text-primary mb-2">{personalInfo?.name}</h1>
+                        <p className="text-lg font-light text-gray-600">Software Engineer</p>
+                    </div>
+                    <div className="text-right text-xs">
+                        <p className="break-words">{personalInfo?.email}</p>
+                        <p>{personalInfo?.phone}</p>
+                        <p>{personalInfo?.location}</p>
+                        <p className="break-words">{personalInfo?.website}</p>
+                    </div>
+                </div>
 
-    default: // Simple, ATS, Word, Google Docs templates
+                <div className="mt-8 border-t-2 border-primary pt-6">
+                    <h2 className="text-lg font-bold uppercase text-primary tracking-wider mb-3">About Me</h2>
+                    <p className="leading-relaxed">{summary}</p>
+                </div>
+
+                <div className="mt-6">
+                    <h2 className="text-lg font-bold uppercase text-primary tracking-wider mb-3">Experience</h2>
+                     {experience?.map((exp: any, i: number) => (
+                        <div key={i} className="mb-4 grid grid-cols-4 gap-4">
+                           <div className="col-span-1 text-xs text-gray-600">
+                               <p>{exp.startDate} - {exp.endDate}</p>
+                               <p>{exp.company}</p>
+                           </div>
+                           <div className="col-span-3">
+                                <h3 className="font-bold">{exp.jobTitle}</h3>
+                               <p className="mt-1 leading-relaxed">{exp.description}</p>
+                           </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="mt-6 grid grid-cols-2 gap-12">
+                     <div>
+                        <h2 className="text-lg font-bold uppercase text-primary tracking-wider mb-3">Education</h2>
+                        {education?.map((edu: any, i: number) => (
+                            <div key={i} className="mb-3">
+                                <h3 className="font-bold">{edu.degree}</h3>
+                                <p className="text-sm">{edu.school}</p>
+                                <p className="text-xs text-gray-600">{edu.graduationDate}</p>
+                            </div>
+                        ))}
+                    </div>
+                     <div>
+                        <h2 className="text-lg font-bold uppercase text-primary tracking-wider mb-3">Skills</h2>
+                        <ul className="list-disc list-inside space-y-1">
+                          {skills?.map((skill: any, i:number) => <li key={i}>{skill.name}</li>)}
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        )
+    
+    case 'dublin': // Simple
+    default:
       return (
         <div className="p-8 font-sans bg-white text-slate-800 min-h-full text-sm">
             {/* Header */}
