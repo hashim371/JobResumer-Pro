@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'JobeResumer',
+  title: 'Realtime Relay',
   description: 'Create a professional resume in minutes.',
 };
 

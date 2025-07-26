@@ -41,7 +41,7 @@ export default function Home() {
     {
       name: "Sarah L.",
       role: "Product Manager",
-      quote: "JobeResumer made it incredibly easy to create a professional resume that truly stands out. I landed my dream job in weeks!",
+      quote: "Realtime Relay made it incredibly easy to create a professional resume that truly stands out. I landed my dream job in weeks!",
       stars: 5
     },
     {
@@ -59,7 +59,7 @@ export default function Home() {
      {
       name: "David C.",
       role: "Marketing Director",
-      quote: "I hadn't updated my resume in years. JobeResumer guided me through the process and the result was polished and professional.",
+      quote: "I hadn't updated my resume in years. Realtime Relay guided me through the process and the result was polished and professional.",
       stars: 4
     }
   ];
@@ -98,7 +98,7 @@ export default function Home() {
             <div className="text-center max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold tracking-tight">Our Mission</h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                At JobeResumer, our mission is to empower job seekers by providing them with the tools and resources needed to create professional, modern resumes that open doors to new opportunities. We believe that a great resume is a key step towards a successful career, and we're dedicated to making that step as simple and effective as possible.
+                At Realtime Relay, our mission is to empower job seekers by providing them with the tools and resources needed to create professional, modern resumes that open doors to new opportunities. We believe that a great resume is a key step towards a successful career, and we're dedicated to making that step as simple and effective as possible.
               </p>
             </div>
           </div>
