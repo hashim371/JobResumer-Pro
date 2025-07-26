@@ -50,12 +50,14 @@ const improveResumeSectionFlow = ai.defineFlow(
 
 
 export async function improveResumeSection(input: ImproveResumeSectionInput): Promise<ImproveResumeSectionOutput> {
-  if (!input.text.trim()) {
+  // Guard against empty input to prevent unnecessary AI calls.
+  if (!input.text || !input.text.trim()) {
       return { improvedText: '' };
   }
+  
   // The exported server action extracts the primitive values from the potentially
   // tainted input object and calls the internal flow with a new, clean object.
-  // This is the correct way to avoid the "Unsupported Part type" error.
+  // This is the correct and robust way to avoid the "Unsupported Part type" error.
   return improveResumeSectionFlow({
     text: input.text,
     section: input.section

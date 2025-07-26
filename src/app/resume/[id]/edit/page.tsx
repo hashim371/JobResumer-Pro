@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
 import { ref, onValue, update } from 'firebase/database';
 import { useParams, useRouter } from 'next/navigation';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, Path } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Sparkles, Save } from 'lucide-react';
@@ -188,12 +188,12 @@ export default function ResumeEditPage() {
     });
   };
 
-  const handleImproveWithAI = async (fieldName: any, section: string) => {
-    const aiKey = `${section}-${(fieldName.match(/\d+/) || ['0'])[0]}`;
+  const handleImproveWithAI = async (fieldName: Path<ResumeData>, section: string) => {
+    const aiKey = fieldName;
     setAiLoading(aiKey);
     try {
         const currentValue = form.getValues(fieldName);
-        if (!currentValue || !currentValue.trim()) {
+        if (typeof currentValue !== 'string' || !currentValue.trim()) {
             toast({ variant: 'destructive', title: 'Cannot improve empty text.' });
             return;
         }
@@ -267,7 +267,7 @@ export default function ResumeEditPage() {
                                         <div className="flex justify-between items-center">
                                             <FormLabel>Summary</FormLabel>
                                             <Button type="button" size="sm" variant="ghost" onClick={() => handleImproveWithAI('summary', 'summary')} disabled={!!aiLoading}>
-                                                {aiLoading === 'summary-0' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
+                                                {aiLoading === 'summary' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
                                                 Improve with AI
                                             </Button>
                                         </div>
@@ -296,7 +296,7 @@ export default function ResumeEditPage() {
                                                     <div className="flex justify-between items-center">
                                                         <FormLabel>Description</FormLabel>
                                                         <Button type="button" size="sm" variant="ghost" onClick={() => handleImproveWithAI(`experience.${index}.description`, 'experience')} disabled={!!aiLoading}>
-                                                            {aiLoading === `experience-${index}` ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
+                                                            {aiLoading === `experience.${index}.description` ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
                                                             Improve with AI
                                                         </Button>
                                                     </div>
