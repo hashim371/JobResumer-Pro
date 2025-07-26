@@ -42,7 +42,10 @@ const improveResumeSectionFlow = ai.defineFlow(
     outputSchema: ImproveResumeSectionOutputSchema,
   },
   async (input) => {
-    const {output} = await prompt(input);
+    // Final fix: The 'input' object coming into the flow is still tainted.
+    // We must create a fresh, clean object to pass to the prompt.
+    const { text, section } = input;
+    const {output} = await prompt({ text, section });
     return output!;
   }
 );
@@ -52,7 +55,5 @@ export async function improveResumeSection(input: ImproveResumeSectionInput): Pr
   if (!input.text.trim()) {
       return { improvedText: '' };
   }
-  // This is the fix: By explicitly calling the flow with a new object, 
-  // we ensure the data is not tainted by the server action's serialization.
-  return improveResumeSectionFlow({ text: input.text, section: input.section });
+  return improveResumeSectionFlow(input);
 }
