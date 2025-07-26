@@ -75,15 +75,19 @@ export default function TemplatesPage() {
             {filteredTemplates.map(template => (
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block">
                 <Card className="group overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
-                  <CardContent className="p-0 relative aspect-[8.5/11]">
-                    <div className="absolute inset-0 overflow-hidden rounded-t-lg bg-gray-100">
+                  <CardContent className="p-0 relative aspect-[8.5/11] bg-gray-100 overflow-hidden">
+                     <div
+                        className="pointer-events-none"
+                        style={{
+                            width: '163.2px', /* 8.5in * 0.2 * 96dpi */
+                            height: '211.2px', /* 11in * 0.2 * 96dpi */
+                        }}
+                    >
                         <div 
-                          className="transform origin-top-left pointer-events-none bg-white w-[8.5in] h-[11in]"
-                          style={{
-                            transform: 'scale(0.20)', // Scales the preview down
-                          }}
+                            className="transform origin-top-left bg-white w-[8.5in] h-[11in]"
+                            style={{ transform: 'scale(0.2)' }}
                         >
-                          <ResumePreview templateId={template.id} />
+                            <ResumePreview templateId={template.id} />
                         </div>
                     </div>
                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4">
