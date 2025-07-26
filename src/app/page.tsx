@@ -8,7 +8,28 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { CheckCircle, Briefcase, DraftingCompass, Star, Building } from "lucide-react";
+import { CheckCircle, Briefcase, DraftingCompass, Star } from "lucide-react";
+
+const companyLogos: { [key: string]: React.ReactNode } = {
+  Google: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.18,4.73C15.29,4.73 17.1,6.7 17.1,6.7L19,4.72C19,4.72 16.56,2 12.18,2C6.42,2 2.03,6.8 2.03,12C2.03,17.05 6.16,22 12.18,22C17.6,22 21.54,18.5 21.54,12.81C21.54,11.76 21.35,11.1 21.35,11.1V11.1Z" /></svg>
+  ),
+  Microsoft: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="90" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M2,3H11V12H2V3M13,3H22V12H13V3M2,13H11V22H2V13M13,13H22V22H13V13" /></svg>
+  ),
+  Apple: (
+     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M19.1,10.2c-0.3-2.2-2.2-3.8-4.4-3.8c-1.4,0-2.7,0.8-3.5,2c-0.8-1.2-2.1-2-3.5-2c-2.2,0-4.1,1.6-4.4,3.8 c-2.3,0.2-4,2.2-4,4.6c0,2.6,2.1,4.7,4.7,4.7h13.1c2.6,0,4.7-2.1,4.7-4.7C23.1,12.4,21.4,10.4,19.1,10.2z M14.6,7.1 c1.5,0,2.8,1.1,3,2.6H14V7.2C14.3,7.1,14.4,7.1,14.6,7.1z M6,9.6c0.2-1.5,1.5-2.6,3-2.6c0.1,0,0.2,0,0.3,0V9.6H6z M17.8,18.4H4.7c-1.9,0-3.5-1.6-3.5-3.5s1.6-3.5,3.5-3.5h0.3v-0.5c0-2.6,2.1-4.7,4.7-4.7c1.5,0,2.9,0.7,3.8,1.9 c0.9-1.2,2.3-1.9,3.8-1.9c2.6,0,4.7,2.1,4.7,4.7v0.5h0.3c1.9,0,3.5,1.6,3.5,3.5S19.7,18.4,17.8,18.4z" /></svg>
+  ),
+  Amazon: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M15.3,16.4c-0.8-0.3-1.7-0.4-2.6-0.4c-1.9,0-3.7,0.6-5.2,1.7l-1.6-1.1c1.8-1.4,4-2.2,6.5-2.2c1.1,0,2.1,0.2,3,0.5 C15.4,14.9,15.3,16.4,15.3,16.4z M21.4,16.4c-0.3-2-2-3.4-3.9-3.4c-1.9,0-3.5,1.3-3.9,3.1l-0.1,0.2c-0.1,0.5,0.2,1,0.7,1.1 c0.5,0.1,1-0.2,1.1-0.7l0.1-0.2c0.2-1,1.1-1.8,2.1-1.8s1.9,0.7,2.1,1.8l0.1,0.2c0.1,0.5,0.6,0.8,1.1,0.7C21.2,17.4,21.5,16.9,21.4,16.4 z M7,13c-1.7,0-3,1.3-3,3s1.3,3,3,3s3-1.3,3-3S8.7,13,7,13z M7,18c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S8.1,18,7,18z M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M12,20c-4.4,0-8-3.6-8-8s3.6-8,8-8s8,3.6,8,8S16.4,20,12,20z" /></svg>
+  ),
+  Netflix: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M8,3l-2,18h2.5l2-8.3l2.2,8.3H15l-2.1-18H8z M16,3v18h2.5V3H16z"/></svg>
+  ),
+  Facebook: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="110" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M22,12c0-5.5-4.5-10-10-10S2,6.5,2,12c0,5,3.7,9.1,8.4,9.9v-7H8.2v-2.9h2.2V9.4c0-2.2,1.3-3.4,3.3-3.4 c0.9,0,1.9,0.2,1.9,0.2v2.5h-1.3c-1.1,0-1.4,0.6-1.4,1.4v1.6h2.8l-0.5,2.9h-2.3v7C18.3,21.1,22,17,22,12z" /></svg>
+  ),
+};
 
 export default function Home() {
 
@@ -122,11 +143,10 @@ export default function Home() {
                 <h2 className="text-center text-2xl font-semibold text-muted-foreground mb-8">
                     Trusted by professionals who landed jobs at
                 </h2>
-                <div className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4">
-                    {companies.map((company, index) => (
-                       <div key={index} className="flex items-center gap-2 text-xl font-semibold text-gray-400">
-                           <Building className="h-6 w-6"/>
-                           <span>{company}</span>
+                <div className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4 text-gray-400">
+                    {companies.map((company) => (
+                       <div key={company} title={company}>
+                           {companyLogos[company]}
                        </div>
                     ))}
                 </div>
