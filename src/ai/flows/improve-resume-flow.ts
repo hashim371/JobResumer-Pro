@@ -14,12 +14,12 @@ const ImproveResumeSectionInputSchema = z.object({
   text: z.string().describe('The text to improve.'),
   section: z.string().describe("The resume section the text belongs to (e.g., 'summary', 'experience')."),
 });
-type ImproveResumeSectionInput = z.infer<typeof ImproveResumeSectionInputSchema>;
+export type ImproveResumeSectionInput = z.infer<typeof ImproveResumeSectionInputSchema>;
 
 const ImproveResumeSectionOutputSchema = z.object({
   improvedText: z.string().describe('The improved resume section text.'),
 });
-type ImproveResumeSectionOutput = z.infer<typeof ImproveResumeSectionOutputSchema>;
+export type ImproveResumeSectionOutput = z.infer<typeof ImproveResumeSectionOutputSchema>;
 
 export async function improveResumeSection(input: ImproveResumeSectionInput): Promise<ImproveResumeSectionOutput> {
   return improveResumeSectionFlow(input);
@@ -27,8 +27,8 @@ export async function improveResumeSection(input: ImproveResumeSectionInput): Pr
 
 const prompt = ai.definePrompt({
   name: 'improveResumeSectionPrompt',
-  inputSchema: ImproveResumeSectionInputSchema,
-  outputSchema: ImproveResumeSectionOutputSchema,
+  input: { schema: ImproveResumeSectionInputSchema },
+  output: { schema: ImproveResumeSectionOutputSchema },
   prompt: `You are an expert resume writer and career coach. Your task is to revise the following text for a resume's '{{section}}' section.
 
 Rewrite the text to be more professional, concise, and impactful. Use strong action verbs and focus on quantifiable achievements where possible. Ensure the tone is appropriate for a professional resume.
