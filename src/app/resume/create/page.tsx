@@ -43,6 +43,7 @@ export default function CreateResumePage() {
             updatedAt: new Date().toISOString(),
             personalInfo: {
               name: user.displayName || 'Your Name',
+              role: 'Your Role (e.g. Software Engineer)',
               email: user.email || '',
               phone: '',
               location: '',

@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef, use } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
 import { ref, onValue, update } from 'firebase/database';
@@ -45,6 +45,7 @@ const skillSchema = z.object({
 const resumeSchema = z.object({
   personalInfo: z.object({
     name: z.string().min(1, 'Name is required'),
+    role: z.string(),
     email: z.string().email(),
     phone: z.string(),
     location: z.string(),
@@ -71,7 +72,7 @@ export default function ResumeEditPage() {
   const form = useForm<ResumeData>({
     resolver: zodResolver(resumeSchema),
     defaultValues: {
-      personalInfo: { name: '', email: '', phone: '', location: '', website: '' },
+      personalInfo: { name: '', role: '', email: '', phone: '', location: '', website: '' },
       summary: '',
       experience: [],
       education: [],
@@ -198,7 +199,7 @@ export default function ResumeEditPage() {
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center">
             <Button variant="ghost" asChild>
-                <Link href="/templates" className="flex items-center"><ArrowLeft className="mr-2 h-4 w-4"/> Back to Templates</Link>
+                <Link href="/my-resumes" className="flex items-center"><ArrowLeft className="mr-2 h-4 w-4"/> Back to My Resumes</Link>
             </Button>
             <div className="flex-1 text-center font-semibold">
                 Editing: {templates.find(t => t.id === resumeData.templateId)?.name || 'Resume'}
@@ -228,6 +229,7 @@ export default function ResumeEditPage() {
                             <AccordionTrigger className="text-xl font-bold">Personal Information</AccordionTrigger>
                             <AccordionContent className="space-y-4 pt-4">
                                 <FormField name="personalInfo.name" control={form.control} render={({ field }) => (<FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField name="personalInfo.role" control={form.control} render={({ field }) => (<FormItem><FormLabel>Role (e.g., Software Engineer)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.email" control={form.control} render={({ field }) => (<FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.phone" control={form.control} render={({ field }) => (<FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.location" control={form.control} render={({ field }) => (<FormItem><FormLabel>Location (e.g., City, State)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
