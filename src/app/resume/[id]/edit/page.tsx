@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, use } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
 import { ref, onValue, update } from 'firebase/database';
@@ -97,7 +97,29 @@ export default function ResumeEditPage() {
       if (snapshot.exists()) {
         const data = snapshot.val();
         setResumeData(data);
-        form.reset(data);
+        const formData = {
+          ...data,
+          personalInfo: {
+            ...data.personalInfo,
+            role: data.personalInfo.role ?? '',
+          },
+          experience: data.experience?.map((exp: any) => ({
+            jobTitle: exp.jobTitle ?? '',
+            company: exp.company ?? '',
+            startDate: exp.startDate ?? '',
+            endDate: exp.endDate ?? '',
+            description: exp.description ?? '',
+          })) || [],
+           education: data.education?.map((edu: any) => ({
+            degree: edu.degree ?? '',
+            school: edu.school ?? '',
+            graduationDate: edu.graduationDate ?? '',
+          })) || [],
+           skills: data.skills?.map((skill: any) => ({
+            name: skill.name ?? '',
+          })) || [],
+        };
+        form.reset(formData);
       } else {
         toast({ variant: 'destructive', title: 'Error', description: 'Resume not found.' });
         router.push('/templates');
