@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
 import { ref, onValue } from 'firebase/database';
-import { Loader2, Download, Edit, ArrowLeft } from 'lucide-react';
+import { Loader2, Download, Edit, ArrowLeft, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ResumePreview } from '@/components/ResumePreview';
 import Link from 'next/link';
@@ -72,6 +72,37 @@ export default function ResumeViewPage() {
         });
     };
 
+    const handleDownloadImage = () => {
+        const input = previewRef.current;
+        if (!input) return;
+
+        html2canvas(input, {
+          scale: 4,
+          useCORS: true,
+          logging: true,
+          width: input.offsetWidth,
+          height: input.offsetHeight,
+          windowWidth: input.scrollWidth,
+          windowHeight: input.scrollHeight,
+        })
+          .then((canvas) => {
+            const imgData = canvas.toDataURL('image/png', 1.0);
+    
+            const link = document.createElement('a');
+            link.href = imgData;
+            link.download = `${resumeData?.personalInfo?.name || 'resume'}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+    
+            toast({ title: 'Success', description: 'Your resume has been downloaded as an image.' });
+          })
+          .catch((error) => {
+            console.error('Error generating Image', error);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not generate image.' });
+          });
+      };
+
     if (loading || authLoading) {
         return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
     }
@@ -91,6 +122,9 @@ export default function ResumeViewPage() {
                     <div className="flex items-center gap-4">
                         <Button variant="outline" asChild>
                             <Link href={`/resume/${resumeId}/edit`}><Edit className="mr-2 h-4 w-4"/> Edit</Link>
+                        </Button>
+                        <Button onClick={handleDownloadImage} variant="outline">
+                            <ImageIcon className="mr-2 h-4 w-4" /> Download Image
                         </Button>
                         <Button onClick={handleDownload}>
                             <Download className="mr-2 h-4 w-4" /> Download PDF

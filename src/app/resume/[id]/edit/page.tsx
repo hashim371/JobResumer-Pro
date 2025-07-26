@@ -9,7 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Save } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Save, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -208,6 +208,50 @@ export default function ResumeEditPage() {
     });
   };
 
+  const handleDownloadImage = () => {
+    const input = previewRef.current;
+    if (!input) return;
+
+    const originalScale = input.style.transform;
+    const originalWidth = input.style.width;
+
+    // Reset styles for capture
+    input.style.transform = 'scale(1)';
+    input.style.width = '8.5in'; // Standard US Letter width
+
+    html2canvas(input, {
+      scale: 4, // Higher scale for better quality
+      useCORS: true,
+      logging: true,
+      windowWidth: input.scrollWidth,
+      windowHeight: input.scrollHeight,
+    })
+      .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png', 1.0);
+
+        const link = document.createElement('a');
+        link.href = imgData;
+        link.download = `${resumeData?.personalInfo?.name || 'resume'}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Restore styles
+        input.style.transform = originalScale;
+        input.style.width = originalWidth;
+
+        toast({ title: 'Success', description: 'Your resume has been downloaded as an image.' });
+      })
+      .catch((error) => {
+        console.error('Error generating Image', error);
+        toast({ variant: 'destructive', title: 'Error', description: 'Could not generate image.' });
+
+        // Restore styles
+        input.style.transform = originalScale;
+        input.style.width = originalWidth;
+      });
+  };
+
   if (loading) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
   }
@@ -230,6 +274,9 @@ export default function ResumeEditPage() {
                 <Button onClick={handleSave} disabled={isSaving}>
                     {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
                     {isSaving ? 'Saving...' : 'Save'}
+                </Button>
+                <Button onClick={handleDownloadImage} variant="outline">
+                    <ImageIcon className="mr-2 h-4 w-4" /> Download Image
                 </Button>
                  <Button onClick={handleDownload}>
                     <Download className="mr-2 h-4 w-4" /> Download PDF
