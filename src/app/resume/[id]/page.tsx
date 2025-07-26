@@ -15,8 +15,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export default function ResumeViewPage() {
-    const params = useParams();
-    const resumeId = params.id as string;
+    const { id: resumeId } = useParams();
     const router = useRouter();
     const { user, loading: authLoading } = useAuth();
     const [resumeData, setResumeData] = useState<any>(null);
