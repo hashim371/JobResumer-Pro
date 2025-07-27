@@ -10,7 +10,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Save, Image as ImageIcon, Upload, X } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Save, Image as ImageIcon, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -22,6 +22,7 @@ import { ResumePreview } from '@/components/ResumePreview';
 import { templates } from '@/app/templates/page';
 import Link from 'next/link';
 import NextImage from 'next/image';
+import { createRoot } from 'react-dom/client';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -117,11 +118,11 @@ export default function ResumeEditPage() {
   
   const watchedData = form.watch();
 
-  const handleSave = async () => {
+  const handleSave = async (data?: ResumeData) => {
     if (!user || !resumeId) return;
     setIsSaving(true);
     try {
-        const dataToSave = form.getValues();
+        const dataToSave = data || form.getValues();
         const updates = { ...dataToSave, updatedAt: new Date().toISOString() };
         await update(dbRef(db, `users/${user.uid}/resumes/${resumeId as string}`), updates);
         toast({ title: 'Saved!', description: 'Your resume has been updated.' });
@@ -156,8 +157,10 @@ export default function ResumeEditPage() {
       await uploadBytes(imageRef, file);
       const downloadURL = await getDownloadURL(imageRef);
       
+      const updatedData = form.getValues();
+      updatedData.personalInfo.photoUrl = downloadURL;
       form.setValue('personalInfo.photoUrl', downloadURL, { shouldDirty: true });
-      await handleSave();
+      await handleSave(updatedData);
       
       toast({ title: 'Success', description: 'Image uploaded successfully.' });
     } catch (error) {
@@ -189,25 +192,27 @@ export default function ResumeEditPage() {
        }
     }
     
+    const updatedData = form.getValues();
+    updatedData.personalInfo.photoUrl = '';
     form.setValue('personalInfo.photoUrl', '', { shouldDirty: true });
-    await handleSave();
+    await handleSave(updatedData);
     toast({ title: 'Success', description: 'Image removed.' });
     setIsUploading(false);
   };
 
   const downloadAs = async (format: 'pdf' | 'png') => {
-    const input = previewRef.current;
-    if (!input) return;
-
     setIsDownloading(true);
 
-    const originalScale = input.style.transform;
-    const originalWidth = input.style.width;
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.width = '8.5in';
+    container.style.height = '11in';
+    document.body.appendChild(container);
 
-    input.style.transform = 'scale(1)';
-    input.style.width = '8.5in'; 
-    input.style.height = '11in';
-
+    const root = createRoot(container);
+    root.render(<ResumePreview templateId={resumeData.templateId} data={watchedData} />);
+    
     try {
         await document.fonts.ready;
     } catch (err) {
@@ -216,12 +221,14 @@ export default function ResumeEditPage() {
     
     setTimeout(async () => {
       try {
-        const canvas = await html2canvas(input, {
+        const canvas = await html2canvas(container, {
           scale: 4, 
           useCORS: true,
-          logging: true,
-          windowWidth: input.scrollWidth,
-          windowHeight: input.scrollHeight,
+          logging: false, // Disables logging for cleaner console
+          width: container.offsetWidth,
+          height: container.offsetHeight,
+          windowWidth: container.scrollWidth,
+          windowHeight: container.scrollHeight,
         });
 
         const imgData = canvas.toDataURL('image/png', 1.0);
@@ -251,12 +258,10 @@ export default function ResumeEditPage() {
         console.error(`Error generating ${format}`, error);
         toast({ variant: 'destructive', title: 'Error', description: `Could not generate ${format.toUpperCase()}.` });
       } finally {
-        input.style.transform = originalScale;
-        input.style.width = originalWidth;
-        input.style.height = 'auto';
+        document.body.removeChild(container);
         setIsDownloading(false);
       }
-    }, 100); 
+    }, 500); 
   };
 
 
@@ -282,7 +287,7 @@ export default function ResumeEditPage() {
                 Editing: {templates.find(t => t.id === resumeData.templateId)?.name || 'Resume'}
             </div>
             <div className="flex items-center gap-4">
-                <Button onClick={handleSave} disabled={isSaving || isUploading || !form.formState.isDirty}>
+                <Button onClick={() => handleSave()} disabled={isSaving || isUploading || !form.formState.isDirty}>
                     {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
                     {isSaving ? 'Saving...' : 'Save'}
                 </Button>
@@ -444,13 +449,14 @@ export default function ResumeEditPage() {
         
         <div className="h-full flex items-start justify-center overflow-hidden">
             <div 
+              ref={previewRef}
               className="w-[8.5in] h-[11in] bg-white shadow-2xl origin-top-center"
               style={{
                 transform: 'scale(0.8)',
                 transformOrigin: 'top center',
               }}
             >
-             <div ref={previewRef} className="w-full h-full">
+             <div className="w-full h-full">
               <ResumePreview templateId={resumeData.templateId} data={watchedData} />
              </div>
             </div>

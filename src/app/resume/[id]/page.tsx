@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { toast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { createRoot } from 'react-dom/client';
 
 export default function ResumeViewPage() {
     const { id: resumeId } = useParams();
@@ -48,17 +49,18 @@ export default function ResumeViewPage() {
     }, [user, authLoading, resumeId, router]);
 
     const downloadAs = async (format: 'pdf' | 'png') => {
-        const input = previewRef.current;
-        if (!input) return;
-    
         setIsDownloading(true);
     
-        const originalWidth = input.style.width;
-        const originalHeight = input.style.height;
-
-        input.style.width = '8.5in'; 
-        input.style.height = '11in';
+        const container = document.createElement('div');
+        container.style.position = 'absolute';
+        container.style.left = '-9999px';
+        container.style.width = '8.5in';
+        container.style.height = '11in';
+        document.body.appendChild(container);
     
+        const root = createRoot(container);
+        root.render(<ResumePreview templateId={resumeData.templateId} data={resumeData} />);
+        
         try {
             await document.fonts.ready;
         } catch (err) {
@@ -67,12 +69,14 @@ export default function ResumeViewPage() {
         
         setTimeout(async () => {
           try {
-            const canvas = await html2canvas(input, {
+            const canvas = await html2canvas(container, {
               scale: 4, 
               useCORS: true,
-              logging: true,
-              windowWidth: input.scrollWidth,
-              windowHeight: input.scrollHeight,
+              logging: false, // Disables logging for cleaner console
+              width: container.offsetWidth,
+              height: container.offsetHeight,
+              windowWidth: container.scrollWidth,
+              windowHeight: container.scrollHeight,
             });
     
             const imgData = canvas.toDataURL('image/png', 1.0);
@@ -102,11 +106,10 @@ export default function ResumeViewPage() {
             console.error(`Error generating ${format}`, error);
             toast({ variant: 'destructive', title: 'Error', description: `Could not generate ${format.toUpperCase()}.` });
           } finally {
-            input.style.width = originalWidth;
-            input.style.height = originalHeight;
+            document.body.removeChild(container);
             setIsDownloading(false);
           }
-        }, 100); 
+        }, 500); 
     };
 
     if (loading || authLoading) {
