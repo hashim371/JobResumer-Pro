@@ -113,7 +113,7 @@ export default function ResumeEditPage() {
             jobTitle: exp.jobTitle ?? '',
             company: exp.company ?? '',
             startDate: exp.startDate ?? '',
-endDate: exp.endDate ?? '',
+            endDate: exp.endDate ?? '',
             description: exp.description ?? '',
           })) || [],
            education: data.education?.map((edu: any) => ({
@@ -382,7 +382,7 @@ endDate: exp.endDate ?? '',
                                 <FormField name="personalInfo.role" control={form.control} render={({ field }) => (<FormItem><FormLabel>Role (e.g., Software Engineer)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.email" control={form.control} render={({ field }) => (<FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.phone" control={form.control} render={({ field }) => (<FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField name="personalInfo.location" control={form.control} render={({ field }) => (<FormItem><FormLabel>Location (e.g., City, State)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormMessage /></FormItem>)} />
+                                <FormField name="personalInfo.location" control={form.control} render={({ field }) => (<FormItem><FormLabel>Location (e.g., City, State)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.website" control={form.control} render={({ field }) => (<FormItem><FormLabel>Website/Portfolio</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                             </AccordionContent>
                         </AccordionItem>
