@@ -89,13 +89,13 @@ export function ContactForm() {
             <FormItem>
               <FormLabel>Message</FormLabel>
               <FormControl>
-                <Textarea placeholder="Tell us what's on your mind..." className="resize-none" {...field} />
+                <Textarea rows={4} placeholder="Tell us what's on your mind..." className="resize-none" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={form.formState.isSubmitting} className="w-full bg-gradient-to-r from-primary to-purple-500 text-primary-foreground hover:scale-105 hover:shadow-lg transition-all duration-300">
+        <Button type="submit" disabled={form.formState.isSubmitting} className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md hover:scale-105 hover:shadow-lg transition-all duration-300">
           {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {form.formState.isSubmitting ? "Sending..." : "Send Message"}
         </Button>

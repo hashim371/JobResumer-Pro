@@ -34,12 +34,12 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="flex items-center space-x-2">
             <FileText className="h-6 w-6 text-accent" />
-            <span className="font-bold">JobResumer</span>
+            <span className="font-bold font-headline">JobResumer</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
@@ -78,7 +78,7 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button asChild className="rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:scale-105 hover:shadow-lg transition-all duration-300">
+            <Button asChild className="rounded-full bg-primary text-primary-foreground shadow-sm hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out">
               <Link href="/auth">Sign In</Link>
             </Button>
           )}

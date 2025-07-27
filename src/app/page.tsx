@@ -8,7 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { CheckCircle, DraftingCompass, Star } from "lucide-react";
+import { CheckCircle, DraftingCompass, Star, FileText } from "lucide-react";
 
 const companyLogos: { [key: string]: React.ReactNode } = {
     Google: (
@@ -41,7 +41,7 @@ export default function Home() {
     {
       name: "Sarah L.",
       role: "Product Manager",
-      quote: "Realtime Relay made it incredibly easy to create a professional resume that truly stands out. I landed my dream job in weeks!",
+      quote: "JobResumer made it incredibly easy to create a professional resume that truly stands out. I landed my dream job in weeks!",
       stars: 5
     },
     {
@@ -59,7 +59,7 @@ export default function Home() {
      {
       name: "David C.",
       role: "Marketing Director",
-      quote: "I hadn't updated my resume in years. Realtime Relay guided me through the process and the result was polished and professional.",
+      quote: "I hadn't updated my resume in years. JobResumer guided me through the process and the result was polished and professional.",
       stars: 4
     }
   ];
@@ -71,41 +71,42 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         {/* Hero Section */}
-        <div className="container mx-auto px-4 py-8 md:py-12">
-            <div className="text-center animate-fadeIn py-16">
-              <h1 className="text-5xl font-bold tracking-tight font-headline bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-                Build your professional resume
+        <div className="container mx-auto px-4 py-8 md:py-12 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full bg-grid-slate-900/[0.04] [mask-image:linear-gradient(to_bottom,white_50%,transparent_100%)] dark:bg-grid-slate-400/[0.05]"></div>
+            <div className="text-center animate-fadeIn py-16 relative z-10">
+              <h1 className="text-5xl lg:text-6xl font-bold tracking-tighter font-headline bg-clip-text text-transparent bg-gradient-to-br from-primary via-accent to-primary">
+                Craft Your Future, One Resume at a Time
               </h1>
               <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
-                Create a stunning resume in minutes with our professionally designed templates.
+                Create a stunning, professional resume in minutes. Our templates are designed to impress and help you land your dream job.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
-                <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:scale-105 hover:shadow-lg transition-all duration-300">
+                <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out">
                   <Link href="/templates">
                     Choose a Template
                   </Link>
                 </Button>
               </div>
-               <div className="mt-16">
-                  <Image src="https://images.google.com/doc/forms/d/1G1nZ3jB2yO2y0H-g8z9g8jA5f7x8c9v6/image/jh4jfj34j5h4j.jpg" alt="Person reviewing a resume document at a desk" width={800} height={600} className="rounded-lg shadow-2xl mx-auto" />
+               <div className="mt-20 px-8">
+                  <Image src="https://placehold.co/1200x600.png" data-ai-hint="resume app screenshot" alt="Person reviewing a resume document at a desk" width={1200} height={600} className="rounded-xl shadow-2xl mx-auto ring-1 ring-black/10" />
               </div>
             </div>
         </div>
         
         {/* About Section */}
-        <section id="about" className="bg-muted/40 py-16 md:py-24">
+        <section id="about" className="bg-background py-16 md:py-24">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold tracking-tight">Our Mission</h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                At Realtime Relay, our mission is to empower job seekers by providing them with the tools and resources needed to create professional, modern resumes that open doors to new opportunities. We believe that a great resume is a key step towards a successful career, and we're dedicated to making that step as simple and effective as possible.
+                At JobResumer, our mission is to empower job seekers by providing them with the tools and resources needed to create professional, modern resumes that open doors to new opportunities. We believe that a great resume is a key step towards a successful career, and we're dedicated to making that step as simple and effective as possible.
               </p>
             </div>
           </div>
         </section>
 
         {/* Features/Benefits Section */}
-        <section id="features" className="py-16 md:py-24">
+        <section id="features" className="py-16 md:py-24 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold tracking-tight">Why Choose Us?</h2>
@@ -113,7 +114,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {features.map((feature, index) => (
-                <Card key={index} className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <Card key={index} className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm">
                   <div className="flex justify-center mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-semibold">{feature.title}</h3>
                   <p className="mt-2 text-muted-foreground">{feature.description}</p>
@@ -124,7 +125,7 @@ export default function Home() {
         </section>
 
         {/* Trusted By Section */}
-        <section id="trusted-by" className="py-16 bg-muted/40">
+        <section id="trusted-by" className="py-16 bg-background">
             <div className="container mx-auto px-4">
                 <h2 className="text-center text-2xl font-semibold text-muted-foreground mb-8">
                     Trusted by professionals who landed jobs at
@@ -141,7 +142,7 @@ export default function Home() {
 
 
         {/* Testimonials Section */}
-        <section id="testimonials" className="py-16 md:py-24">
+        <section id="testimonials" className="py-16 md:py-24 bg-muted/30">
           <div className="container mx-auto px-4">
              <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold tracking-tight">What Our Users Say</h2>
@@ -155,7 +156,7 @@ export default function Home() {
                 {testimonials.map((testimonial, index) => (
                   <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                     <div className="p-1 h-full">
-                      <Card className="flex flex-col justify-between h-full p-6 shadow-md">
+                      <Card className="flex flex-col justify-between h-full p-6 shadow-md bg-card/80 backdrop-blur-sm">
                         <div>
                           <div className="flex items-center mb-2">
                             {Array(testimonial.stars).fill(0).map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />)}
@@ -182,18 +183,3 @@ export default function Home() {
     </>
   );
 }
-    
-    
-
-    
-
-    
-
-
-
-
-    
-
-    
-
-    

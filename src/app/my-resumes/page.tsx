@@ -82,9 +82,9 @@ export default function MyResumesPage() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b bg-background">
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center">
-            <h1 className="text-2xl font-bold">My Resumes</h1>
+            <h1 className="text-2xl font-bold font-headline">My Resumes</h1>
              <Button asChild className="ml-auto">
                 <Link href="/templates"><Plus className="mr-2 h-4 w-4"/> New Resume</Link>
              </Button>
@@ -97,8 +97,8 @@ export default function MyResumesPage() {
               {resumes.map(resume => {
                  const template = templates.find(t => t.id === resume.templateId);
                  return (
-                    <Card key={resume.id} className="group flex flex-col">
-                      <Link href={`/resume/${resume.id}`} className="block overflow-hidden rounded-t-lg">
+                    <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 border-transparent hover:border-accent">
+                      <Link href={`/resume/${resume.id}`} className="block overflow-hidden">
                          <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                            <div
                               className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"
@@ -111,11 +111,11 @@ export default function MyResumesPage() {
                             </div>
                         </CardContent>
                        </Link>
-                       <CardHeader className="flex-grow">
-                          <CardTitle className="truncate">{resume.personalInfo?.name || "Untitled Resume"}</CardTitle>
+                       <CardHeader className="flex-grow p-4">
+                          <CardTitle className="truncate text-lg">{resume.personalInfo?.name || "Untitled Resume"}</CardTitle>
                           <CardDescription>{template?.name || "Unknown"} Template</CardDescription>
                        </CardHeader>
-                        <CardFooter className="flex justify-end gap-2">
+                        <CardFooter className="flex justify-end gap-2 p-4 pt-0">
                            <Button variant="outline" size="sm" asChild>
                               <Link href={`/resume/${resume.id}/edit`}><Edit className="mr-2 h-4 w-4" /> Edit</Link>
                            </Button>
