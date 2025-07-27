@@ -3,13 +3,14 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/auth-context';
-import { db } from '@/lib/firebase';
-import { ref, onValue, update } from 'firebase/database';
+import { db, storage } from '@/lib/firebase';
+import { ref as dbRef, onValue, update, set } from 'firebase/database';
+import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Save, Image as ImageIcon } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Save, Image as ImageIcon, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,6 +21,7 @@ import { toast } from '@/hooks/use-toast';
 import { ResumePreview } from '@/components/ResumePreview';
 import { templates } from '@/app/templates/page';
 import Link from 'next/link';
+import NextImage from 'next/image';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -50,6 +52,7 @@ const resumeSchema = z.object({
     phone: z.string(),
     location: z.string(),
     website: z.string().url().optional().or(z.literal('')),
+    photoUrl: z.string().url().optional().or(z.literal('')),
   }),
   summary: z.string(),
   experience: z.array(experienceSchema),
@@ -66,13 +69,15 @@ export default function ResumeEditPage() {
   const [resumeData, setResumeData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ResumeData>({
     resolver: zodResolver(resumeSchema),
     defaultValues: {
-      personalInfo: { name: '', role: '', email: '', phone: '', location: '', website: '' },
+      personalInfo: { name: '', role: '', email: '', phone: '', location: '', website: '', photoUrl: '' },
       summary: '',
       experience: [],
       education: [],
@@ -92,8 +97,8 @@ export default function ResumeEditPage() {
     }
     if (!resumeId) return;
 
-    const resumeRef = ref(db, `users/${user.uid}/resumes/${resumeId}`);
-    const unsubscribe = onValue(resumeRef, (snapshot) => {
+    const resumeDbRef = dbRef(db, `users/${user.uid}/resumes/${resumeId}`);
+    const unsubscribe = onValue(resumeDbRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
         setResumeData(data);
@@ -102,12 +107,13 @@ export default function ResumeEditPage() {
           personalInfo: {
             ...data.personalInfo,
             role: data.personalInfo.role ?? '',
+            photoUrl: data.personalInfo.photoUrl ?? '',
           },
           experience: data.experience?.map((exp: any) => ({
             jobTitle: exp.jobTitle ?? '',
             company: exp.company ?? '',
             startDate: exp.startDate ?? '',
-            endDate: exp.endDate ?? '',
+endDate: exp.endDate ?? '',
             description: exp.description ?? '',
           })) || [],
            education: data.education?.map((edu: any) => ({
@@ -132,18 +138,66 @@ export default function ResumeEditPage() {
   
   const watchedData = form.watch();
 
-  const handleSave = async () => {
-    if (!user) return;
+  const handleSave = async (dataToSave = watchedData) => {
+    if (!user || !resumeId) return;
     setIsSaving(true);
     try {
-        const updates = { ...watchedData, updatedAt: new Date().toISOString() };
-        await update(ref(db, `users/${user.uid}/resumes/${resumeId as string}`), updates);
+        const updates = { ...dataToSave, updatedAt: new Date().toISOString() };
+        await update(dbRef(db, `users/${user.uid}/resumes/${resumeId as string}`), updates);
         toast({ title: 'Saved!', description: 'Your resume has been updated.' });
     } catch (err: any) {
         toast({ variant: 'destructive', title: 'Save Error', description: err.message });
     } finally {
         setIsSaving(false);
     }
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user || !resumeId) return;
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const imageRef = storageRef(storage, `user-photos/${user.uid}/${resumeId}/${file.name}`);
+      await uploadBytes(imageRef, file);
+      const downloadURL = await getDownloadURL(imageRef);
+      
+      form.setValue('personalInfo.photoUrl', downloadURL);
+      // We need to save immediately after getting the URL
+      const currentData = form.getValues();
+      currentData.personalInfo.photoUrl = downloadURL;
+      await handleSave(currentData);
+
+      toast({ title: 'Success', description: 'Image uploaded successfully.' });
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+      toast({ variant: 'destructive', title: 'Upload Error', description: 'Failed to upload image.' });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  
+  const handleRemoveImage = async () => {
+    if (!user || !resumeId || !watchedData.personalInfo.photoUrl) return;
+
+    try {
+      const imageRef = storageRef(storage, watchedData.personalInfo.photoUrl);
+      await deleteObject(imageRef);
+    } catch(error: any) {
+       // Ignore if file doesn't exist, it might have been deleted already
+       if (error.code !== 'storage/object-not-found') {
+        console.error("Error deleting image: ", error);
+        toast({ variant: 'destructive', title: 'Delete Error', description: 'Failed to delete image.' });
+        return;
+       }
+    }
+    
+    form.setValue('personalInfo.photoUrl', '');
+    const currentData = form.getValues();
+    currentData.personalInfo.photoUrl = '';
+    await handleSave(currentData);
+    toast({ title: 'Success', description: 'Image removed.' });
   };
 
 
@@ -246,6 +300,9 @@ export default function ResumeEditPage() {
       return null;
   }
 
+  const templateHasPhoto = ['geneva', 'madrid', 'seoul', 'berlin', 'oslo', 'toronto', 'mexico-city'].includes(resumeData.templateId);
+
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -257,7 +314,7 @@ export default function ResumeEditPage() {
                 Editing: {templates.find(t => t.id === resumeData.templateId)?.name || 'Resume'}
             </div>
             <div className="flex items-center gap-4">
-                <Button onClick={handleSave} disabled={isSaving}>
+                <Button onClick={() => handleSave()} disabled={isSaving}>
                     {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
                     {isSaving ? 'Saving...' : 'Save'}
                 </Button>
@@ -283,11 +340,49 @@ export default function ResumeEditPage() {
                         <AccordionItem value="personal">
                             <AccordionTrigger className="text-xl font-bold">Personal Information</AccordionTrigger>
                             <AccordionContent className="space-y-4 pt-4">
+                                {templateHasPhoto && (
+                                   <FormItem>
+                                        <FormLabel>Profile Photo</FormLabel>
+                                        <div className="flex items-center gap-4">
+                                          <div className="w-24 h-24 rounded-full bg-muted overflow-hidden relative">
+                                            {watchedData.personalInfo?.photoUrl ? (
+                                                <>
+                                                  <NextImage src={watchedData.personalInfo.photoUrl} alt="Profile Photo" layout="fill" objectFit="cover" />
+                                                  <Button
+                                                    type="button"
+                                                    variant="destructive"
+                                                    size="icon"
+                                                    className="absolute top-0 right-0 h-6 w-6 rounded-full"
+                                                    onClick={handleRemoveImage}
+                                                  >
+                                                    <X className="h-4 w-4"/>
+                                                  </Button>
+                                                </>
+                                            ) : (
+                                              <div className="flex items-center justify-center h-full text-muted-foreground">
+                                                <ImageIcon className="h-8 w-8"/>
+                                              </div>
+                                            )}
+                                          </div>
+                                          <Input
+                                            type="file"
+                                            className="hidden"
+                                            ref={fileInputRef}
+                                            onChange={handleImageUpload}
+                                            accept="image/png, image/jpeg"
+                                          />
+                                          <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                                            {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Upload className="mr-2 h-4 w-4" />}
+                                            {isUploading ? 'Uploading...' : 'Upload Image'}
+                                          </Button>
+                                        </div>
+                                    </FormItem>
+                                )}
                                 <FormField name="personalInfo.name" control={form.control} render={({ field }) => (<FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.role" control={form.control} render={({ field }) => (<FormItem><FormLabel>Role (e.g., Software Engineer)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.email" control={form.control} render={({ field }) => (<FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.phone" control={form.control} render={({ field }) => (<FormItem><FormLabel>Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField name="personalInfo.location" control={form.control} render={({ field }) => (<FormItem><FormLabel>Location (e.g., City, State)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                <FormField name="personalInfo.location" control={form.control} render={({ field }) => (<FormItem><FormLabel>Location (e.g., City, State)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.website" control={form.control} render={({ field }) => (<FormItem><FormLabel>Website/Portfolio</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                             </AccordionContent>
                         </AccordionItem>
@@ -382,16 +477,15 @@ export default function ResumeEditPage() {
         {/* Resume Preview */}
         <div className="h-full flex items-start justify-center overflow-hidden">
             <div 
-              ref={previewRef}
-              className="w-full bg-white shadow-lg"
+              className="w-[8.5in] h-[11in] bg-white shadow-2xl origin-top-center"
               style={{
                 transform: 'scale(0.8)',
                 transformOrigin: 'top center',
-                width: '8.5in',
-                minHeight: '11in',
               }}
             >
+             <div ref={previewRef} className="w-full h-full">
               <ResumePreview templateId={resumeData.templateId} data={watchedData} />
+             </div>
             </div>
         </div>
       </main>

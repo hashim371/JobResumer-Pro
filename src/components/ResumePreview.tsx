@@ -12,6 +12,7 @@ const mockData = {
     phone: '123-456-7890',
     location: 'New York, NY',
     website: 'johndoe.com',
+    photoUrl: 'https://placehold.co/120x120.png',
   },
   summary: 'Dedicated and results-oriented Software Engineer with 5+ years of experience in developing, testing, and maintaining web applications. Proficient in JavaScript, React, and Node.js. Seeking to leverage my skills to contribute to a dynamic team.',
   experience: [
@@ -36,6 +37,16 @@ interface ResumePreviewProps {
   templateId: string;
   data?: any;
 }
+
+const PhotoComponent = ({ photoUrl }: { photoUrl?: string }) => {
+    const url = photoUrl || 'https://placehold.co/120x120.png';
+    return <img src={url} alt="Portrait" className="rounded-full shadow-md w-full h-full object-cover" data-ai-hint="professional portrait" />;
+};
+const PhotoComponentBordered = ({ photoUrl }: { photoUrl?: string }) => {
+    const url = photoUrl || 'https://placehold.co/120x120.png';
+    return <img src={url} alt="Portrait" className="rounded-full shadow-md w-full h-full object-cover border-4 border-white" data-ai-hint="professional portrait" />;
+};
+
 
 export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewProps) => {
   const data = initialData || mockData;
@@ -277,7 +288,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
           <div className="w-1/3 bg-gray-100 p-8 text-gray-800 flex flex-col">
             <div className="text-center mb-8">
                  <div className="w-24 h-24 mx-auto mb-4">
-                    <img src={'https://placehold.co/120x120.png'} alt="Portrait" className="rounded-full shadow-md" data-ai-hint="professional portrait" />
+                    <PhotoComponent photoUrl={personalInfo?.photoUrl} />
                 </div>
                 <h1 className="text-3xl font-bold text-gray-900">{personalInfo?.name}</h1>
                 <p className="text-md text-gray-600 mt-1">{personalInfo?.role}</p>
@@ -335,12 +346,11 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
     case 'geneva':
     case 'madrid':
     case 'seoul':
-        const photoUrl = 'https://placehold.co/120x120.png';
         return (
             <div className="p-8 font-sans bg-white text-gray-700 min-h-full text-sm">
                 <div className="flex items-center mb-6 pb-6 border-b-2 border-teal-500">
                     <div className="w-32 h-32 mr-6 shrink-0">
-                        <img src={photoUrl} alt="Portrait" className="rounded-full shadow-md w-full h-full object-cover" data-ai-hint="professional portrait" />
+                       <PhotoComponent photoUrl={personalInfo?.photoUrl} />
                     </div>
                     <div>
                         <h1 className="text-5xl font-extrabold text-teal-700">{personalInfo?.name}</h1>
@@ -983,7 +993,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
         <div className="font-sans min-h-full flex text-sm">
           <div className="w-1/3 bg-blue-800 text-white p-8 flex flex-col items-center text-center">
             <div className="w-24 h-24 mb-4">
-              <img src={'https://placehold.co/120x120.png'} alt="Portrait" className="rounded-full shadow-md border-4 border-white" data-ai-hint="professional portrait" />
+              <PhotoComponentBordered photoUrl={personalInfo?.photoUrl} />
             </div>
             <h1 className="text-2xl font-bold">{personalInfo?.name}</h1>
             <p className="text-sm text-blue-200">{personalInfo?.role}</p>
