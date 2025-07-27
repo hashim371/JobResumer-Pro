@@ -3,14 +3,13 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/auth-context';
-import { db, storage } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { ref as dbRef, onValue, update } from 'firebase/database';
-import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Save, Image as ImageIcon, Upload } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Download, ArrowLeft, Save, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,7 +20,6 @@ import { toast } from '@/hooks/use-toast';
 import { ResumePreview } from '@/components/ResumePreview';
 import { templates } from '@/app/templates/page';
 import Link from 'next/link';
-import NextImage from 'next/image';
 import { createRoot } from 'react-dom/client';
 
 import jsPDF from 'jspdf';
@@ -53,7 +51,6 @@ const resumeSchema = z.object({
     phone: z.string(),
     location: z.string(),
     website: z.string().url().optional().or(z.literal('')),
-    photoUrl: z.string().url().optional().or(z.literal('')),
   }),
   summary: z.string(),
   experience: z.array(experienceSchema),
@@ -70,17 +67,15 @@ export default function ResumeEditPage() {
   const [resumeData, setResumeData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
 
   const previewRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ResumeData>({
     resolver: zodResolver(resumeSchema),
     defaultValues: {
-      personalInfo: { name: '', role: '', email: '', phone: '', location: '', website: '', photoUrl: '' },
+      personalInfo: { name: '', role: '', email: '', phone: '', location: '', website: '' },
       summary: '',
       experience: [],
       education: [],
@@ -118,11 +113,11 @@ export default function ResumeEditPage() {
   
   const watchedData = form.watch();
 
-  const handleSave = async (data?: ResumeData) => {
+  const handleSave = async () => {
     if (!user || !resumeId) return;
     setIsSaving(true);
     try {
-        const dataToSave = data || form.getValues();
+        const dataToSave = form.getValues();
         const updates = { ...dataToSave, updatedAt: new Date().toISOString() };
         await update(dbRef(db, `users/${user.uid}/resumes/${resumeId as string}`), updates);
         toast({ title: 'Saved!', description: 'Your resume has been updated.' });
@@ -132,74 +127,7 @@ export default function ResumeEditPage() {
         setIsSaving(false);
     }
   };
-
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user || !resumeId) return;
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setIsUploading(true);
-    try {
-      const imageRef = storageRef(storage, `user-photos/${user.uid}/${resumeId}/${file.name}`);
-      
-      const oldPhotoUrl = form.getValues('personalInfo.photoUrl');
-      if(oldPhotoUrl) {
-          try {
-            const oldImageRef = storageRef(storage, oldPhotoUrl);
-            await deleteObject(oldImageRef);
-          } catch (error: any) {
-            if (error.code !== 'storage/object-not-found') {
-              console.warn("Could not delete old photo", error);
-            }
-          }
-      }
-
-      await uploadBytes(imageRef, file);
-      const downloadURL = await getDownloadURL(imageRef);
-      
-      const updatedData = form.getValues();
-      updatedData.personalInfo.photoUrl = downloadURL;
-      form.setValue('personalInfo.photoUrl', downloadURL, { shouldDirty: true });
-      await handleSave(updatedData);
-      
-      toast({ title: 'Success', description: 'Image uploaded successfully.' });
-    } catch (error) {
-      console.error("Error uploading image: ", error);
-      toast({ variant: 'destructive', title: 'Upload Error', description: 'Failed to upload image.' });
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
-  };
   
-  const handleRemoveImage = async () => {
-    if (!user || !resumeId) return;
-    const photoUrl = form.getValues('personalInfo.photoUrl');
-    if(!photoUrl) return;
-
-    setIsUploading(true);
-    try {
-      const imageRef = storageRef(storage, photoUrl);
-      await deleteObject(imageRef);
-    } catch(error: any) {
-       if (error.code !== 'storage/object-not-found') {
-        console.error("Error deleting image: ", error);
-        toast({ variant: 'destructive', title: 'Delete Error', description: 'Failed to delete image.' });
-        setIsUploading(false);
-        return;
-       }
-    }
-    
-    const updatedData = form.getValues();
-    updatedData.personalInfo.photoUrl = '';
-    form.setValue('personalInfo.photoUrl', '', { shouldDirty: true });
-    await handleSave(updatedData);
-    toast({ title: 'Success', description: 'Image removed.' });
-    setIsUploading(false);
-  };
-
   const downloadAs = async (format: 'pdf' | 'png') => {
     setIsDownloading(true);
 
@@ -224,7 +152,7 @@ export default function ResumeEditPage() {
         const canvas = await html2canvas(container, {
           scale: 4, 
           useCORS: true,
-          logging: false, // Disables logging for cleaner console
+          logging: false,
           width: container.offsetWidth,
           height: container.offsetHeight,
           windowWidth: container.scrollWidth,
@@ -273,9 +201,6 @@ export default function ResumeEditPage() {
       return null;
   }
 
-  const templateHasPhoto = ['geneva', 'madrid', 'seoul', 'berlin', 'oslo', 'toronto', 'mexico-city'].includes(resumeData.templateId);
-
-
   return (
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -287,7 +212,7 @@ export default function ResumeEditPage() {
                 Editing: {templates.find(t => t.id === resumeData.templateId)?.name || 'Resume'}
             </div>
             <div className="flex items-center gap-4">
-                <Button onClick={() => handleSave()} disabled={isSaving || isUploading || !form.formState.isDirty}>
+                <Button onClick={handleSave} disabled={isSaving || !form.formState.isDirty}>
                     {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
                     {isSaving ? 'Saving...' : 'Save'}
                 </Button>
@@ -313,48 +238,6 @@ export default function ResumeEditPage() {
                         <AccordionItem value="personal">
                             <AccordionTrigger className="text-xl font-bold">Personal Information</AccordionTrigger>
                             <AccordionContent className="space-y-4 pt-4">
-                                {templateHasPhoto && (
-                                   <FormItem>
-                                        <FormLabel>Profile Photo</FormLabel>
-                                        <div className="flex items-center gap-4">
-                                          <div className="w-24 h-24 rounded-full bg-muted overflow-hidden relative">
-                                            {watchedData.personalInfo?.photoUrl ? (
-                                                <NextImage src={watchedData.personalInfo.photoUrl} alt="Profile Photo" layout="fill" objectFit="cover" />
-                                            ) : (
-                                              <div className="flex items-center justify-center h-full text-muted-foreground">
-                                                <ImageIcon className="h-8 w-8"/>
-                                              </div>
-                                            )}
-                                          </div>
-                                          <div>
-                                              <Input
-                                                type="file"
-                                                className="hidden"
-                                                ref={fileInputRef}
-                                                onChange={handleImageUpload}
-                                                accept="image/png, image/jpeg"
-                                                disabled={isUploading}
-                                              />
-                                              <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                                                {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Upload className="mr-2 h-4 w-4" />}
-                                                {isUploading ? 'Uploading...' : 'Upload'}
-                                              </Button>
-                                              {watchedData.personalInfo?.photoUrl && (
-                                                  <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="ml-2 text-destructive hover:text-destructive"
-                                                    onClick={handleRemoveImage}
-                                                    disabled={isUploading}
-                                                  >
-                                                    <Trash2 className="h-4 w-4"/>
-                                                  </Button>
-                                              )}
-                                          </div>
-                                        </div>
-                                    </FormItem>
-                                )}
                                 <FormField name="personalInfo.name" control={form.control} render={({ field }) => (<FormItem><FormLabel>Full Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.role" control={form.control} render={({ field }) => (<FormItem><FormLabel>Role (e.g., Software Engineer)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                                 <FormField name="personalInfo.email" control={form.control} render={({ field }) => (<FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>)} />
