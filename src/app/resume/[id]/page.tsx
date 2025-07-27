@@ -50,12 +50,13 @@ export default function ResumeViewPage() {
         const input = previewRef.current;
         if (!input) return;
 
+        const originalWidth = input.style.width;
+        input.style.width = '8.5in';
+
         html2canvas(input, {
             scale: 4,
             useCORS: true,
             logging: true,
-            width: input.offsetWidth,
-            height: input.offsetHeight,
             windowWidth: input.scrollWidth,
             windowHeight: input.scrollHeight,
         }).then(canvas => {
@@ -67,9 +68,12 @@ export default function ResumeViewPage() {
             });
             pdf.addImage(imgData, 'PNG', 0, 0, 8.5, 11);
             pdf.save(`${resumeData?.personalInfo?.name || 'resume'}.pdf`);
+            
+            input.style.width = originalWidth;
             toast({ title: 'Success', description: 'Your resume has been downloaded.' });
         }).catch(error => {
             console.error("Error generating PDF", error);
+            input.style.width = originalWidth;
             toast({ variant: 'destructive', title: 'Error', description: 'Could not generate PDF.' });
         });
     };
@@ -78,12 +82,13 @@ export default function ResumeViewPage() {
         const input = previewRef.current;
         if (!input) return;
 
+        const originalWidth = input.style.width;
+        input.style.width = '8.5in';
+
         html2canvas(input, {
           scale: 4,
           useCORS: true,
           logging: true,
-          width: input.offsetWidth,
-          height: input.offsetHeight,
           windowWidth: input.scrollWidth,
           windowHeight: input.scrollHeight,
         })
@@ -97,10 +102,12 @@ export default function ResumeViewPage() {
             link.click();
             document.body.removeChild(link);
     
+            input.style.width = originalWidth;
             toast({ title: 'Success', description: 'Your resume has been downloaded as an image.' });
           })
           .catch((error) => {
             console.error('Error generating Image', error);
+            input.style.width = originalWidth;
             toast({ variant: 'destructive', title: 'Error', description: 'Could not generate image.' });
           });
       };
@@ -110,7 +117,7 @@ export default function ResumeViewPage() {
     }
     
     if (!resumeData) {
-        return null; // Or some other placeholder
+        return null;
     }
 
     return (

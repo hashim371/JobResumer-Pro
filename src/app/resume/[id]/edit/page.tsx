@@ -4,7 +4,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { db, storage } from '@/lib/firebase';
-import { ref as dbRef, onValue, update, set } from 'firebase/database';
+import { ref as dbRef, onValue, update } from 'firebase/database';
 import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -102,30 +102,7 @@ export default function ResumeEditPage() {
       if (snapshot.exists()) {
         const data = snapshot.val();
         setResumeData(data);
-        const formData = {
-          ...data,
-          personalInfo: {
-            ...data.personalInfo,
-            role: data.personalInfo.role ?? '',
-            photoUrl: data.personalInfo.photoUrl ?? '',
-          },
-          experience: data.experience?.map((exp: any) => ({
-            jobTitle: exp.jobTitle ?? '',
-            company: exp.company ?? '',
-            startDate: exp.startDate ?? '',
-            endDate: exp.endDate ?? '',
-            description: exp.description ?? '',
-          })) || [],
-           education: data.education?.map((edu: any) => ({
-            degree: edu.degree ?? '',
-            school: edu.school ?? '',
-            graduationDate: edu.graduationDate ?? '',
-          })) || [],
-           skills: data.skills?.map((skill: any) => ({
-            name: skill.name ?? '',
-          })) || [],
-        };
-        form.reset(formData);
+        form.reset(data);
       } else {
         toast({ variant: 'destructive', title: 'Error', description: 'Resume not found.' });
         router.push('/templates');
@@ -164,7 +141,6 @@ export default function ResumeEditPage() {
       const downloadURL = await getDownloadURL(imageRef);
       
       form.setValue('personalInfo.photoUrl', downloadURL);
-      // We need to save immediately after getting the URL
       const currentData = form.getValues();
       currentData.personalInfo.photoUrl = downloadURL;
       await handleSave(currentData);
@@ -185,7 +161,6 @@ export default function ResumeEditPage() {
       const imageRef = storageRef(storage, watchedData.personalInfo.photoUrl);
       await deleteObject(imageRef);
     } catch(error: any) {
-       // Ignore if file doesn't exist, it might have been deleted already
        if (error.code !== 'storage/object-not-found') {
         console.error("Error deleting image: ", error);
         toast({ variant: 'destructive', title: 'Delete Error', description: 'Failed to delete image.' });
@@ -208,12 +183,11 @@ export default function ResumeEditPage() {
     const originalScale = input.style.transform;
     const originalWidth = input.style.width;
 
-    // Reset styles for capture
     input.style.transform = 'scale(1)';
-    input.style.width = '8.5in'; // Standard US Letter width
+    input.style.width = '8.5in';
 
     html2canvas(input, {
-        scale: 4, // Higher scale for better quality
+        scale: 4, 
         useCORS: true,
         logging: true,
         windowWidth: input.scrollWidth,
@@ -232,7 +206,6 @@ export default function ResumeEditPage() {
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save(`${resumeData?.personalInfo?.name || 'resume'}.pdf`);
 
-        // Restore styles
         input.style.transform = originalScale;
         input.style.width = originalWidth;
 
@@ -242,7 +215,6 @@ export default function ResumeEditPage() {
         console.error("Error generating PDF", error);
         toast({ variant: 'destructive', title: 'Error', description: 'Could not generate PDF.' });
         
-        // Restore styles
         input.style.transform = originalScale;
         input.style.width = originalWidth;
     });
@@ -255,12 +227,11 @@ export default function ResumeEditPage() {
     const originalScale = input.style.transform;
     const originalWidth = input.style.width;
 
-    // Reset styles for capture
     input.style.transform = 'scale(1)';
-    input.style.width = '8.5in'; // Standard US Letter width
+    input.style.width = '8.5in'; 
 
     html2canvas(input, {
-      scale: 4, // Higher scale for better quality
+      scale: 4, 
       useCORS: true,
       logging: true,
       windowWidth: input.scrollWidth,
@@ -276,7 +247,6 @@ export default function ResumeEditPage() {
         link.click();
         document.body.removeChild(link);
 
-        // Restore styles
         input.style.transform = originalScale;
         input.style.width = originalWidth;
 
@@ -286,7 +256,6 @@ export default function ResumeEditPage() {
         console.error('Error generating Image', error);
         toast({ variant: 'destructive', title: 'Error', description: 'Could not generate image.' });
 
-        // Restore styles
         input.style.transform = originalScale;
         input.style.width = originalWidth;
       });
@@ -329,14 +298,12 @@ export default function ResumeEditPage() {
       </header>
 
       <main className="flex-1 grid md:grid-cols-2 gap-8 p-4 md:p-8 bg-muted/20">
-        {/* Editor Form */}
         <div className="h-full overflow-y-auto pr-4">
           <Card className="shadow-none border-none bg-transparent">
              <CardContent className="p-0">
                <Form {...form}>
                  <form className="space-y-6">
                     <Accordion type="multiple" defaultValue={['personal', 'summary', 'experience']} className="w-full">
-                        {/* Personal Info */}
                         <AccordionItem value="personal">
                             <AccordionTrigger className="text-xl font-bold">Personal Information</AccordionTrigger>
                             <AccordionContent className="space-y-4 pt-4">
@@ -387,7 +354,6 @@ export default function ResumeEditPage() {
                             </AccordionContent>
                         </AccordionItem>
                         
-                        {/* Professional Summary */}
                          <AccordionItem value="summary">
                             <AccordionTrigger className="text-xl font-bold">Professional Summary</AccordionTrigger>
                             <AccordionContent className="space-y-4 pt-4">
@@ -403,7 +369,6 @@ export default function ResumeEditPage() {
                             </AccordionContent>
                         </AccordionItem>
 
-                        {/* Work Experience */}
                         <AccordionItem value="experience">
                             <AccordionTrigger className="text-xl font-bold">Work Experience</AccordionTrigger>
                             <AccordionContent className="space-y-4 pt-4">
@@ -433,7 +398,6 @@ export default function ResumeEditPage() {
                             </AccordionContent>
                         </AccordionItem>
 
-                        {/* Education */}
                         <AccordionItem value="education">
                              <AccordionTrigger className="text-xl font-bold">Education</AccordionTrigger>
                              <AccordionContent className="space-y-4 pt-4">
@@ -451,7 +415,6 @@ export default function ResumeEditPage() {
                              </AccordionContent>
                         </AccordionItem>
                         
-                        {/* Skills */}
                         <AccordionItem value="skills">
                              <AccordionTrigger className="text-xl font-bold">Skills</AccordionTrigger>
                              <AccordionContent className="space-y-4 pt-4">
@@ -474,7 +437,6 @@ export default function ResumeEditPage() {
           </Card>
         </div>
         
-        {/* Resume Preview */}
         <div className="h-full flex items-start justify-center overflow-hidden">
             <div 
               className="w-[8.5in] h-[11in] bg-white shadow-2xl origin-top-center"
