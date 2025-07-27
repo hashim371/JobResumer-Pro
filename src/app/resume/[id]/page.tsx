@@ -20,6 +20,7 @@ export default function ResumeViewPage() {
     const { user, loading: authLoading } = useAuth();
     const [resumeData, setResumeData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [isDownloading, setIsDownloading] = useState(false);
 
     const previewRef = useRef<HTMLDivElement>(null);
 
@@ -46,71 +47,67 @@ export default function ResumeViewPage() {
         return () => unsubscribe();
     }, [user, authLoading, resumeId, router]);
 
-    const handleDownload = () => {
+    const downloadAs = async (format: 'pdf' | 'png') => {
         const input = previewRef.current;
         if (!input) return;
-
+    
+        setIsDownloading(true);
+    
         const originalWidth = input.style.width;
-        input.style.width = '8.5in';
+        const originalHeight = input.style.height;
 
-        html2canvas(input, {
-            scale: 4,
-            useCORS: true,
-            logging: true,
-            windowWidth: input.scrollWidth,
-            windowHeight: input.scrollHeight,
-        }).then(canvas => {
-            const imgData = canvas.toDataURL('image/png', 1.0);
-            const pdf = new jsPDF({
-                orientation: 'p',
-                unit: 'in',
-                format: [8.5, 11]
+        input.style.width = '8.5in'; 
+        input.style.height = '11in';
+    
+        try {
+            await document.fonts.ready;
+        } catch (err) {
+            console.warn('Fonts could not be loaded before download.', err);
+        }
+        
+        setTimeout(async () => {
+          try {
+            const canvas = await html2canvas(input, {
+              scale: 4, 
+              useCORS: true,
+              logging: true,
+              windowWidth: input.scrollWidth,
+              windowHeight: input.scrollHeight,
             });
-            pdf.addImage(imgData, 'PNG', 0, 0, 8.5, 11);
-            pdf.save(`${resumeData?.personalInfo?.name || 'resume'}.pdf`);
-            
-            input.style.width = originalWidth;
-            toast({ title: 'Success', description: 'Your resume has been downloaded.' });
-        }).catch(error => {
-            console.error("Error generating PDF", error);
-            input.style.width = originalWidth;
-            toast({ variant: 'destructive', title: 'Error', description: 'Could not generate PDF.' });
-        });
-    };
-
-    const handleDownloadImage = () => {
-        const input = previewRef.current;
-        if (!input) return;
-
-        const originalWidth = input.style.width;
-        input.style.width = '8.5in';
-
-        html2canvas(input, {
-          scale: 4,
-          useCORS: true,
-          logging: true,
-          windowWidth: input.scrollWidth,
-          windowHeight: input.scrollHeight,
-        })
-          .then((canvas) => {
+    
             const imgData = canvas.toDataURL('image/png', 1.0);
+            const fileName = `${resumeData?.personalInfo?.name || 'resume'}.${format}`;
     
-            const link = document.createElement('a');
-            link.href = imgData;
-            link.download = `${resumeData?.personalInfo?.name || 'resume'}.png`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            if (format === 'pdf') {
+              const pdf = new jsPDF({
+                  orientation: 'p',
+                  unit: 'in',
+                  format: 'letter'
+              });
+              const pdfWidth = pdf.internal.pageSize.getWidth();
+              const pdfHeight = pdf.internal.pageSize.getHeight();
+              pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+              pdf.save(fileName);
+            } else {
+              const link = document.createElement('a');
+              link.href = imgData;
+              link.download = fileName;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }
     
+            toast({ title: 'Success', description: `Your resume has been downloaded as a ${format.toUpperCase()}.` });
+          } catch (error) {
+            console.error(`Error generating ${format}`, error);
+            toast({ variant: 'destructive', title: 'Error', description: `Could not generate ${format.toUpperCase()}.` });
+          } finally {
             input.style.width = originalWidth;
-            toast({ title: 'Success', description: 'Your resume has been downloaded as an image.' });
-          })
-          .catch((error) => {
-            console.error('Error generating Image', error);
-            input.style.width = originalWidth;
-            toast({ variant: 'destructive', title: 'Error', description: 'Could not generate image.' });
-          });
-      };
+            input.style.height = originalHeight;
+            setIsDownloading(false);
+          }
+        }, 100); 
+    };
 
     if (loading || authLoading) {
         return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
@@ -132,11 +129,13 @@ export default function ResumeViewPage() {
                         <Button variant="outline" asChild>
                             <Link href={`/resume/${resumeId}/edit`}><Edit className="mr-2 h-4 w-4"/> Edit</Link>
                         </Button>
-                        <Button onClick={handleDownloadImage} variant="outline">
-                            <ImageIcon className="mr-2 h-4 w-4" /> Download Image
+                        <Button onClick={() => downloadAs('png')} variant="outline" disabled={isDownloading}>
+                            {isDownloading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <ImageIcon className="mr-2 h-4 w-4" />}
+                            Download Image
                         </Button>
-                        <Button onClick={handleDownload}>
-                            <Download className="mr-2 h-4 w-4" /> Download PDF
+                        <Button onClick={() => downloadAs('pdf')} disabled={isDownloading}>
+                            {isDownloading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Download className="mr-2 h-4 w-4" />}
+                            Download PDF
                         </Button>
                     </div>
                 </div>

@@ -100,8 +100,11 @@ export default function MyResumesPage() {
                     <Card key={resume.id} className="group flex flex-col">
                       <Link href={`/resume/${resume.id}`} className="block overflow-hidden rounded-t-lg">
                          <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                            <div className="absolute inset-0 transform scale-[0.20] origin-top-left" style={{width: '500%', height: '500%'}}>
-                                <ResumePreview templateId={resume.templateId} data={resume} />
+                           <div
+                              className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"
+                              style={{width: '500%', height: '500%'}}
+                            >
+                              <ResumePreview templateId={resume.templateId} data={resume} />
                             </div>
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Eye className="h-12 w-12 text-white" />

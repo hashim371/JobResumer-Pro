@@ -70,6 +70,8 @@ export default function ResumeEditPage() {
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
 
   const previewRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -115,10 +117,11 @@ export default function ResumeEditPage() {
   
   const watchedData = form.watch();
 
-  const handleSave = async (dataToSave = watchedData) => {
+  const handleSave = async () => {
     if (!user || !resumeId) return;
     setIsSaving(true);
     try {
+        const dataToSave = form.getValues();
         const updates = { ...dataToSave, updatedAt: new Date().toISOString() };
         await update(dbRef(db, `users/${user.uid}/resumes/${resumeId as string}`), updates);
         toast({ title: 'Saved!', description: 'Your resume has been updated.' });
@@ -137,129 +140,125 @@ export default function ResumeEditPage() {
     setIsUploading(true);
     try {
       const imageRef = storageRef(storage, `user-photos/${user.uid}/${resumeId}/${file.name}`);
+      
+      const oldPhotoUrl = form.getValues('personalInfo.photoUrl');
+      if(oldPhotoUrl) {
+          try {
+            const oldImageRef = storageRef(storage, oldPhotoUrl);
+            await deleteObject(oldImageRef);
+          } catch (error: any) {
+            if (error.code !== 'storage/object-not-found') {
+              console.warn("Could not delete old photo", error);
+            }
+          }
+      }
+
       await uploadBytes(imageRef, file);
       const downloadURL = await getDownloadURL(imageRef);
       
-      form.setValue('personalInfo.photoUrl', downloadURL);
-      const currentData = form.getValues();
-      currentData.personalInfo.photoUrl = downloadURL;
-      await handleSave(currentData);
-
+      form.setValue('personalInfo.photoUrl', downloadURL, { shouldDirty: true });
+      await handleSave();
+      
       toast({ title: 'Success', description: 'Image uploaded successfully.' });
     } catch (error) {
       console.error("Error uploading image: ", error);
       toast({ variant: 'destructive', title: 'Upload Error', description: 'Failed to upload image.' });
     } finally {
       setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
   
   const handleRemoveImage = async () => {
-    if (!user || !resumeId || !watchedData.personalInfo.photoUrl) return;
+    if (!user || !resumeId) return;
+    const photoUrl = form.getValues('personalInfo.photoUrl');
+    if(!photoUrl) return;
 
+    setIsUploading(true);
     try {
-      const imageRef = storageRef(storage, watchedData.personalInfo.photoUrl);
+      const imageRef = storageRef(storage, photoUrl);
       await deleteObject(imageRef);
     } catch(error: any) {
        if (error.code !== 'storage/object-not-found') {
         console.error("Error deleting image: ", error);
         toast({ variant: 'destructive', title: 'Delete Error', description: 'Failed to delete image.' });
+        setIsUploading(false);
         return;
        }
     }
     
-    form.setValue('personalInfo.photoUrl', '');
-    const currentData = form.getValues();
-    currentData.personalInfo.photoUrl = '';
-    await handleSave(currentData);
+    form.setValue('personalInfo.photoUrl', '', { shouldDirty: true });
+    await handleSave();
     toast({ title: 'Success', description: 'Image removed.' });
+    setIsUploading(false);
   };
 
-
-  const handleDownload = () => {
+  const downloadAs = async (format: 'pdf' | 'png') => {
     const input = previewRef.current;
     if (!input) return;
 
-    const originalScale = input.style.transform;
-    const originalWidth = input.style.width;
-
-    input.style.transform = 'scale(1)';
-    input.style.width = '8.5in';
-
-    html2canvas(input, {
-        scale: 4, 
-        useCORS: true,
-        logging: true,
-        windowWidth: input.scrollWidth,
-        windowHeight: input.scrollHeight,
-    })
-    .then(canvas => {
-        const imgData = canvas.toDataURL('image/png', 1.0);
-        const pdf = new jsPDF({
-            orientation: 'p',
-            unit: 'in',
-            format: 'letter'
-        });
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`${resumeData?.personalInfo?.name || 'resume'}.pdf`);
-
-        input.style.transform = originalScale;
-        input.style.width = originalWidth;
-
-        toast({ title: 'Success', description: 'Your resume has been downloaded.' });
-    })
-    .catch(error => {
-        console.error("Error generating PDF", error);
-        toast({ variant: 'destructive', title: 'Error', description: 'Could not generate PDF.' });
-        
-        input.style.transform = originalScale;
-        input.style.width = originalWidth;
-    });
-  };
-
-  const handleDownloadImage = () => {
-    const input = previewRef.current;
-    if (!input) return;
+    setIsDownloading(true);
 
     const originalScale = input.style.transform;
     const originalWidth = input.style.width;
 
     input.style.transform = 'scale(1)';
     input.style.width = '8.5in'; 
+    input.style.height = '11in';
 
-    html2canvas(input, {
-      scale: 4, 
-      useCORS: true,
-      logging: true,
-      windowWidth: input.scrollWidth,
-      windowHeight: input.scrollHeight,
-    })
-      .then((canvas) => {
+    try {
+        await document.fonts.ready;
+    } catch (err) {
+        console.warn('Fonts could not be loaded before download.', err);
+    }
+    
+    setTimeout(async () => {
+      try {
+        const canvas = await html2canvas(input, {
+          scale: 4, 
+          useCORS: true,
+          logging: true,
+          windowWidth: input.scrollWidth,
+          windowHeight: input.scrollHeight,
+        });
+
         const imgData = canvas.toDataURL('image/png', 1.0);
+        const fileName = `${resumeData?.personalInfo?.name || 'resume'}.${format}`;
 
-        const link = document.createElement('a');
-        link.href = imgData;
-        link.download = `${resumeData?.personalInfo?.name || 'resume'}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        if (format === 'pdf') {
+          const pdf = new jsPDF({
+              orientation: 'p',
+              unit: 'in',
+              format: 'letter'
+          });
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = pdf.internal.pageSize.getHeight();
+          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+          pdf.save(fileName);
+        } else {
+          const link = document.createElement('a');
+          link.href = imgData;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
 
+        toast({ title: 'Success', description: `Your resume has been downloaded as a ${format.toUpperCase()}.` });
+      } catch (error) {
+        console.error(`Error generating ${format}`, error);
+        toast({ variant: 'destructive', title: 'Error', description: `Could not generate ${format.toUpperCase()}.` });
+      } finally {
         input.style.transform = originalScale;
         input.style.width = originalWidth;
-
-        toast({ title: 'Success', description: 'Your resume has been downloaded as an image.' });
-      })
-      .catch((error) => {
-        console.error('Error generating Image', error);
-        toast({ variant: 'destructive', title: 'Error', description: 'Could not generate image.' });
-
-        input.style.transform = originalScale;
-        input.style.width = originalWidth;
-      });
+        input.style.height = 'auto';
+        setIsDownloading(false);
+      }
+    }, 100); 
   };
+
 
   if (loading) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
@@ -283,15 +282,17 @@ export default function ResumeEditPage() {
                 Editing: {templates.find(t => t.id === resumeData.templateId)?.name || 'Resume'}
             </div>
             <div className="flex items-center gap-4">
-                <Button onClick={() => handleSave()} disabled={isSaving}>
+                <Button onClick={handleSave} disabled={isSaving || isUploading || !form.formState.isDirty}>
                     {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4" />}
                     {isSaving ? 'Saving...' : 'Save'}
                 </Button>
-                <Button onClick={handleDownloadImage} variant="outline">
-                    <ImageIcon className="mr-2 h-4 w-4" /> Download Image
+                <Button onClick={() => downloadAs('png')} variant="outline" disabled={isDownloading}>
+                    {isDownloading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <ImageIcon className="mr-2 h-4 w-4" />}
+                    Download Image
                 </Button>
-                 <Button onClick={handleDownload}>
-                    <Download className="mr-2 h-4 w-4" /> Download PDF
+                 <Button onClick={() => downloadAs('pdf')} disabled={isDownloading}>
+                    {isDownloading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Download className="mr-2 h-4 w-4" />}
+                    Download PDF
                 </Button>
             </div>
         </div>
@@ -313,35 +314,39 @@ export default function ResumeEditPage() {
                                         <div className="flex items-center gap-4">
                                           <div className="w-24 h-24 rounded-full bg-muted overflow-hidden relative">
                                             {watchedData.personalInfo?.photoUrl ? (
-                                                <>
-                                                  <NextImage src={watchedData.personalInfo.photoUrl} alt="Profile Photo" layout="fill" objectFit="cover" />
-                                                  <Button
-                                                    type="button"
-                                                    variant="destructive"
-                                                    size="icon"
-                                                    className="absolute top-0 right-0 h-6 w-6 rounded-full"
-                                                    onClick={handleRemoveImage}
-                                                  >
-                                                    <X className="h-4 w-4"/>
-                                                  </Button>
-                                                </>
+                                                <NextImage src={watchedData.personalInfo.photoUrl} alt="Profile Photo" layout="fill" objectFit="cover" />
                                             ) : (
                                               <div className="flex items-center justify-center h-full text-muted-foreground">
                                                 <ImageIcon className="h-8 w-8"/>
                                               </div>
                                             )}
                                           </div>
-                                          <Input
-                                            type="file"
-                                            className="hidden"
-                                            ref={fileInputRef}
-                                            onChange={handleImageUpload}
-                                            accept="image/png, image/jpeg"
-                                          />
-                                          <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                                            {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Upload className="mr-2 h-4 w-4" />}
-                                            {isUploading ? 'Uploading...' : 'Upload Image'}
-                                          </Button>
+                                          <div>
+                                              <Input
+                                                type="file"
+                                                className="hidden"
+                                                ref={fileInputRef}
+                                                onChange={handleImageUpload}
+                                                accept="image/png, image/jpeg"
+                                                disabled={isUploading}
+                                              />
+                                              <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                                                {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Upload className="mr-2 h-4 w-4" />}
+                                                {isUploading ? 'Uploading...' : 'Upload'}
+                                              </Button>
+                                              {watchedData.personalInfo?.photoUrl && (
+                                                  <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="ml-2 text-destructive hover:text-destructive"
+                                                    onClick={handleRemoveImage}
+                                                    disabled={isUploading}
+                                                  >
+                                                    <Trash2 className="h-4 w-4"/>
+                                                  </Button>
+                                              )}
+                                          </div>
                                         </div>
                                     </FormItem>
                                 )}
