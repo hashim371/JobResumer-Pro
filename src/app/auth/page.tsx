@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -62,10 +63,11 @@ export default function AuthPage() {
       await set(userRef, {
         name: authUser.displayName || authUser.email?.split('@')[0] || 'Anonymous',
         email: authUser.email,
+        photoURL: authUser.photoURL,
         lastLogin: new Date().toISOString(),
       });
     } else {
-      await update(userRef, { lastLogin: new Date().toISOString() });
+      await update(userRef, { lastLogin: new Date().toISOString(), photoURL: authUser.photoURL });
     }
     router.push("/");
     toast({ title: "Welcome!", description: "You have successfully signed in." });
@@ -96,6 +98,11 @@ export default function AuthPage() {
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
+      provider.addScope('profile');
+      provider.addScope('email');
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
       const result = await signInWithPopup(auth, provider);
       await handleAuthSuccess(result.user);
     } catch (error) { handleAuthError(error); } finally { setLoading(false); }
@@ -145,3 +152,4 @@ export default function AuthPage() {
     </div>
   );
 }
+
