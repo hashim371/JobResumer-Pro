@@ -67,8 +67,7 @@ export default function AuthPage() {
       }
     };
     processRedirectResult();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -185,3 +184,5 @@ export default function AuthPage() {
     </div>
   );
 }
+
+    
