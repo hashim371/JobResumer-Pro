@@ -74,7 +74,16 @@ export default function AuthPage() {
   };
   
   const handleAuthError = (error: any) => {
-    toast({ variant: "destructive", title: "Authentication Failed", description: error.code === 'auth/invalid-credential' ? 'Incorrect email or password.' : error.message });
+    if (error.code === 'auth/unauthorized-domain') {
+        toast({ 
+            variant: "destructive", 
+            title: "Domain Not Authorized", 
+            description: `This domain is not authorized for authentication. Please add '${window.location.hostname}' to the list of authorized domains in your Firebase console under Authentication -> Settings.`,
+            duration: 9000,
+        });
+    } else {
+        toast({ variant: "destructive", title: "Authentication Failed", description: error.code === 'auth/invalid-credential' ? 'Incorrect email or password.' : error.message });
+    }
   }
 
   const onSignUp = async (data: z.infer<typeof signUpSchema>) => {
@@ -153,3 +162,5 @@ export default function AuthPage() {
   );
 }
 
+
+    
