@@ -57,6 +57,7 @@ export default function AuthPage() {
       try {
         const result = await getRedirectResult(auth);
         if (result) {
+          toast({ title: "Welcome!", description: "You have successfully signed in." });
           await handleAuthSuccess(result.user);
         }
       } catch (error) {
@@ -87,7 +88,6 @@ export default function AuthPage() {
     } else {
       await update(userRef, { lastLogin: new Date().toISOString(), photoURL: authUser.photoURL });
     }
-    toast({ title: "Welcome!", description: "You have successfully signed in." });
   };
   
   const handleAuthError = (error: any) => {
@@ -129,8 +129,6 @@ export default function AuthPage() {
   const onGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      provider.addScope('profile');
-      provider.addScope('email');
       await signInWithRedirect(auth, provider);
     } catch (error) { 
       handleAuthError(error); 
@@ -138,6 +136,12 @@ export default function AuthPage() {
   };
   
   if (authLoading || isProcessingRedirect) {
+    return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
+  }
+
+  // If we are done loading and processing, and we have a user, we should redirect.
+  // This check is redundant due to the useEffect above, but serves as a failsafe.
+  if(user) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
 
