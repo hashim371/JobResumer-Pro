@@ -47,12 +47,15 @@ export default function AuthPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [formLoading, setFormLoading] = useState(false);
+  
+  // This state is crucial to prevent rendering the page content before Firebase has processed the redirect.
   const [isProcessingRedirect, setIsProcessingRedirect] = useState(true);
 
   const signUpForm = useForm<z.infer<typeof signUpSchema>>({ resolver: zodResolver(signUpSchema), defaultValues: { email: "", password: "" } });
   const signInForm = useForm<z.infer<typeof signInSchema>>({ resolver: zodResolver(signInSchema), defaultValues: { email: "", password: "" } });
 
   useEffect(() => {
+    // This effect runs only once on mount to process the redirect result.
     const processRedirectResult = async () => {
       try {
         const result = await getRedirectResult(auth);
@@ -63,13 +66,16 @@ export default function AuthPage() {
       } catch (error) {
         handleAuthError(error);
       } finally {
+        // Once processing is done, we can allow the rest of the page to render.
         setIsProcessingRedirect(false);
       }
     };
     processRedirectResult();
-  }, [auth]);
+  }, []);
 
   useEffect(() => {
+    // This effect handles redirecting the user away from the auth page if they are logged in.
+    // It waits for both auth loading and redirect processing to be complete.
     if (!authLoading && !isProcessingRedirect && user) {
       router.push("/");
     }
@@ -92,21 +98,19 @@ export default function AuthPage() {
   
   const handleAuthError = (error: any) => {
     setFormLoading(false);
+    console.error("Authentication Error: ", error);
+    let description = error.message;
     if (error.code === 'auth/unauthorized-domain') {
-        toast({ 
-            variant: "destructive", 
-            title: "Domain Not Authorized", 
-            description: (
-              <>
-                This domain is not authorized for authentication. 
-                Please add <code className="p-1 bg-muted rounded-sm">{window.location.hostname}</code> to the list of authorized domains in your Firebase console.
-              </>
-            ),
-            duration: 9000,
-        });
-    } else {
-        toast({ variant: "destructive", title: "Authentication Failed", description: error.code === 'auth/invalid-credential' ? 'Incorrect email or password.' : error.message });
+      description = `This domain is not authorized for authentication. Please add ${window.location.hostname} to the list of authorized domains in your Firebase console.`;
+    } else if (error.code === 'auth/invalid-credential') {
+      description = 'Incorrect email or password.';
     }
+    toast({ 
+        variant: "destructive", 
+        title: "Authentication Failed", 
+        description: description,
+        duration: 9000,
+    });
   }
 
   const onSignUp = async (data: z.infer<typeof signUpSchema>) => {
@@ -127,6 +131,7 @@ export default function AuthPage() {
   };
 
   const onGoogleSignIn = async () => {
+    setFormLoading(true); // Set loading state to provide feedback
     try {
       const provider = new GoogleAuthProvider();
       await signInWithRedirect(auth, provider);
@@ -135,12 +140,14 @@ export default function AuthPage() {
     }
   };
   
+  // Show a loading spinner while Firebase is initializing or processing the redirect.
+  // This is the key to preventing the auth form from flashing before the user is redirected.
   if (authLoading || isProcessingRedirect) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
 
-  // If we are done loading and processing, and we have a user, we should redirect.
-  // This check is redundant due to the useEffect above, but serves as a failsafe.
+  // If we are done loading and processing, and we have a user, this will also show the spinner
+  // while the redirect effect above takes place.
   if(user) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
