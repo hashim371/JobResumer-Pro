@@ -46,7 +46,7 @@ export default function AuthPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
   const [isProcessingRedirect, setIsProcessingRedirect] = useState(true);
 
   const signUpForm = useForm<z.infer<typeof signUpSchema>>({ resolver: zodResolver(signUpSchema), defaultValues: { email: "", password: "" } });
@@ -57,7 +57,6 @@ export default function AuthPage() {
       try {
         const result = await getRedirectResult(auth);
         if (result) {
-          setLoading(true); // Show loading spinner while we process the result
           await handleAuthSuccess(result.user);
         }
       } catch (error) {
@@ -70,10 +69,10 @@ export default function AuthPage() {
   }, [auth]);
 
   useEffect(() => {
-    if (!authLoading && user) {
+    if (!authLoading && !isProcessingRedirect && user) {
       router.push("/");
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, isProcessingRedirect, router]);
 
   const handleAuthSuccess = async (authUser: User) => {
     const userRef = ref(db, `users/${authUser.uid}`);
@@ -88,12 +87,11 @@ export default function AuthPage() {
     } else {
       await update(userRef, { lastLogin: new Date().toISOString(), photoURL: authUser.photoURL });
     }
-    // The useEffect above will handle the redirect.
     toast({ title: "Welcome!", description: "You have successfully signed in." });
   };
   
   const handleAuthError = (error: any) => {
-    setLoading(false);
+    setFormLoading(false);
     if (error.code === 'auth/unauthorized-domain') {
         toast({ 
             variant: "destructive", 
@@ -112,24 +110,23 @@ export default function AuthPage() {
   }
 
   const onSignUp = async (data: z.infer<typeof signUpSchema>) => {
-    setLoading(true);
+    setFormLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       await updateProfile(userCredential.user, { displayName: data.email.split('@')[0] });
       await handleAuthSuccess({ ...userCredential.user, displayName: data.email.split('@')[0] });
-    } catch (error) { handleAuthError(error); } finally { setLoading(false); }
+    } catch (error) { handleAuthError(error); } finally { setFormLoading(false); }
   };
 
   const onSignIn = async (data: z.infer<typeof signInSchema>) => {
-    setLoading(true);
+    setFormLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
       await handleAuthSuccess(userCredential.user);
-    } catch (error) { handleAuthError(error); } finally { setLoading(false); }
+    } catch (error) { handleAuthError(error); } finally { setFormLoading(false); }
   };
 
   const onGoogleSignIn = async () => {
-    setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
       provider.addScope('profile');
@@ -140,7 +137,7 @@ export default function AuthPage() {
     }
   };
   
-  if (authLoading || isProcessingRedirect || user) {
+  if (authLoading || isProcessingRedirect) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
 
@@ -159,10 +156,10 @@ export default function AuthPage() {
               <Form {...signInForm}><form onSubmit={signInForm.handleSubmit(onSignIn)} className="space-y-4">
                 <FormField control={signInForm.control} name="email" render={({ field }) => (<FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="m@example.com" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                 <FormField control={signInForm.control} name="password" render={({ field }) => (<FormItem><FormLabel>Password</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>)}/>
-                <Button type="submit" className="w-full" disabled={loading}>{loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Sign In</Button>
+                <Button type="submit" className="w-full" disabled={formLoading}>{formLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Sign In</Button>
               </form></Form>
               <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">Or continue with</span></div></div>
-              <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={loading}><GoogleIcon className="mr-2" /> Google</Button>
+              <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={formLoading}><GoogleIcon className="mr-2" /> Google</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -173,10 +170,10 @@ export default function AuthPage() {
               <Form {...signUpForm}><form onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-4">
                 <FormField control={signUpForm.control} name="email" render={({ field }) => (<FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="m@example.com" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                 <FormField control={signUpForm.control} name="password" render={({ field }) => (<FormItem><FormLabel>Password</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>)}/>
-                <Button type="submit" className="w-full" disabled={loading}>{loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Create Account</Button>
+                <Button type="submit" className="w-full" disabled={formLoading}>{formLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Create Account</Button>
               </form></Form>
                <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">Or continue with</span></div></div>
-              <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={loading}><GoogleIcon className="mr-2" /> Google</Button>
+              <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={formLoading}><GoogleIcon className="mr-2" /> Google</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -184,5 +181,3 @@ export default function AuthPage() {
     </div>
   );
 }
-
-    
