@@ -10,9 +10,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
   updateProfile,
   User,
 } from "firebase/auth";
@@ -36,50 +33,21 @@ const signInSchema = z.object({
   password: z.string().min(1, "Password is required."),
 });
 
-function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C42.021,35.591,44,30.138,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
-  );
-}
-
 export default function AuthPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [formLoading, setFormLoading] = useState(false);
   
-  // This state is crucial to prevent rendering the page content before Firebase has processed the redirect.
-  const [isProcessingRedirect, setIsProcessingRedirect] = useState(true);
-
   const signUpForm = useForm<z.infer<typeof signUpSchema>>({ resolver: zodResolver(signUpSchema), defaultValues: { email: "", password: "" } });
   const signInForm = useForm<z.infer<typeof signInSchema>>({ resolver: zodResolver(signInSchema), defaultValues: { email: "", password: "" } });
 
   useEffect(() => {
-    // This effect runs only once on mount to process the redirect result.
-    const processRedirectResult = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          toast({ title: "Welcome!", description: "You have successfully signed in." });
-          await handleAuthSuccess(result.user);
-        }
-      } catch (error) {
-        handleAuthError(error);
-      } finally {
-        // Once processing is done, we can allow the rest of the page to render.
-        setIsProcessingRedirect(false);
-      }
-    };
-    processRedirectResult();
-  }, []);
-
-  useEffect(() => {
     // This effect handles redirecting the user away from the auth page if they are logged in.
-    // It waits for both auth loading and redirect processing to be complete.
-    if (!authLoading && !isProcessingRedirect && user) {
+    if (!authLoading && user) {
       router.push("/");
     }
-  }, [user, authLoading, isProcessingRedirect, router]);
+  }, [user, authLoading, router]);
 
   const handleAuthSuccess = async (authUser: User) => {
     const userRef = ref(db, `users/${authUser.uid}`);
@@ -100,9 +68,7 @@ export default function AuthPage() {
     setFormLoading(false);
     console.error("Authentication Error: ", error);
     let description = error.message;
-    if (error.code === 'auth/unauthorized-domain') {
-      description = `This domain is not authorized for authentication. Please add ${window.location.hostname} to the list of authorized domains in your Firebase console.`;
-    } else if (error.code === 'auth/invalid-credential') {
+    if (error.code === 'auth/invalid-credential') {
       description = 'Incorrect email or password.';
     }
     toast({ 
@@ -130,23 +96,11 @@ export default function AuthPage() {
     } catch (error) { handleAuthError(error); } finally { setFormLoading(false); }
   };
 
-  const onGoogleSignIn = async () => {
-    setFormLoading(true); // Set loading state to provide feedback
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithRedirect(auth, provider);
-    } catch (error) { 
-      handleAuthError(error); 
-    }
-  };
-  
-  // Show a loading spinner while Firebase is initializing or processing the redirect.
-  // This is the key to preventing the auth form from flashing before the user is redirected.
-  if (authLoading || isProcessingRedirect) {
+  if (authLoading) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
 
-  // If we are done loading and processing, and we have a user, this will also show the spinner
+  // If we are done loading and we have a user, this will also show the spinner
   // while the redirect effect above takes place.
   if(user) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
@@ -169,8 +123,6 @@ export default function AuthPage() {
                 <FormField control={signInForm.control} name="password" render={({ field }) => (<FormItem><FormLabel>Password</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                 <Button type="submit" className="w-full" disabled={formLoading}>{formLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Sign In</Button>
               </form></Form>
-              <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">Or continue with</span></div></div>
-              <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={formLoading}><GoogleIcon className="mr-2" /> Google</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -183,8 +135,6 @@ export default function AuthPage() {
                 <FormField control={signUpForm.control} name="password" render={({ field }) => (<FormItem><FormLabel>Password</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                 <Button type="submit" className="w-full" disabled={formLoading}>{formLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Create Account</Button>
               </form></Form>
-               <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">Or continue with</span></div></div>
-              <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={formLoading}><GoogleIcon className="mr-2" /> Google</Button>
             </CardContent>
           </Card>
         </TabsContent>
