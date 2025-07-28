@@ -98,7 +98,7 @@ export default function AuthPage() {
         toast({ 
             variant: "destructive", 
             title: "Domain Not Authorized", 
-            description: `This domain is not authorized for authentication. Please add '${window.location.hostname}' to the list of authorized domains in your Firebase console under Authentication -> Settings.`,
+            description: `This domain is not authorized for authentication. Please add it to the list of authorized domains in your Firebase console.`,
             duration: 9000,
         });
     } else {
