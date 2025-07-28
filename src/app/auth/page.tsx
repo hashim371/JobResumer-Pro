@@ -47,28 +47,28 @@ export default function AuthPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(true);
+  const [isProcessingRedirect, setIsProcessingRedirect] = useState(true);
 
   const signUpForm = useForm<z.infer<typeof signUpSchema>>({ resolver: zodResolver(signUpSchema), defaultValues: { email: "", password: "" } });
   const signInForm = useForm<z.infer<typeof signInSchema>>({ resolver: zodResolver(signInSchema), defaultValues: { email: "", password: "" } });
 
   useEffect(() => {
-    const handleRedirectResult = async () => {
+    const processRedirectResult = async () => {
       try {
         const result = await getRedirectResult(auth);
         if (result) {
+          setLoading(true); // Show loading spinner while we process the result
           await handleAuthSuccess(result.user);
         }
       } catch (error) {
         handleAuthError(error);
       } finally {
-        setIsRedirecting(false);
+        setIsProcessingRedirect(false);
       }
     };
-    handleRedirectResult();
+    processRedirectResult();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -89,16 +89,22 @@ export default function AuthPage() {
     } else {
       await update(userRef, { lastLogin: new Date().toISOString(), photoURL: authUser.photoURL });
     }
-    router.push("/");
+    // The useEffect above will handle the redirect.
     toast({ title: "Welcome!", description: "You have successfully signed in." });
   };
   
   const handleAuthError = (error: any) => {
+    setLoading(false);
     if (error.code === 'auth/unauthorized-domain') {
         toast({ 
             variant: "destructive", 
             title: "Domain Not Authorized", 
-            description: `This domain is not authorized for authentication. Please add it to the list of authorized domains in your Firebase console.`,
+            description: (
+              <>
+                This domain is not authorized for authentication. 
+                Please add <code className="p-1 bg-muted rounded-sm">{window.location.hostname}</code> to the list of authorized domains in your Firebase console.
+              </>
+            ),
             duration: 9000,
         });
     } else {
@@ -132,11 +138,10 @@ export default function AuthPage() {
       await signInWithRedirect(auth, provider);
     } catch (error) { 
       handleAuthError(error); 
-      setLoading(false);
     }
   };
   
-  if (authLoading || user || isRedirecting) {
+  if (authLoading || isProcessingRedirect || user) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
 
@@ -180,3 +185,5 @@ export default function AuthPage() {
     </div>
   );
 }
+
+    
