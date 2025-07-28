@@ -11,7 +11,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   updateProfile,
   User,
 } from "firebase/auth";
@@ -46,9 +47,28 @@ export default function AuthPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(true);
 
   const signUpForm = useForm<z.infer<typeof signUpSchema>>({ resolver: zodResolver(signUpSchema), defaultValues: { email: "", password: "" } });
   const signInForm = useForm<z.infer<typeof signInSchema>>({ resolver: zodResolver(signInSchema), defaultValues: { email: "", password: "" } });
+
+  useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          await handleAuthSuccess(result.user);
+        }
+      } catch (error) {
+        handleAuthError(error);
+      } finally {
+        setIsRedirecting(false);
+      }
+    };
+    handleRedirectResult();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -109,15 +129,14 @@ export default function AuthPage() {
       const provider = new GoogleAuthProvider();
       provider.addScope('profile');
       provider.addScope('email');
-      provider.setCustomParameters({
-        prompt: 'select_account'
-      });
-      const result = await signInWithPopup(auth, provider);
-      await handleAuthSuccess(result.user);
-    } catch (error) { handleAuthError(error); } finally { setLoading(false); }
+      await signInWithRedirect(auth, provider);
+    } catch (error) { 
+      handleAuthError(error); 
+      setLoading(false);
+    }
   };
   
-  if (authLoading || user) {
+  if (authLoading || user || isRedirecting) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
 
@@ -161,6 +180,3 @@ export default function AuthPage() {
     </div>
   );
 }
-
-
-    
