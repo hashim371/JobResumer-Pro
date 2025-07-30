@@ -65,10 +65,12 @@ export default function UserManagementPage() {
 
   const filteredUsers = useMemo(() => {
     if (!searchTerm) return users;
-    return users.filter(user => 
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    return users.filter(user => {
+      const lowercasedSearchTerm = searchTerm.toLowerCase();
+      const nameMatch = user.name && user.name.toLowerCase().includes(lowercasedSearchTerm);
+      const emailMatch = user.email && user.email.toLowerCase().includes(lowercasedSearchTerm);
+      return nameMatch || emailMatch;
+    });
   }, [users, searchTerm]);
 
   const handleDeleteUser = async (userId: string) => {
@@ -138,8 +140,8 @@ export default function UserManagementPage() {
                             <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-medium">{user.name}</p>
-                            <p className="text-sm text-muted-foreground truncate max-w-[150px] sm:max-w-none">{user.email}</p>
+                            <p className="font-medium">{user.name || 'No Name'}</p>
+                            <p className="text-sm text-muted-foreground truncate max-w-[150px] sm:max-w-none">{user.email || 'No Email'}</p>
                           </div>
                         </div>
                       </TableCell>
