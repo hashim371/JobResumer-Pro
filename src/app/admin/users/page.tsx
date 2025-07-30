@@ -122,8 +122,8 @@ export default function UserManagementPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>User</TableHead>
-                  <TableHead>Last Login</TableHead>
-                  <TableHead>Date Registered</TableHead>
+                  <TableHead className="hidden md:table-cell">Last Login</TableHead>
+                  <TableHead className="hidden sm:table-cell">Date Registered</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -139,12 +139,12 @@ export default function UserManagementPage() {
                           </Avatar>
                           <div>
                             <p className="font-medium">{user.name}</p>
-                            <p className="text-sm text-muted-foreground">{user.email}</p>
+                            <p className="text-sm text-muted-foreground truncate max-w-[150px] sm:max-w-none">{user.email}</p>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>{formatDateSafe(user.lastLogin)}</TableCell>
-                      <TableCell>{formatDateSafe(user.createdAt)}</TableCell>
+                      <TableCell className="hidden md:table-cell">{formatDateSafe(user.lastLogin)}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{formatDateSafe(user.createdAt)}</TableCell>
                       <TableCell className="text-right">
                         <AlertDialog>
                           <AlertDialogTrigger asChild>

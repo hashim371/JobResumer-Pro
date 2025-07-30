@@ -97,7 +97,7 @@ export default function MyResumesPage() {
               {resumes.map(resume => {
                  const template = templates.find(t => t.id === resume.templateId);
                  return (
-                    <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 border-transparent hover:border-accent">
+                    <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 border-transparent hover:border-primary">
                       <Link href={`/resume/${resume.id}`} className="block overflow-hidden">
                          <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                            <div
@@ -142,8 +142,8 @@ export default function MyResumesPage() {
               })}
             </div>
           ) : (
-            <div className="text-center py-20 rounded-lg border-2 border-dashed border-gray-300">
-                <FileText className="mx-auto h-12 w-12 text-gray-400" />
+            <div className="text-center py-20 rounded-lg border-2 border-dashed border-muted-foreground/30">
+                <FileText className="mx-auto h-12 w-12 text-muted-foreground/80" />
                 <h3 className="mt-2 text-xl font-semibold">No Resumes Found</h3>
                 <p className="mt-1 text-sm text-muted-foreground">Get started by creating a new resume.</p>
                 <div className="mt-6">

@@ -8,22 +8,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, FileText } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { ResumePreview } from '@/components/ResumePreview';
 import { getTemplates, Template } from '@/lib/template-store';
 
 export const templates: Template[] = [
   { id: 'dublin', name: 'Dublin', category: 'Simple' },
   { id: 'new-york', name: 'New York', category: 'Simple' },
-  { id: 'geneva', name: 'Geneva', category: 'Picture' },
+  { id: 'geneva', name: 'Geneva', category: 'Creative' },
   { id: 'sydney', name: 'Sydney', category: 'ATS' },
   { id: 'paris', name: 'Paris', category: 'Classic' },
   { id: 'london', name: 'London', category: 'Modern' },
-  { id: 'madrid', name: 'Madrid', category: 'Picture' },
+  { id: 'madrid', name: 'Madrid', category: 'Creative' },
   { id: 'berlin', name: 'Berlin', category: 'Two-column' },
   { id: 'moscow', name: 'Moscow', category: 'Simple' },
   { id: 'cairo', name: 'Cairo', category: 'ATS' },
-  { id: 'seoul', name: 'Seoul', category: 'Picture' },
+  { id: 'seoul', name: 'Seoul', category: 'Creative' },
   { id: 'tokyo', name: 'Tokyo', category: 'Modern' },
   { id: 'rome', name: 'Rome', category: 'Classic' },
   { id: 'vienna', name: 'Vienna', category: 'Classic' },
@@ -47,9 +47,6 @@ export const templates: Template[] = [
   { id: 'shanghai', name: 'Shanghai', category: 'Modern' },
   { id: 'mexico-city', name: 'Mexico City', category: 'Artistic' },
 ];
-
-const allCategories = ['All templates', ...Array.from(new Set(templates.map(t => t.category)))];
-
 
 export default function TemplatesPage() {
   const [activeFilter, setActiveFilter] = useState('All templates');
@@ -92,7 +89,7 @@ export default function TemplatesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {filteredTemplates.map(template => (
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block group">
-                <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
+                <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-primary">
                  <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                     <div
                       className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"

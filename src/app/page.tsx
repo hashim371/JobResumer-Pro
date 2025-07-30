@@ -5,10 +5,9 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { CheckCircle, DraftingCompass, Star, FileText } from "lucide-react";
+import { CheckCircle, DraftingCompass, Star } from "lucide-react";
 import { getTemplates } from "@/lib/template-store";
 import { ResumePreview } from "@/components/ResumePreview";
 
@@ -102,7 +101,7 @@ export default function Home() {
                         <CarouselItem key={template.id} className="pl-2 md:basis-1/2 lg:basis-1/3">
                           <div className="p-1">
                             <Link href={`/resume/create?template=${template.id}`} className="block group">
-                              <Card className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
+                              <Card className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-primary">
                                 <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                                   <div
                                     className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"

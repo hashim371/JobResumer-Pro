@@ -19,7 +19,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
           <Link href={stat.href} key={stat.title}>
-            <Card className="hover:shadow-lg transition-shadow duration-300 hover:border-primary cursor-pointer h-full">
+            <Card className="hover:shadow-lg transition-shadow duration-300 hover:border-primary cursor-pointer h-full hover:-translate-y-1">
               <CardHeader>
                 <div className="flex items-center gap-4">
                   {stat.icon}

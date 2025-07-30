@@ -271,7 +271,6 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
 
     case 'berlin': 
     case 'oslo':
-    case 'toronto':
       return (
         <div className="font-body bg-white text-gray-800 min-h-full flex text-sm">
           <div className="w-1/3 bg-gray-100 p-8 text-gray-800 flex flex-col">
@@ -1017,6 +1016,65 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                  {skills?.map((skill: any, i: number) => <span key={i} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-md">{skill.name}</span>)}
               </div>
             </section>
+          </div>
+        </div>
+      );
+    case 'toronto':
+       return (
+        <div className="font-body bg-white text-gray-800 min-h-full flex text-sm">
+          <div className="w-1/3 bg-gray-800 text-white p-8 flex flex-col">
+            <div className="text-left mb-8">
+                <h1 className="text-3xl font-bold font-headline">{personalInfo?.name}</h1>
+                <p className="text-md text-gray-300 mt-1">{personalInfo?.role}</p>
+            </div>
+
+            <div className="space-y-6 text-xs">
+                <div className="mb-6">
+                  <h2 className="text-sm font-bold uppercase text-gray-400 tracking-wider mb-3 font-headline">Contact</h2>
+                  <div className="space-y-1">
+                    <p className="break-words">{personalInfo?.email}</p>
+                    <p>{personalInfo?.phone}</p>
+                    <p>{personalInfo?.location}</p>
+                    <p className="break-words">{personalInfo?.website}</p>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <h2 className="text-sm font-bold uppercase text-gray-400 tracking-wider mb-3 font-headline">Skills</h2>
+                  <ul className="space-y-1">
+                    {skills?.map((skill: any, i: number) => <li key={i}>{skill.name}</li>)}
+                  </ul>
+                </div>
+                 <div className="mt-auto">
+                  <h2 className="text-sm font-bold uppercase text-gray-400 tracking-wider mb-3 font-headline">Education</h2>
+                  {education?.map((edu:any, i:number) => (
+                    <div key={i} className="mb-3">
+                      <h3 className="font-semibold">{edu.degree}</h3>
+                      <p className="text-gray-300">{edu.school}</p>
+                      <p className="text-gray-400">{edu.graduationDate}</p>
+                    </div>
+                  ))}
+                </div>
+            </div>
+          </div>
+          <div className="w-2/3 p-10 bg-gray-50">
+             <section className="mb-8">
+                <h2 className="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4 font-headline">Professional Summary</h2>
+                <p className="leading-relaxed text-sm">{summary}</p>
+              </section>
+              <section>
+                <h2 className="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4 font-headline">Work Experience</h2>
+                {experience?.map((exp: any, i:number) => (
+                  <div key={i} className="mb-4">
+                    <div className="flex justify-between items-baseline">
+                      <h3 className="text-md font-bold">{exp.jobTitle}</h3>
+                      <p className="text-xs text-gray-600">{exp.startDate} - {exp.endDate}</p>
+                    </div>
+                    <h4 className="font-semibold text-gray-700 italic">{exp.company}</h4>
+                    <p className="mt-1 leading-relaxed text-xs">{exp.description}</p>
+                  </div>
+                ))}
+              </section>
           </div>
         </div>
       );
