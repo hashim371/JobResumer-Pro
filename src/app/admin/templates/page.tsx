@@ -1,13 +1,36 @@
 
 "use client"
-import { templates } from '@/app/templates/page';
+import { useState } from 'react';
+import { templates as initialTemplates, Template } from '@/app/templates/page';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { ResumePreview } from '@/components/ResumePreview';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { toast } from '@/hooks/use-toast';
 
 export default function AdminTemplatesPage() {
+  const [templates, setTemplates] = useState<Template[]>(initialTemplates);
+  
+  const handleDelete = (templateId: string) => {
+    setTemplates(currentTemplates => currentTemplates.filter(t => t.id !== templateId));
+    toast({
+        title: 'Template Deleted',
+        description: 'The template has been removed from the view. Refresh to reset.',
+    });
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -37,10 +60,26 @@ export default function AdminTemplatesPage() {
                             <Edit className="h-4 w-4"/>
                             <span className="sr-only">Edit</span>
                         </Button>
-                         <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                            <Trash2 className="h-4 w-4"/>
-                             <span className="sr-only">Delete</span>
-                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                             <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                <Trash2 className="h-4 w-4"/>
+                                 <span className="sr-only">Delete</span>
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                             <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                   This will only remove the template from the view for this session. A full database integration is needed for permanent deletion.
+                                </AlertDialogDescription>
+                             </AlertDialogHeader>
+                             <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDelete(template.id)}>Delete</AlertDialogAction>
+                             </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </div>
             </CardFooter>

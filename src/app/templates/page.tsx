@@ -11,7 +11,13 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, FileText } from 'lucide-react';
 import { ResumePreview } from '@/components/ResumePreview';
 
-export const templates = [
+export interface Template {
+    id: string;
+    name: string;
+    category: string;
+}
+
+export const templates: Template[] = [
   { id: 'dublin', name: 'Dublin', category: 'Simple' },
   { id: 'new-york', name: 'New York', category: 'Simple' },
   { id: 'geneva', name: 'Geneva', category: 'Picture' },

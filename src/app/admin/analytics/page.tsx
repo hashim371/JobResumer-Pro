@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Users, FileText, Loader2 } from "lucide-react";
 import { templates } from '@/app/templates/page';
-import { subDays, format, isAfter } from 'date-fns';
+import { subDays, format, isAfter, isValid } from 'date-fns';
 
 interface Resume {
   templateId: string;
@@ -65,17 +65,13 @@ export default function AdminAnalyticsPage() {
     }
     
     users.forEach(user => {
-       try {
         const createdAtDate = new Date(user.createdAt);
-        if (isAfter(createdAtDate, last30Days)) {
+        if (isValid(createdAtDate) && isAfter(createdAtDate, last30Days)) {
           const dateStr = format(createdAtDate, 'MMM d');
           if(signups.has(dateStr)) {
             signups.set(dateStr, (signups.get(dateStr) || 0) + 1);
           }
         }
-      } catch (e) {
-          // Ignore invalid date formats
-      }
     });
 
     return Array.from(signups.entries()).map(([date, count]) => ({ date, count })).reverse();
