@@ -33,6 +33,10 @@ const signInSchema = z.object({
   password: z.string().min(1, "Password is required."),
 });
 
+const ADMIN_EMAIL = "res97ad7777mn@gmail.com";
+const ADMIN_PASSWORD = "adddd@____''[[imnreskk|";
+
+
 export default function AuthPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -45,7 +49,11 @@ export default function AuthPage() {
   useEffect(() => {
     // This effect handles redirecting the user away from the auth page if they are logged in.
     if (!authLoading && user) {
-      router.push("/");
+        if (user.email === ADMIN_EMAIL) {
+            router.push("/admin/dashboard");
+        } else {
+            router.push("/my-resumes");
+        }
     }
   }, [user, authLoading, router]);
 
@@ -54,10 +62,12 @@ export default function AuthPage() {
     const snapshot = await get(userRef);
     if (!snapshot.exists()) {
       await set(userRef, {
+        uid: authUser.uid,
         name: authUser.displayName || authUser.email?.split('@')[0] || 'Anonymous',
         email: authUser.email,
         photoURL: authUser.photoURL,
         lastLogin: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       });
     } else {
       await update(userRef, { lastLogin: new Date().toISOString(), photoURL: authUser.photoURL });
@@ -85,24 +95,26 @@ export default function AuthPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       await updateProfile(userCredential.user, { displayName: data.email.split('@')[0] });
       await handleAuthSuccess({ ...userCredential.user, displayName: data.email.split('@')[0] });
+      // Redirect handled by useEffect
     } catch (error) { handleAuthError(error); } finally { setFormLoading(false); }
   };
 
   const onSignIn = async (data: z.infer<typeof signInSchema>) => {
     setFormLoading(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-      await handleAuthSuccess(userCredential.user);
+      if (data.email === ADMIN_EMAIL && data.password === ADMIN_PASSWORD) {
+          const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+          await handleAuthSuccess(userCredential.user);
+          // Redirect to admin dashboard is handled by useEffect
+      } else {
+          const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+          await handleAuthSuccess(userCredential.user);
+          // Redirect to user dashboard is handled by useEffect
+      }
     } catch (error) { handleAuthError(error); } finally { setFormLoading(false); }
   };
 
-  if (authLoading) {
-    return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
-  }
-
-  // If we are done loading and we have a user, this will also show the spinner
-  // while the redirect effect above takes place.
-  if(user) {
+  if (authLoading || user) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
 
