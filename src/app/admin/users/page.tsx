@@ -1,10 +1,11 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { db } from '@/lib/firebase';
 import { ref, onValue, remove } from 'firebase/database';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -25,7 +26,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2, Trash2, Search } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
@@ -41,6 +42,7 @@ interface User {
 export default function UserManagementPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const usersRef = ref(db, 'users/');
@@ -50,7 +52,7 @@ export default function UserManagementPage() {
         const userList = Object.keys(data).map(key => ({
           uid: key,
           ...data[key],
-        }));
+        })).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setUsers(userList);
       } else {
         setUsers([]);
@@ -60,6 +62,14 @@ export default function UserManagementPage() {
 
     return () => unsubscribe();
   }, []);
+
+  const filteredUsers = useMemo(() => {
+    if (!searchTerm) return users;
+    return users.filter(user => 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [users, searchTerm]);
 
   const handleDeleteUser = async (userId: string) => {
     const userRef = ref(db, `users/${userId}`);
@@ -94,68 +104,81 @@ export default function UserManagementPage() {
 
   return (
     <div className="animate-fadeIn">
-      <h1 className="text-3xl font-bold tracking-tight mb-6">User Management</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
+        <div className="relative w-full sm:max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input 
+            placeholder="Search by name or email..."
+            className="pl-10"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Last Login</TableHead>
-              <TableHead>Date Registered</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.length > 0 ? (
-              users.map(user => (
-                <TableRow key={user.uid}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={user.photoURL} alt={user.name} />
-                        <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">{user.name}</p>
-                        <p className="text-sm text-muted-foreground">{user.email}</p>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{formatDateSafe(user.lastLogin)}</TableCell>
-                  <TableCell>{formatDateSafe(user.createdAt)}</TableCell>
-                  <TableCell className="text-right">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                         <Button variant="destructive" size="icon" disabled={user.email === 'res97ad7777mn@gmail.com'}>
-                            <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Delete user</span>
-                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                         <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                               This action cannot be undone. This will permanently delete the user and all their data.
-                            </AlertDialogDescription>
-                         </AlertDialogHeader>
-                         <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteUser(user.uid)}>Delete</AlertDialogAction>
-                         </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
+         <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>User</TableHead>
+                  <TableHead>Last Login</TableHead>
+                  <TableHead>Date Registered</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">
-                  No users found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.length > 0 ? (
+                  filteredUsers.map(user => (
+                    <TableRow key={user.uid}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage src={user.photoURL} alt={user.name} />
+                            <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{user.name}</p>
+                            <p className="text-sm text-muted-foreground">{user.email}</p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{formatDateSafe(user.lastLogin)}</TableCell>
+                      <TableCell>{formatDateSafe(user.createdAt)}</TableCell>
+                      <TableCell className="text-right">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                             <Button variant="destructive" size="icon" disabled={user.email === 'res97ad7777mn@gmail.com'}>
+                                <Trash2 className="h-4 w-4" />
+                                <span className="sr-only">Delete user</span>
+                             </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                             <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                   This action cannot be undone. This will permanently delete the user and all their data.
+                                </AlertDialogDescription>
+                             </AlertDialogHeader>
+                             <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDeleteUser(user.uid)}>Delete</AlertDialogAction>
+                             </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-24 text-center">
+                      No users found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
       </div>
     </div>
   );

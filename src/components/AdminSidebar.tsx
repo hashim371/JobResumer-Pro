@@ -16,8 +16,8 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 
 const navItems = [
   { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -38,10 +38,15 @@ export function AdminSidebar() {
       console.error('Error signing out: ', error);
     }
   };
+  
+  const getInitials = (name: string) => {
+      if (!name) return 'A';
+      return name.split(' ').map(n => n[0]).join('').substring(0, 2);
+  }
 
   return (
-    <aside className="w-64 flex-shrink-0 border-r bg-background flex flex-col">
-      <div className="p-4 border-b">
+    <aside className="w-64 flex-shrink-0 border-r bg-background flex-col hidden lg:flex">
+      <div className="p-4 border-b h-16 flex items-center">
         <Link href="/admin/dashboard" className="flex items-center space-x-2">
             <svg
               className="h-6 w-6"
@@ -94,30 +99,38 @@ export function AdminSidebar() {
             <span className="font-bold font-headline">JobResumer</span>
         </Link>
       </div>
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-1">
         {navItems.map((item) => (
           <Link href={item.href} key={item.href}>
             <Button
               variant={pathname === item.href ? 'secondary' : 'ghost'}
               className="w-full justify-start"
             >
-              <item.icon className="mr-2 h-4 w-4" />
+              <item.icon className="mr-3 h-5 w-5" />
               {item.label}
             </Button>
           </Link>
         ))}
       </nav>
-      <div className="p-4 border-t mt-auto">
-        <Button variant="ghost" className="w-full justify-start" asChild>
+      <div className="p-4 border-t mt-auto space-y-2">
+        <Button variant="outline" className="w-full justify-start" asChild>
             <Link href="/">
-                <ArrowLeft className="mr-2 h-4 w-4" />
+                <ArrowLeft className="mr-3 h-5 w-5" />
                 Back to Site
             </Link>
         </Button>
-        <Button variant="ghost" className="w-full justify-start" onClick={handleSignOut}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
-        </Button>
+        <div className="flex items-center gap-3">
+             <Avatar className="h-9 w-9">
+                <AvatarImage src={user?.photoURL ?? ''} alt={user?.displayName ?? 'Admin'} />
+                <AvatarFallback>{getInitials(user?.displayName ?? 'Admin')}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 overflow-hidden">
+                <p className="text-sm font-semibold truncate">{user?.displayName}</p>
+            </div>
+            <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground flex-shrink-0">
+                <LogOut className="h-5 w-5" />
+            </Button>
+        </div>
       </div>
     </aside>
   );
