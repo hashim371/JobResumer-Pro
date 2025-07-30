@@ -1,12 +1,15 @@
 
 "use client"
 import { useState } from 'react';
-import { templates as initialTemplates, Template } from '@/app/templates/page';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { getTemplates, deleteTemplate, updateTemplate, Template } from '@/lib/template-store';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { ResumePreview } from '@/components/ResumePreview';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Loader2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,17 +21,65 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { toast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+
+const templateSchema = z.object({
+  name: z.string().min(1, 'Template name is required.'),
+  category: z.string().min(1, 'Category is required.'),
+});
 
 export default function AdminTemplatesPage() {
-  const [templates, setTemplates] = useState<Template[]>(initialTemplates);
+  // We need a way to force a re-render when the store changes.
+  const [_, setForceRender] = useState(0); 
+  const templates = getTemplates();
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   
+  const { toast } = useToast();
+
+  const form = useForm<z.infer<typeof templateSchema>>({
+    resolver: zodResolver(templateSchema),
+    defaultValues: { name: '', category: '' },
+  });
+
   const handleDelete = (templateId: string) => {
-    setTemplates(currentTemplates => currentTemplates.filter(t => t.id !== templateId));
+    deleteTemplate(templateId);
     toast({
         title: 'Template Deleted',
-        description: 'The template has been removed from the view. Refresh to reset.',
+        description: 'The template has been removed.',
     });
+    setForceRender(c => c + 1); // Force re-render
+  };
+
+  const handleEditClick = (template: Template) => {
+    setSelectedTemplate(template);
+    form.reset({ name: template.name, category: template.category });
+    setIsEditModalOpen(true);
+  };
+  
+  const handleEditSubmit = (values: z.infer<typeof templateSchema>) => {
+    if (selectedTemplate) {
+      updateTemplate(selectedTemplate.id, { ...selectedTemplate, ...values });
+      toast({
+        title: 'Template Updated',
+        description: 'The template details have been saved.',
+      });
+      setIsEditModalOpen(false);
+      setSelectedTemplate(null);
+      setForceRender(c => c + 1); // Force re-render
+    }
   };
 
   return (
@@ -56,7 +107,7 @@ export default function AdminTemplatesPage() {
                         <Badge variant="secondary" className="mt-2">{template.category}</Badge>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" onClick={() => handleEditClick(template)}>
                             <Edit className="h-4 w-4"/>
                             <span className="sr-only">Edit</span>
                         </Button>
@@ -71,12 +122,12 @@ export default function AdminTemplatesPage() {
                              <AlertDialogHeader>
                                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                   This will only remove the template from the view for this session. A full database integration is needed for permanent deletion.
+                                   This action will remove the template from view for all users for this session. This cannot be undone.
                                 </AlertDialogDescription>
                              </AlertDialogHeader>
                              <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDelete(template.id)}>Delete</AlertDialogAction>
+                                <AlertDialogAction onClick={() => handleDelete(template.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
                              </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
@@ -86,6 +137,54 @@ export default function AdminTemplatesPage() {
           </Card>
         ))}
       </div>
+
+       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Template</DialogTitle>
+            <DialogDescription>
+              Change the details for the &quot;{selectedTemplate?.name}&quot; template.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleEditSubmit)} className="space-y-4 py-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                     <Label htmlFor="name">Template Name</Label>
+                    <FormControl>
+                      <Input id="name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                     <Label htmlFor="category">Category</Label>
+                    <FormControl>
+                      <Input id="category" {...field} />
+                    </FormControl>
+                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <DialogFooter>
+                 <Button type="button" variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                  Save Changes
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -9,7 +9,7 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { CheckCircle, DraftingCompass, Star, FileText } from "lucide-react";
-import { templates } from "@/app/templates/page";
+import { getTemplates } from "@/lib/template-store";
 import { ResumePreview } from "@/components/ResumePreview";
 
 const companyLogos: { [key: string]: React.ReactNode } = {
@@ -67,8 +67,9 @@ export default function Home() {
   ];
 
   const companies = ["Google", "Microsoft", "Facebook"];
-  const featuredTemplates = ["dublin", "new-york", "sydney", "paris", "london", "geneva"];
-
+  const allTemplates = getTemplates();
+  const featuredTemplateIds = ["dublin", "new-york", "sydney", "paris", "london", "geneva"];
+  const featuredTemplates = allTemplates.filter(t => featuredTemplateIds.includes(t.id));
 
   return (
     <>
@@ -97,17 +98,17 @@ export default function Home() {
                     className="w-full max-w-5xl mx-auto"
                   >
                     <CarouselContent className="-ml-2">
-                      {featuredTemplates.map((templateId) => (
-                        <CarouselItem key={templateId} className="pl-2 md:basis-1/2 lg:basis-1/3">
+                      {featuredTemplates.map((template) => (
+                        <CarouselItem key={template.id} className="pl-2 md:basis-1/2 lg:basis-1/3">
                           <div className="p-1">
-                            <Link href={`/resume/create?template=${templateId}`} className="block group">
+                            <Link href={`/resume/create?template=${template.id}`} className="block group">
                               <Card className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">
                                 <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                                   <div
                                     className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"
                                     style={{width: '500%', height: '500%'}}
                                   >
-                                    <ResumePreview templateId={templateId} />
+                                    <ResumePreview templateId={template.id} />
                                   </div>
                                 </CardContent>
                               </Card>

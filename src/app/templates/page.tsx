@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -10,12 +10,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, FileText } from 'lucide-react';
 import { ResumePreview } from '@/components/ResumePreview';
-
-export interface Template {
-    id: string;
-    name: string;
-    category: string;
-}
+import { getTemplates, Template } from '@/lib/template-store';
 
 export const templates: Template[] = [
   { id: 'dublin', name: 'Dublin', category: 'Simple' },
@@ -53,13 +48,20 @@ export const templates: Template[] = [
   { id: 'mexico-city', name: 'Mexico City', category: 'Artistic' },
 ];
 
-const filters = ['All templates', 'Simple', 'Two-column', 'Picture', 'ATS', 'Modern', 'Classic', 'Elegant', 'Bold', 'Professional', 'Creative', 'Dynamic', 'Minimalist', 'Artistic'];
+const allCategories = ['All templates', ...Array.from(new Set(templates.map(t => t.category)))];
 
 
 export default function TemplatesPage() {
   const [activeFilter, setActiveFilter] = useState('All templates');
+  const [currentTemplates, setCurrentTemplates] = useState<Template[]>([]);
 
-  const filteredTemplates = templates.filter(template => {
+  useEffect(() => {
+    setCurrentTemplates(getTemplates());
+  }, []);
+
+  const filters = ['All templates', ...Array.from(new Set(currentTemplates.map(t => t.category)))];
+
+  const filteredTemplates = currentTemplates.filter(template => {
     if (activeFilter === 'All templates') return true;
     return template.category === activeFilter;
   });
