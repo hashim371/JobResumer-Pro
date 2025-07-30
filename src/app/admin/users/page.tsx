@@ -77,6 +77,17 @@ export default function UserManagementPage() {
       return name.split(' ').map(n => n[0]).join('').substring(0, 2);
   }
 
+  const formatDateSafe = (dateString: string) => {
+    try {
+      if (dateString && !isNaN(new Date(dateString).getTime())) {
+        return format(new Date(dateString), 'PPp');
+      }
+      return "N/A";
+    } catch (error) {
+      return "N/A";
+    }
+  }
+
   if (loading) {
     return <div className="flex h-full w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
   }
@@ -110,8 +121,8 @@ export default function UserManagementPage() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{format(new Date(user.lastLogin), 'PPp')}</TableCell>
-                  <TableCell>{format(new Date(user.createdAt), 'PPp')}</TableCell>
+                  <TableCell>{formatDateSafe(user.lastLogin)}</TableCell>
+                  <TableCell>{formatDateSafe(user.createdAt)}</TableCell>
                   <TableCell className="text-right">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
