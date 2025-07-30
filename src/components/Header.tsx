@@ -81,15 +81,15 @@ export function Header() {
                 strokeLinejoin="round"
               />
               <path
-                d="M9 14L11 12L9 10"
-                stroke="hsl(var(--primary))"
+                d="M9.5 13.5L12.5 11.5L9.5 9.5"
+                stroke="hsl(var(--primary-foreground))"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
                <path
-                d="M12 16H16"
-                stroke="hsl(var(--primary))"
+                d="M12.5 15.5H15.5"
+                stroke="hsl(var(--primary-foreground))"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
