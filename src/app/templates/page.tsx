@@ -69,12 +69,12 @@ export default function TemplatesPage() {
       <Header />
       <main className="flex-1 bg-muted/20">
         <div className="container mx-auto px-4 py-8 md:py-16">
-          <div className="text-center mb-12 animate-fadeIn">
+          <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight font-headline bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">Choose Your Perfect Template</h1>
             <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">Select from our professionally designed resume templates to create a standout application in minutes.</p>
           </div>
 
-          <div className="flex justify-center mb-10 flex-wrap gap-2 animate-fadeIn">
+          <div className="flex justify-center mb-10 flex-wrap gap-2">
             {filters.map(filter => (
               <Button
                 key={filter}
@@ -87,7 +87,7 @@ export default function TemplatesPage() {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 animate-fadeIn">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {filteredTemplates.map(template => (
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block group">
                 <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-accent">

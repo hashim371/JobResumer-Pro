@@ -121,7 +121,7 @@ export default function AuthPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
        <Link href="/" className="absolute top-4 left-4 rounded-md p-2 hover:bg-accent transition-colors">&larr; Back to Home</Link>
-      <Tabs defaultValue="signin" className="w-full max-w-md animate-fadeIn">
+      <Tabs defaultValue="signin" className="w-full max-w-md">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="signin">Sign In</TabsTrigger>
           <TabsTrigger value="signup">Sign Up</TabsTrigger>
