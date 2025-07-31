@@ -50,19 +50,18 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold tracking-tight text-gray-900 font-headline">{personalInfo?.name}</h1>
                     <p className="text-xl mt-1 text-gray-600 font-light tracking-wide">{personalInfo?.role}</p>
-                    <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-1 text-xs mt-2 text-gray-600">
+                    <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-1 text-xs mt-3 text-gray-600">
                         {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                         {personalInfo?.phone && <span className="text-gray-400">&bull;</span>}
-                        {personalInfo?.email && <span className="break-all">{personalInfo.email}</span>}
-                        {personalInfo?.location && <span className="text-gray-400">&bull;</span>}
-                        {personalInfo?.location && <span>{personalInfo.location}</span>}
-                        {personalInfo?.website && <><span className="text-gray-400">&bull;</span><span className="break-all">{personalInfo.website}</span></>}
+                        {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                        {personalInfo?.location && <><span className="text-gray-400">&bull;</span><span>{personalInfo.location}</span></>}
+                        {personalInfo?.website && <><span className="text-gray-400">&bull;</span><a href={personalInfo.website} className="break-all">{personalInfo.website}</a></>}
                     </div>
                 </div>
 
                 <div className="mb-6">
                     <h2 className="text-sm font-bold text-gray-700 tracking-widest uppercase pb-2 border-b-2 border-gray-300 mb-3">Summary</h2>
-                    <p>{summary}</p>
+                    <p className="text-xs leading-normal">{summary}</p>
                 </div>
 
                 <div className="mb-6">
@@ -73,7 +72,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                                 <h3 className="font-bold text-md">{exp.jobTitle} at {exp.company}</h3>
                                 <p className="text-xs font-mono whitespace-nowrap">{exp.startDate} - {exp.endDate}</p>
                             </div>
-                            <p className="mt-1 text-gray-700">{exp.description}</p>
+                            <p className="mt-1 text-gray-700 text-xs leading-normal">{exp.description}</p>
                         </div>
                     ))}
                 </div>
@@ -108,11 +107,11 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
         <div className="p-8 font-body bg-white text-slate-800 min-h-full text-sm">
             <h1 className="text-3xl font-bold font-headline text-slate-900">{personalInfo?.name}</h1>
             <p className="text-lg text-slate-600 font-medium">{personalInfo?.role}</p>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs mt-1 text-slate-600">
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs mt-2 text-slate-600">
                 {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                {personalInfo?.email && <span className="break-all">{personalInfo.email}</span>}
+                {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                 {personalInfo?.location && <span>{personalInfo.location}</span>}
-                {personalInfo?.website && <span className="break-all">{personalInfo.website}</span>}
+                {personalInfo?.website && <a href={personalInfo.website} className="break-all">{personalInfo.website}</a>}
             </div>
 
             <section className="mt-6">
@@ -124,12 +123,12 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 <h2 className="text-md font-bold uppercase text-slate-700 tracking-wider border-b border-slate-300 pb-1 mb-2 font-headline">Work Experience</h2>
                 {experience?.map((exp:any, i:number) => (
                     <div key={i} className="mb-3">
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-baseline">
                             <h3 className="text-sm font-bold text-slate-800">{exp.jobTitle}</h3>
                             <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
                         </div>
                         <h4 className="text-xs font-semibold text-slate-600 italic">{exp.company}</h4>
-                        <p className="text-slate-700 mt-1 text-xs">{exp.description}</p>
+                        <p className="text-slate-700 mt-1 text-xs leading-normal">{exp.description}</p>
                     </div>
                 ))}
             </section>
@@ -164,29 +163,29 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 <div className="text-center">
                     <h1 className="text-3xl tracking-widest font-light uppercase font-headline">{personalInfo?.name}</h1>
                     <p className="text-md tracking-widest uppercase text-gray-600 mt-1">{personalInfo?.role}</p>
-                    <div className="text-xs text-gray-500 mt-2 flex justify-center items-center flex-wrap gap-x-2">
+                    <div className="text-xs text-gray-500 mt-2 flex justify-center items-center flex-wrap gap-x-3 gap-y-1">
                         {personalInfo?.location && <span>{personalInfo.location}</span>}
-                        {personalInfo?.phone && <span>&bull; {personalInfo.phone}</span>}
-                        {personalInfo?.email && <span className="break-all">&bull; {personalInfo.email}</span>}
-                        {personalInfo?.website && <span className="break-all">&bull; {personalInfo.website}</span>}
+                        {personalInfo?.phone && <><span className="text-gray-400">&bull;</span><span>{personalInfo.phone}</span></>}
+                        {personalInfo?.email && <><span className="text-gray-400">&bull;</span><a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a></>}
+                        {personalInfo?.website && <><span className="text-gray-400">&bull;</span><a href={personalInfo.website} className="break-all">{personalInfo.website}</a></>}
                     </div>
                 </div>
 
                 <div className="mt-6">
                     <h2 className="text-[11pt] font-semibold tracking-[.2em] text-center uppercase border-y border-gray-400 py-1 my-3 font-headline">Summary</h2>
-                    <p className="text-center">{summary}</p>
+                    <p className="text-center text-xs leading-normal">{summary}</p>
                 </div>
 
                 <div className="mt-5">
                     <h2 className="text-[11pt] font-semibold tracking-[.2em] text-center uppercase border-y border-gray-400 py-1 my-3 font-headline">Experience</h2>
                     {experience?.map((exp: any, i: number) => (
                         <div key={i} className="mb-3">
-                            <div className="flex justify-between">
+                            <div className="flex justify-between items-baseline">
                                 <h3 className="font-bold text-sm">{exp.company}</h3>
                                 <p className="text-sm whitespace-nowrap">{exp.startDate} &mdash; {exp.endDate}</p>
                             </div>
                             <p className="italic text-sm">{exp.jobTitle}</p>
-                            <p className="mt-0.5 text-gray-800">{exp.description}</p>
+                            <p className="mt-0.5 text-gray-800 text-xs leading-normal">{exp.description}</p>
                         </div>
                     ))}
                 </div>
@@ -206,7 +205,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
 
                 <div className="mt-5">
                     <h2 className="text-[11pt] font-semibold tracking-[.2em] text-center uppercase border-y border-gray-400 py-1 my-3 font-headline">Skills</h2>
-                     <p className="text-center">{skills?.map((skill: any) => skill.name).join(' &bull; ')}</p>
+                     <p className="text-center text-xs">{skills?.map((skill: any) => skill.name).join(' &bull; ')}</p>
                 </div>
             </div>
         )
@@ -223,16 +222,16 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                         <p className="text-lg font-light text-gray-600">{personalInfo?.role}</p>
                     </div>
                     <div className="text-right text-xs space-y-1">
-                        {personalInfo?.email && <p className="break-all">{personalInfo.email}</p>}
+                        {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                         {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                         {personalInfo?.location && <p>{personalInfo.location}</p>}
-                        {personalInfo?.website && <p className="break-all">{personalInfo.website}</p>}
+                        {personalInfo?.website && <a href={personalInfo.website} className="break-all">{personalInfo.website}</a>}
                     </div>
                 </div>
 
                 <div className="mt-8 border-t-2 border-blue-800 pt-6">
                     <h2 className="text-lg font-bold uppercase text-blue-800 tracking-wider mb-3 font-headline">About Me</h2>
-                    <p className="leading-relaxed">{summary}</p>
+                    <p className="leading-relaxed text-xs">{summary}</p>
                 </div>
 
                 <div className="mt-6">
@@ -240,12 +239,12 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                      {experience?.map((exp: any, i: number) => (
                         <div key={i} className="mb-4 grid grid-cols-4 gap-4">
                            <div className="col-span-1 text-xs text-gray-600">
-                               <p className="whitespace-nowrap">{exp.startDate} - {exp.endDate}</p>
+                               <p className="whitespace-nowrap font-semibold">{exp.startDate} - {exp.endDate}</p>
                                <p>{exp.company}</p>
                            </div>
                            <div className="col-span-3">
                                 <h3 className="font-bold">{exp.jobTitle}</h3>
-                               <p className="mt-1 leading-relaxed">{exp.description}</p>
+                               <p className="mt-1 leading-relaxed text-xs">{exp.description}</p>
                            </div>
                         </div>
                     ))}
@@ -264,7 +263,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     </div>
                      <div>
                         <h2 className="text-lg font-bold uppercase text-blue-800 tracking-wider mb-3 font-headline">Skills</h2>
-                        <ul className="list-disc list-inside space-y-1">
+                        <ul className="list-disc list-inside space-y-1 text-xs">
                           {skills?.map((skill: any, i:number) => <li key={i}>{skill.name}</li>)}
                         </ul>
                     </div>
@@ -283,23 +282,23 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 <p className="text-md text-gray-600 mt-1">{personalInfo?.role}</p>
             </div>
 
-            <div className="mb-6">
-              <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider mb-3 font-headline">Contact</h2>
-              <div className="text-xs space-y-1">
-                {personalInfo?.email && <p className="break-all">{personalInfo.email}</p>}
-                {personalInfo?.phone && <p>{personalInfo.phone}</p>}
-                {personalInfo?.location && <p>{personalInfo.location}</p>}
-                {personalInfo?.website && <p className="break-all">{personalInfo.website}</p>}
-              </div>
+            <div className="space-y-6">
+                <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider font-headline">Contact</h2>
+                <div className="text-xs space-y-2">
+                  {personalInfo?.email && <p className="break-all flex items-center gap-2"><Mail size={12}/> <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a></p>}
+                  {personalInfo?.phone && <p className="flex items-center gap-2"><Phone size={12}/> {personalInfo.phone}</p>}
+                  {personalInfo?.location && <p className="flex items-center gap-2"><MapPin size={12}/> {personalInfo.location}</p>}
+                  {personalInfo?.website && <p className="break-all flex items-center gap-2"><LinkIcon size={12}/> <a href={personalInfo.website}>{personalInfo.website}</a></p>}
+                </div>
             </div>
 
-            <div className="mb-6">
+             <div className="mt-6">
               <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider mb-3 font-headline">Skills</h2>
-              <ul className="text-xs space-y-1">
-                {skills?.map((skill: any, i: number) => <li key={i} className="bg-gray-200 px-2 py-1 rounded-sm">{skill.name}</li>)}
-              </ul>
+              <div className="flex flex-wrap gap-2">
+                {skills?.map((skill: any, i: number) => <span key={i} className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-sm">{skill.name}</span>)}
+              </div>
             </div>
-             <div className="mt-auto">
+             <div className="mt-auto pt-6">
               <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider mb-3 font-headline">Education</h2>
               {education?.map((edu:any, i:number) => (
                 <div key={i} className="mb-3 text-xs">
@@ -313,7 +312,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
           <div className="w-2/3 p-8">
              <section className="mb-8">
                 <h2 className="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4 font-headline">Summary</h2>
-                <p className="leading-relaxed text-sm">{summary}</p>
+                <p className="leading-relaxed text-xs">{summary}</p>
               </section>
               <section>
                 <h2 className="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4 font-headline">Experience</h2>
@@ -344,25 +343,25 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     </div>
                 </div>
                 <div className="flex justify-start items-center flex-wrap text-xs gap-x-6 gap-y-2 mb-6">
-                    {personalInfo?.email && <p className="flex items-center gap-2"><Mail className="h-3 w-3 text-teal-600" /> {personalInfo.email}</p>}
+                    {personalInfo?.email && <p className="flex items-center gap-2"><Mail className="h-3 w-3 text-teal-600" /> <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a></p>}
                     {personalInfo?.phone && <p className="flex items-center gap-2"><Phone className="h-3 w-3 text-teal-600" /> {personalInfo.phone}</p>}
                     {personalInfo?.location && <p className="flex items-center gap-2"><MapPin className="h-3 w-3 text-teal-600" /> {personalInfo.location}</p>}
-                    {personalInfo?.website && <p className="flex items-center gap-2 break-all"><LinkIcon className="h-3 w-3 text-teal-600" /> {personalInfo.website}</p>}
+                    {personalInfo?.website && <p className="flex items-center gap-2 break-all"><LinkIcon className="h-3 w-3 text-teal-600" /> <a href={personalInfo.website}>{personalInfo.website}</a></p>}
                 </div>
                 <div className="mb-6">
                     <h2 className="text-sm font-bold uppercase tracking-widest text-teal-600 mb-3 border-b border-teal-200 pb-1 font-headline">Summary</h2>
-                    <p className="leading-relaxed">{summary}</p>
+                    <p className="leading-relaxed text-xs">{summary}</p>
                 </div>
                 <div className="mb-6">
                     <h2 className="text-sm font-bold uppercase tracking-widest text-teal-600 mb-3 border-b border-teal-200 pb-1 font-headline">Experience</h2>
                     {experience?.map((exp: any, i:number) => (
                         <div key={i} className="mb-3">
-                            <div className="flex justify-between">
+                            <div className="flex justify-between items-baseline">
                                 <h3 className="font-semibold text-md text-teal-800">{exp.jobTitle}</h3>
                                 <p className="text-xs text-gray-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</p>
                             </div>
                             <p className="text-sm text-gray-600 italic">{exp.company}</p>
-                            <p className="mt-1">{exp.description}</p>
+                            <p className="mt-1 text-xs leading-normal">{exp.description}</p>
                         </div>
                     ))}
                 </div>
@@ -398,10 +397,9 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 </div>
                  <div className="flex justify-center items-center flex-wrap text-xs gap-x-4 gap-y-1 mt-4 text-gray-600">
                     {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                    {personalInfo?.phone && <span>&bull;</span>}
-                    {personalInfo?.email && <span className="break-all">{personalInfo.email}</span>}
-                    {personalInfo?.location && <span>&bull;</span>}
-                    {personalInfo?.location && <span>{personalInfo.location}</span>}
+                    {personalInfo?.phone && <span className="text-rose-300">&bull;</span>}
+                    {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                    {personalInfo?.location && <><span className="text-rose-300">&bull;</span><span>{personalInfo.location}</span></>}
                 </div>
 
                 <div className="mt-6">
@@ -456,17 +454,17 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     <p className="text-md text-orange-100 mb-8">{personalInfo?.role}</p>
                     <div className="mb-6">
                         <h2 className="text-md font-semibold uppercase tracking-wider mb-2 font-headline">Contact</h2>
-                        <div className="text-xs space-y-1 text-orange-100">
-                        {personalInfo?.email && <p className="break-all">{personalInfo.email}</p>}
-                        {personalInfo?.phone && <p>{personalInfo.phone}</p>}
-                        {personalInfo?.location && <p>{personalInfo.location}</p>}
-                        {personalInfo?.website && <p className="break-all">{personalInfo.website}</p>}
+                        <div className="text-xs space-y-2 text-orange-100">
+                            {personalInfo?.email && <p className="break-all flex items-center gap-2"><Mail size={12}/> <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a></p>}
+                            {personalInfo?.phone && <p className="flex items-center gap-2"><Phone size={12}/> {personalInfo.phone}</p>}
+                            {personalInfo?.location && <p className="flex items-center gap-2"><MapPin size={12}/> {personalInfo.location}</p>}
+                            {personalInfo?.website && <p className="break-all flex items-center gap-2"><LinkIcon size={12}/> <a href={personalInfo.website}>{personalInfo.website}</a></p>}
                         </div>
                     </div>
                     <div className="mb-6">
                         <h2 className="text-md font-semibold uppercase tracking-wider mb-2 font-headline">Skills</h2>
                         <ul className="text-xs flex flex-wrap gap-2">
-                        {skills?.map((skill: any, i: number) => <li key={i} className="bg-orange-400 px-2 py-1 rounded">{skill.name}</li>)}
+                            {skills?.map((skill: any, i: number) => <li key={i} className="bg-orange-400 px-2 py-1 rounded">{skill.name}</li>)}
                         </ul>
                     </div>
                 </div>
@@ -483,21 +481,21 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
             </div>
             <div className="w-2/3 p-8 bg-white text-gray-800">
                 <section className="mb-6">
-                <h2 className="text-xl font-bold text-orange-600 border-b-2 border-orange-200 pb-2 mb-3 font-headline">Summary</h2>
-                <p className="leading-relaxed">{summary}</p>
+                    <h2 className="text-xl font-bold text-orange-600 border-b-2 border-orange-200 pb-2 mb-3 font-headline">Summary</h2>
+                    <p className="leading-relaxed text-xs">{summary}</p>
                 </section>
                 <section>
-                <h2 className="text-xl font-bold text-orange-600 border-b-2 border-orange-200 pb-2 mb-3 font-headline">Experience</h2>
-                {experience?.map((exp: any, i: number) => (
-                    <div key={i} className="mb-4">
-                    <div className="flex justify-between items-baseline">
-                        <h3 className="text-md font-bold">{exp.jobTitle}</h3>
-                        <p className="text-xs text-gray-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</p>
-                    </div>
-                    <h4 className="font-semibold text-orange-700 italic">{exp.company}</h4>
-                    <p className="mt-1 leading-relaxed text-xs">{exp.description}</p>
-                    </div>
-                ))}
+                    <h2 className="text-xl font-bold text-orange-600 border-b-2 border-orange-200 pb-2 mb-3 font-headline">Experience</h2>
+                    {experience?.map((exp: any, i: number) => (
+                        <div key={i} className="mb-4">
+                        <div className="flex justify-between items-baseline">
+                            <h3 className="text-md font-bold">{exp.jobTitle}</h3>
+                            <p className="text-xs text-gray-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</p>
+                        </div>
+                        <h4 className="font-semibold text-orange-700 italic">{exp.company}</h4>
+                        <p className="mt-1 leading-relaxed text-xs">{exp.description}</p>
+                        </div>
+                    ))}
                 </section>
             </div>
             </div>
@@ -508,18 +506,17 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
           <div className="text-center mb-8">
             <h1 className="text-4xl font-extrabold tracking-tight font-headline">{personalInfo?.name}</h1>
             <p className="text-lg font-light text-sky-200">{personalInfo?.role}</p>
-            <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-1 text-xs mt-2 text-sky-300">
+            <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-1 text-xs mt-3 text-sky-300">
               {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-              {personalInfo?.phone && <span>&bull;</span>}
-              {personalInfo?.email && <span className="break-all">{personalInfo.email}</span>}
-              {personalInfo?.location && <span>&bull;</span>}
-              {personalInfo?.location && <span>{personalInfo.location}</span>}
+              {personalInfo?.phone && <span className="text-sky-600">&bull;</span>}
+              {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+              {personalInfo?.location && <><span className="text-sky-600">&bull;</span><span>{personalInfo.location}</span></>}
             </div>
           </div>
 
           <div className="mb-6">
             <h2 className="text-sm font-bold tracking-widest uppercase pb-2 border-b-2 border-sky-700 mb-3 text-sky-300 font-headline">Summary</h2>
-            <p className="text-sky-100">{summary}</p>
+            <p className="text-sky-100 text-xs leading-normal">{summary}</p>
           </div>
 
           <div className="mb-6">
@@ -530,7 +527,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                   <h3 className="font-bold text-md text-sky-100">{exp.jobTitle} at {exp.company}</h3>
                   <p className="text-xs font-mono text-sky-400 whitespace-nowrap">{exp.startDate} - {exp.endDate}</p>
                 </div>
-                <p className="mt-1 text-sky-200">{exp.description}</p>
+                <p className="mt-1 text-sky-200 text-xs leading-normal">{exp.description}</p>
               </div>
             ))}
           </div>
@@ -541,7 +538,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
               {education?.map((edu: any, i: number) => (
                 <div key={i} className="mb-2">
                   <h3 className="font-bold text-sky-100">{edu.degree}</h3>
-                  <p className="text-sky-200">{edu.school}</p>
+                  <p className="text-sky-200 text-xs">{edu.school}</p>
                   <p className="text-xs text-sky-400">{edu.graduationDate}</p>
                 </div>
               ))}
@@ -562,15 +559,15 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
     case 'lisbon':
       return (
         <div className="p-8 font-body bg-white text-gray-700 min-h-full text-sm">
-          <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-green-700">
+          <div className="flex items-start justify-between mb-6 pb-4 border-b-2 border-green-700">
             <div>
               <h1 className="text-4xl font-extrabold text-green-800 font-headline">{personalInfo?.name}</h1>
               <p className="text-lg text-gray-500 mt-1">{personalInfo?.role}</p>
             </div>
             <div className="text-right text-xs space-y-1">
-              {personalInfo?.email && <p>Email: <span className="break-all font-semibold">{personalInfo.email}</span></p>}
-              {personalInfo?.phone && <p>Phone: <span className="font-semibold">{personalInfo.phone}</span></p>}
-              {personalInfo?.location && <p>Location: <span className="font-semibold">{personalInfo.location}</span></p>}
+              {personalInfo?.email && <p><a href={`mailto:${personalInfo.email}`} className="break-all font-semibold text-green-700">{personalInfo.email}</a></p>}
+              {personalInfo?.phone && <p><span className="font-semibold">{personalInfo.phone}</span></p>}
+              {personalInfo?.location && <p><span className="font-semibold">{personalInfo.location}</span></p>}
             </div>
           </div>
           <div className="mb-6">
@@ -581,11 +578,11 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
             <h2 className="text-sm font-bold uppercase tracking-widest text-green-700 mb-2 font-headline">Experience</h2>
             {experience?.map((exp: any, i: number) => (
               <div key={i} className="mb-3">
-                <div className="flex justify-between">
+                <div className="flex justify-between items-baseline">
                   <h3 className="font-semibold text-md text-green-900">{exp.jobTitle} at {exp.company}</h3>
                   <p className="text-xs text-gray-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</p>
                 </div>
-                <p className="mt-1 text-xs">{exp.description}</p>
+                <p className="mt-1 text-xs leading-normal">{exp.description}</p>
               </div>
             ))}
           </div>
@@ -615,29 +612,29 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
               <div className="bg-gray-800 text-white p-6 -m-8 mb-6">
                   <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
                   <p className="text-lg font-light text-gray-300 mt-1">{personalInfo?.role}</p>
-                  <div className="flex flex-wrap justify-between mt-2 text-xs text-gray-300 gap-x-4 gap-y-1">
+                  <div className="flex flex-wrap justify-between items-center mt-3 text-xs text-gray-300 gap-x-4 gap-y-1">
                       {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                      {personalInfo?.email && <span className="break-all">{personalInfo.email}</span>}
+                      {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                       {personalInfo?.location && <span>{personalInfo.location}</span>}
-                      {personalInfo?.website && <span className="break-all">{personalInfo.website}</span>}
+                      {personalInfo?.website && <a href={personalInfo.website} className="break-all">{personalInfo.website}</a>}
                   </div>
               </div>
   
               <section className="mb-6">
                   <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Professional Summary</h2>
-                  <p className="text-slate-700 leading-relaxed">{summary}</p>
+                  <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
               </section>
               
               <section className="mb-6">
                   <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Work Experience</h2>
                   {experience?.map((exp:any, i:number) => (
                       <div key={i} className="mb-4">
-                          <div className="flex justify-between">
+                          <div className="flex justify-between items-baseline">
                               <h3 className="text-md font-bold text-slate-800">{exp.jobTitle}</h3>
                               <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
                           </div>
                           <h4 className="text-sm font-semibold text-slate-600 italic">{exp.company}</h4>
-                          <p className="text-slate-700 mt-1">{exp.description}</p>
+                          <p className="text-slate-700 mt-1 text-xs leading-normal">{exp.description}</p>
                       </div>
                   ))}
               </section>
@@ -672,7 +669,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                         <p className="text-lg font-light text-gray-600 mt-1">{personalInfo?.role}</p>
                     </div>
                     <div className="text-right text-xs text-gray-600 space-y-1">
-                        {personalInfo?.email && <p className="break-all">{personalInfo.email}</p>}
+                        {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                         {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                         {personalInfo?.location && <p>{personalInfo.location}</p>}
                     </div>
@@ -680,7 +677,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
 
                 <div className="mt-6">
                     <h2 className="text-sm font-bold uppercase text-red-600 tracking-widest mb-2 font-headline">Summary</h2>
-                    <p className="leading-relaxed">{summary}</p>
+                    <p className="leading-relaxed text-xs">{summary}</p>
                 </div>
 
                 <div className="mt-6">
@@ -720,7 +717,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
         );
     case 'kyoto':
         return (
-            <div className="p-10 font-serif bg-cream-50 text-gray-700 min-h-full text-sm leading-relaxed">
+            <div className="p-10 font-serif bg-cream-50 text-gray-700 min-h-full text-sm leading-relaxed" style={{ backgroundColor: '#FDFBF5' }}>
                 <div className="text-center mb-10">
                     <h1 className="text-4xl font-thin tracking-widest font-headline">{personalInfo?.name}</h1>
                     <p className="text-lg text-gray-500 mt-2 tracking-wider">{personalInfo?.role}</p>
@@ -728,7 +725,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
 
                 <div className="flex justify-center flex-wrap items-center text-xs gap-x-6 gap-y-1 mb-8 text-gray-500">
                     {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                    {personalInfo?.email && <span>{personalInfo.email}</span>}
+                    {personalInfo?.email && <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a>}
                     {personalInfo?.location && <span>{personalInfo.location}</span>}
                 </div>
 
@@ -773,11 +770,11 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                         <h1 className="text-4xl font-bold text-amber-400 font-headline">{personalInfo?.name}</h1>
                         <p className="text-lg text-gray-300 mt-1">{personalInfo?.role}</p>
                     </div>
-                    <div>
+                    <div className="space-y-6">
                         <div className="mb-6">
                             <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-2 font-headline">Contact</h2>
                             <div className="text-xs space-y-1">
-                                {personalInfo?.email && <p className="break-all">{personalInfo.email}</p>}
+                                {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                                 {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                                 {personalInfo?.location && <p>{personalInfo.location}</p>}
                             </div>
@@ -795,7 +792,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 <div className="w-2/3 p-8">
                     <section className="mb-6">
                         <h2 className="text-xl font-bold text-amber-400 border-b-2 border-amber-500 pb-2 mb-3 font-headline">Summary</h2>
-                        <p className="leading-relaxed text-gray-300">{summary}</p>
+                        <p className="leading-relaxed text-gray-300 text-xs">{summary}</p>
                     </section>
                     <section className="mb-6">
                         <h2 className="text-xl font-bold text-amber-400 border-b-2 border-amber-500 pb-2 mb-3 font-headline">Experience</h2>
@@ -803,7 +800,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                             <div key={i} className="mb-4">
                                 <h3 className="text-md font-bold">{exp.jobTitle}</h3>
                                 <p className="text-sm text-gray-400 italic">{exp.company} / {exp.startDate} - {exp.endDate}</p>
-                                <p className="mt-1 text-xs text-gray-300">{exp.description}</p>
+                                <p className="mt-1 text-xs text-gray-300 leading-normal">{exp.description}</p>
                             </div>
                         ))}
                     </section>
@@ -829,7 +826,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     <p className="text-lg text-purple-600">{personalInfo?.role}</p>
                     <div className="flex justify-center flex-wrap items-center text-xs gap-x-4 gap-y-1 mt-2 text-gray-500">
                         {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                        {personalInfo?.email && <span className="break-all">{personalInfo.email}</span>}
+                        {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                         {personalInfo?.location && <span>{personalInfo.location}</span>}
                     </div>
                 </div>
@@ -843,7 +840,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                         <div key={i} className="mb-3">
                             <h3 className="font-semibold text-md">{exp.jobTitle} at <span className="text-pink-600">{exp.company}</span></h3>
                             <p className="text-xs text-gray-500">{exp.startDate} - {exp.endDate}</p>
-                            <p className="text-xs mt-1">{exp.description}</p>
+                            <p className="text-xs mt-1 leading-normal">{exp.description}</p>
                         </div>
                     ))}
                 </section>
@@ -890,7 +887,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                                     <div key={i} className="mb-3">
                                         <h3 className="font-bold">{exp.jobTitle}</h3>
                                         <p className="text-sm italic text-gray-600">{exp.company} | {exp.startDate} - {exp.endDate}</p>
-                                        <p className="text-xs mt-1">{exp.description}</p>
+                                        <p className="text-xs mt-1 leading-normal">{exp.description}</p>
                                     </div>
                                 ))}
                             </section>
@@ -898,7 +895,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                         <div className="col-span-1 text-xs space-y-6">
                             <section>
                                 <h2 className="font-bold text-green-700 mb-2 font-headline">CONTACT</h2>
-                                {personalInfo?.email && <p className="break-all">{personalInfo.email}</p>}
+                                {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                                 {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                                 {personalInfo?.location && <p>{personalInfo.location}</p>}
                             </section>
@@ -934,7 +931,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     <div className="col-span-4 space-y-6">
                         <section>
                             <h2 className="font-bold tracking-widest text-gray-500 uppercase mb-2 text-[10px] font-headline">Info</h2>
-                            {personalInfo?.email && <p className="break-all">{personalInfo.email}</p>}
+                            {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                             {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                             {personalInfo?.location && <p>{personalInfo.location}</p>}
                         </section>
@@ -981,10 +978,10 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
           <div className="w-1/3 bg-blue-800 text-white p-8 flex flex-col items-center text-center">
              <h1 className="text-2xl font-bold font-headline">{personalInfo?.name}</h1>
             <p className="text-sm text-blue-200">{personalInfo?.role}</p>
-            <div className="text-xs space-y-4 mt-8">
+            <div className="text-xs space-y-6 mt-8">
               <section>
                 <h2 className="font-bold uppercase tracking-wider mb-2 font-headline">Contact</h2>
-                {personalInfo?.email && <p className="break-all">{personalInfo.email}</p>}
+                {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                 {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                 {personalInfo?.location && <p>{personalInfo.location}</p>}
               </section>
@@ -1003,7 +1000,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
           <div className="w-2/3 p-8 bg-white">
             <section className="mb-6">
               <h2 className="text-xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-3 font-headline">Summary</h2>
-              <p className="leading-relaxed">{summary}</p>
+              <p className="leading-relaxed text-xs">{summary}</p>
             </section>
             <section className="mb-6">
               <h2 className="text-xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-3 font-headline">Experience</h2>
@@ -1037,10 +1034,10 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 <div className="mb-6">
                   <h2 className="text-sm font-bold uppercase text-gray-400 tracking-wider mb-3 font-headline">Contact</h2>
                   <div className="space-y-1">
-                    {personalInfo?.email && <p className="break-all">{personalInfo.email}</p>}
+                    {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                     {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                     {personalInfo?.location && <p>{personalInfo.location}</p>}
-                    {personalInfo?.website && <p className="break-all">{personalInfo.website}</p>}
+                    {personalInfo?.website && <a href={personalInfo.website} className="break-all">{personalInfo.website}</a>}
                   </div>
                 </div>
 
@@ -1050,7 +1047,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     {skills?.map((skill: any, i: number) => <li key={i}>{skill.name}</li>)}
                   </ul>
                 </div>
-                 <div className="mt-auto">
+                 <div className="mt-auto pt-6">
                   <h2 className="text-sm font-bold uppercase text-gray-400 tracking-wider mb-3 font-headline">Education</h2>
                   {education?.map((edu:any, i:number) => (
                     <div key={i} className="mb-3">
@@ -1065,7 +1062,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
           <div className="w-2/3 p-10 bg-gray-50">
              <section className="mb-8">
                 <h2 className="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4 font-headline">Professional Summary</h2>
-                <p className="leading-relaxed text-sm">{summary}</p>
+                <p className="leading-relaxed text-xs">{summary}</p>
               </section>
               <section>
                 <h2 className="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4 font-headline">Work Experience</h2>
@@ -1090,29 +1087,29 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
             <div className="bg-indigo-700 text-white p-6 -m-8 mb-6">
                 <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
                 <p className="text-lg text-indigo-200 font-light mt-1">{personalInfo?.role}</p>
-                <div className="flex flex-wrap justify-between mt-2 text-xs text-indigo-200 gap-x-4 gap-y-1">
+                <div className="flex flex-wrap justify-between items-center mt-3 text-xs text-indigo-200 gap-x-4 gap-y-1">
                     {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                    {personalInfo?.email && <span className="break-all">{personalInfo.email}</span>}
+                    {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
                     {personalInfo?.location && <span>{personalInfo.location}</span>}
-                    {personalInfo?.website && <span className="break-all">{personalInfo.website}</span>}
+                    {personalInfo?.website && <a href={personalInfo.website} className="break-all">{personalInfo.website}</a>}
                 </div>
             </div>
 
             <section className="mb-6">
                 <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Professional Summary</h2>
-                <p className="text-slate-700 leading-relaxed">{summary}</p>
+                <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
             </section>
             
             <section className="mb-6">
                 <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Work Experience</h2>
                 {experience?.map((exp:any, i:number) => (
                     <div key={i} className="mb-4">
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-baseline">
                             <h3 className="text-md font-bold text-slate-800">{exp.jobTitle}</h3>
                             <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
                         </div>
                         <h4 className="text-sm font-semibold text-slate-600 italic">{exp.company}</h4>
-                        <p className="text-slate-700 mt-1">{exp.description}</p>
+                        <p className="text-slate-700 mt-1 text-xs leading-normal">{exp.description}</p>
                     </div>
                 ))}
             </section>
