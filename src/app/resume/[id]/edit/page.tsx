@@ -334,10 +334,11 @@ export default function ResumeEditPage() {
         
         <div className="h-full flex items-start justify-center overflow-hidden">
             <div 
-              className="w-[8.5in] h-[11in] bg-white shadow-2xl origin-top"
+              className="w-[8.5in] bg-white shadow-2xl"
               style={{
                 transform: 'scale(0.8)',
                 transformOrigin: 'top center',
+                height: '11in'
               }}
             >
               <ResumePreview templateId={resumeData.templateId} data={watchedData} />
@@ -347,4 +348,3 @@ export default function ResumeEditPage() {
     </div>
   );
 }
-
