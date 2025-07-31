@@ -85,7 +85,7 @@ export default function Home() {
                 Create a stunning, professional resume in minutes. Our templates are designed to impress and help you land your dream job.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
-                <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out">
+                <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg hover:shadow-xl transition-transform duration-200 hover:scale-105">
                   <Link href="/templates">
                     Choose a Template
                   </Link>
@@ -101,7 +101,7 @@ export default function Home() {
                         <CarouselItem key={template.id} className="pl-2 md:basis-1/2 lg:basis-1/3">
                           <div className="p-1">
                             <Link href={`/resume/create?template=${template.id}`} className="block group">
-                              <Card className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-primary">
+                              <Card className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 border-transparent hover:border-primary">
                                 <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                                   <div
                                     className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"
@@ -144,7 +144,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {features.map((feature, index) => (
-                <Card key={index} className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card/80 backdrop-blur-sm">
+                <Card key={index} className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow duration-200 bg-card/80 backdrop-blur-sm">
                   <div className="flex justify-center mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-semibold">{feature.title}</h3>
                   <p className="mt-2 text-muted-foreground">{feature.description}</p>
@@ -160,7 +160,7 @@ export default function Home() {
                 <h2 className="text-center text-2xl font-semibold text-muted-foreground mb-8">
                     Trusted by professionals who landed jobs at
                 </h2>
-                <div className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4 text-gray-500 hover:text-gray-700 transition-colors duration-300">
+                <div className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">
                     {companies.map((company) => (
                        <div key={company} title={company} className="h-10 flex items-center">
                            {companyLogos[company]}

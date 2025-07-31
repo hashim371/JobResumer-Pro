@@ -97,7 +97,7 @@ export default function MyResumesPage() {
               {resumes.map(resume => {
                  const template = templates.find(t => t.id === resume.templateId);
                  return (
-                    <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 border-transparent hover:border-primary">
+                    <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-200 ease-in-out hover:border-primary">
                       <Link href={`/resume/${resume.id}`} className="block overflow-hidden">
                          <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                            <div
@@ -106,7 +106,7 @@ export default function MyResumesPage() {
                             >
                               <ResumePreview templateId={resume.templateId} data={resume} />
                             </div>
-                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                 <Eye className="h-12 w-12 text-white" />
                             </div>
                         </CardContent>

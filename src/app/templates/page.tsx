@@ -78,7 +78,7 @@ export default function TemplatesPage() {
               <Button
                 key={filter}
                 variant={activeFilter === filter ? 'default' : 'outline'}
-                className="rounded-full px-6 transition-all duration-300 ease-in-out"
+                className="rounded-full px-6 transition-colors duration-200"
                 onClick={() => setActiveFilter(filter)}
               >
                 {filter}
@@ -89,7 +89,7 @@ export default function TemplatesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {filteredTemplates.map(template => (
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block group">
-                <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-primary">
+                <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-200 ease-in-out hover:border-primary">
                  <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                     <div
                       className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"
@@ -97,7 +97,7 @@ export default function TemplatesPage() {
                     >
                       <ResumePreview templateId={template.id} />
                     </div>
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4">
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-4">
                         <div className="text-center">
                            <Button asChild className="rounded-full bg-white/90 text-gray-900 font-semibold hover:bg-white shadow-md">
                             <span>Use Template <ArrowRight className="ml-2 h-4 w-4"/></span>

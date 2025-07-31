@@ -82,14 +82,14 @@ export function Header() {
               />
                <path 
                 d="M9.5 13.5L11 12L9.5 10.5" 
-                stroke="hsl(var(--primary-foreground))" 
+                stroke="hsl(var(--primary))" 
                 strokeWidth="1.5" 
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
               />
-              <path 
-                d="M12.5 15.5H15.5" 
-                stroke="hsl(var(--primary-foreground))" 
+               <path 
+                d="M14.5 13.5L13 15L14.5 16.5" 
+                stroke="hsl(var(--primary))" 
                 strokeWidth="1.5" 
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
@@ -134,7 +134,7 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button asChild className="rounded-full bg-primary text-primary-foreground shadow-sm hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out">
+            <Button asChild className="rounded-full shadow-sm transition-transform duration-200 hover:scale-105 hover:shadow-lg">
               <Link href="/auth">Sign In</Link>
             </Button>
           )}

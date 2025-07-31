@@ -95,7 +95,7 @@ export function ContactForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={form.formState.isSubmitting} className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md hover:scale-105 hover:shadow-lg transition-all duration-300">
+        <Button type="submit" disabled={form.formState.isSubmitting} className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-md hover:shadow-lg transition-transform duration-200 hover:scale-105">
           {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {form.formState.isSubmitting ? "Sending..." : "Send Message"}
         </Button>
