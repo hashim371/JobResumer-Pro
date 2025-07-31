@@ -331,7 +331,7 @@ export default function ResumeEditPage() {
         
         <div className="h-full flex items-start justify-center overflow-hidden">
             <div 
-              className="w-[8.5in] h-[11in] bg-white shadow-2xl origin-top-center"
+              className="w-[8.5in] h-[11in] bg-white shadow-2xl"
               style={{
                 transform: 'scale(0.8)',
                 transformOrigin: 'top center',

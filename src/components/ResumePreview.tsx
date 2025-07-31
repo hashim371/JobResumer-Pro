@@ -1104,10 +1104,10 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     default:
       return (
         <div className="font-body bg-white text-slate-800 min-h-full text-sm flex flex-col">
-            <div className="bg-indigo-700 text-white p-8">
+            <div className="bg-primary text-primary-foreground p-8">
                 <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
-                <p className="text-lg text-indigo-200 font-light mt-1">{personalInfo?.role}</p>
-                <div className="flex flex-wrap justify-start items-center mt-4 text-xs text-indigo-200 gap-x-4 gap-y-1">
+                <p className="text-lg text-primary-foreground/80 font-light mt-1">{personalInfo?.role}</p>
+                <div className="flex flex-wrap justify-start items-center mt-4 text-xs text-primary-foreground/80 gap-x-4 gap-y-1">
                     {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                     {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                     {personalInfo?.location && <span>{personalInfo.location}</span>}
@@ -1116,12 +1116,12 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
             </div>
             <div className="p-8 flex-grow">
               <section className="mb-6">
-                  <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Professional Summary</h2>
+                  <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Professional Summary</h2>
                   <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
               </section>
               
               <section className="mb-6">
-                  <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Work Experience</h2>
+                  <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Work Experience</h2>
                   {experience?.map((exp:any, i:number) => (
                       <div key={i} className="mb-4">
                           <div className="flex justify-between items-baseline">
@@ -1136,7 +1136,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
               
               <section className="grid grid-cols-2 gap-x-8">
                    <div>
-                      <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Education</h2>
+                      <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Education</h2>
                       {education?.map((edu:any, i:number) => (
                           <div key={i} className="mb-3">
                               <h3 className="text-md font-bold text-slate-800">{edu.degree}</h3>
@@ -1147,9 +1147,9 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                   </div>
 
                   <div>
-                      <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Skills</h2>
+                      <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Skills</h2>
                       <ul className="flex flex-wrap gap-2 mt-2">
-                          {skills?.map((skill: any, i:number) => <li key={i} className="bg-indigo-100 text-indigo-800 text-xs font-medium px-3 py-1 rounded-md">{skill.name}</li>)}
+                          {skills?.map((skill: any, i:number) => <li key={i} className="bg-secondary text-secondary-foreground text-xs font-medium px-3 py-1 rounded-md">{skill.name}</li>)}
                       </ul>
                   </div>
               </section>
