@@ -23,7 +23,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from '@/hooks/use-toast';
-import { templates } from '@/app/templates/page';
+import { getTemplates } from '@/lib/template-store';
 
 interface Resume {
   id: string;
@@ -39,6 +39,7 @@ export default function MyResumesPage() {
   const { user, loading: authLoading } = useAuth();
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loading, setLoading] = useState(true);
+  const templates = getTemplates();
 
   useEffect(() => {
     if (authLoading) return;
@@ -90,8 +91,8 @@ export default function MyResumesPage() {
              </Button>
         </div>
       </header>
-      <main className="flex-1 bg-muted/20 animate-fadeIn">
-        <div className="container mx-auto px-4 py-8 md:py-12">
+      <main className="flex-1 bg-muted/20">
+        <div className="container mx-auto px-4 py-8 md:py-12 animate-fadeIn">
           {resumes.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {resumes.map(resume => {

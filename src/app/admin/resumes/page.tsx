@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
-import { templates } from '@/app/templates/page';
+import { getTemplates } from '@/lib/template-store';
 
 interface Resume {
   id: string;
@@ -34,6 +34,7 @@ interface UserWithResumes {
 export default function AdminResumesPage() {
   const [usersWithResumes, setUsersWithResumes] = useState<UserWithResumes[]>([]);
   const [loading, setLoading] = useState(true);
+  const templates = getTemplates();
 
   useEffect(() => {
     const usersRef = ref(db, 'users/');

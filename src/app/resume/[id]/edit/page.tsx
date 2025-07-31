@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
 import { ref as dbRef, onValue, update } from 'firebase/database';
@@ -21,9 +21,6 @@ import { ResumePreview } from '@/components/ResumePreview';
 import { templates } from '@/app/templates/page';
 import Link from 'next/link';
 import { createRoot } from 'react-dom/client';
-
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 const experienceSchema = z.object({
   jobTitle: z.string().min(1, 'Job title is required'),
@@ -68,9 +65,6 @@ export default function ResumeEditPage() {
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-
-
-  const previewRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<ResumeData>({
     resolver: zodResolver(resumeSchema),
@@ -130,6 +124,11 @@ export default function ResumeEditPage() {
   
   const downloadAs = async (format: 'pdf' | 'png') => {
     setIsDownloading(true);
+
+    const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+      import('jspdf'),
+      import('html2canvas'),
+    ]);
 
     const container = document.createElement('div');
     container.style.position = 'absolute';
@@ -332,7 +331,6 @@ export default function ResumeEditPage() {
         
         <div className="h-full flex items-start justify-center overflow-hidden">
             <div 
-              ref={previewRef}
               className="w-[8.5in] h-[11in] bg-white shadow-2xl origin-top-center"
               style={{
                 transform: 'scale(0.8)',

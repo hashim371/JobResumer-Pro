@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
@@ -11,8 +11,6 @@ import { Button } from '@/components/ui/button';
 import { ResumePreview } from '@/components/ResumePreview';
 import Link from 'next/link';
 import { toast } from '@/hooks/use-toast';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { createRoot } from 'react-dom/client';
 
 export default function ResumeViewPage() {
@@ -22,8 +20,6 @@ export default function ResumeViewPage() {
     const [resumeData, setResumeData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [isDownloading, setIsDownloading] = useState(false);
-
-    const previewRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (authLoading) return;
@@ -51,6 +47,11 @@ export default function ResumeViewPage() {
     const downloadAs = async (format: 'pdf' | 'png') => {
         setIsDownloading(true);
     
+        const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+            import('jspdf'),
+            import('html2canvas'),
+        ]);
+
         const container = document.createElement('div');
         container.style.position = 'absolute';
         container.style.left = '-9999px';
@@ -121,7 +122,7 @@ export default function ResumeViewPage() {
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-muted/40">
+        <div className="flex flex-col min-h-screen bg-muted/40 animate-fadeIn">
             <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="container flex h-16 items-center">
                     <Button variant="ghost" asChild>
@@ -146,7 +147,6 @@ export default function ResumeViewPage() {
 
             <main className="flex-1 py-8 flex items-center justify-center">
                  <div 
-                    ref={previewRef}
                     className="w-[8.5in] h-[11in] bg-white shadow-2xl"
                     >
                     <ResumePreview templateId={resumeData.templateId} data={resumeData} />

@@ -35,7 +35,7 @@ export default function AdminLayout({
     <div className="flex min-h-screen bg-muted/40">
       <AdminSidebar />
       <main className="flex-1 flex flex-col">
-        <div className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto">
+        <div className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto animate-fadeIn">
           {children}
         </div>
       </main>

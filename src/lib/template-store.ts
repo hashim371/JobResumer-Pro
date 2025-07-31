@@ -1,5 +1,10 @@
+import { initialTemplates } from "@/lib/templates";
 
-import { templates as initialTemplates, Template } from "@/app/templates/page";
+export interface Template {
+  id: string;
+  name: string;
+  category: string;
+}
 
 let liveTemplates: Template[] = [...initialTemplates];
 
@@ -11,8 +16,8 @@ export const deleteTemplate = (templateId: string): void => {
   liveTemplates = liveTemplates.filter(t => t.id !== templateId);
 };
 
-export const updateTemplate = (templateId: string, updatedData: Partial<Template>): void => {
-  liveTemplates = liveTemplates.map(t => 
+export const updateTemplate = (templateId: string, updatedData: Partial<Omit<Template, 'id'>>): void => {
+  liveTemplates = liveTemplates.map(t =>
     t.id === templateId ? { ...t, ...updatedData } : t
   );
 };
