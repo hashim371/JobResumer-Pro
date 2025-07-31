@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { CheckCircle, DraftingCompass, Star } from "lucide-react";
 import { getTemplates } from "@/lib/template-store";
-import { ResumePreview } from "@/components/ResumePreview";
+import { TemplateThumbnail } from "@/components/TemplateThumbnail";
 import { MicrosoftLogo, GoogleLogo, FacebookLogo } from "@/components/CompanyLogos";
 
 export default function Home() {
@@ -91,14 +91,9 @@ export default function Home() {
                         <CarouselItem key={template.id} className="pl-2 md:basis-1/2 lg:basis-1/3">
                           <div className="p-1">
                             <Link href={`/resume/create?template=${template.id}`} className="block group">
-                              <Card className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 border-transparent hover:border-primary">
+                              <Card className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-primary">
                                 <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                                  <div
-                                    className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"
-                                    style={{width: '500%', height: '500%'}}
-                                  >
-                                    <ResumePreview templateId={template.id} />
-                                  </div>
+                                  <TemplateThumbnail templateId={template.id} />
                                 </CardContent>
                               </Card>
                             </Link>
@@ -134,7 +129,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {features.map((feature, index) => (
-                <Card key={index} className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow duration-200 bg-card/80 backdrop-blur-sm transform hover:-translate-y-1">
+                <Card key={index} className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 bg-card/80 backdrop-blur-sm transform hover:-translate-y-2">
                   <div className="flex justify-center mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-semibold">{feature.title}</h3>
                   <p className="mt-2 text-muted-foreground">{feature.description}</p>
@@ -176,7 +171,7 @@ export default function Home() {
                 {testimonials.map((testimonial, index) => (
                   <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                     <div className="p-1 h-full">
-                      <Card className="flex flex-col justify-between h-full p-6 shadow-md bg-card/80 backdrop-blur-sm transform hover:-translate-y-1 transition-transform duration-200">
+                      <Card className="flex flex-col justify-between h-full p-6 shadow-md bg-card/80 backdrop-blur-sm transform hover:-translate-y-2 transition-transform duration-300">
                         <div>
                           <div className="flex items-center mb-2">
                             {Array(testimonial.stars).fill(0).map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />)}

@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getTemplates, deleteTemplate, updateTemplate, Template } from '@/lib/template-store';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { ResumePreview } from '@/components/ResumePreview';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2, Loader2 } from 'lucide-react';
@@ -33,6 +32,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { TemplateThumbnail } from '@/components/TemplateThumbnail';
 
 const templateSchema = z.object({
   name: z.string().min(1, 'Template name is required.'),
@@ -91,14 +91,9 @@ export default function AdminTemplatesPage() {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {templates.map(template => (
-          <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                <div
-                  className="absolute inset-0 transform scale-[0.20] origin-top-left"
-                  style={{width: '500%', height: '500%'}}
-                >
-                  <ResumePreview templateId={template.id} />
-                </div>
+                <TemplateThumbnail templateId={template.id} />
             </CardContent>
             <CardFooter className="p-4 bg-card flex flex-col items-start">
                 <div className="w-full flex justify-between items-start">

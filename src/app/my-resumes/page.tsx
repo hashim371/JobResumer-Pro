@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation';
 import { Loader2, Plus, Trash2, Edit, FileText, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ResumePreview } from '@/components/ResumePreview';
 import Link from 'next/link';
 import {
   AlertDialog,
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from '@/hooks/use-toast';
 import { getTemplates } from '@/lib/template-store';
+import { TemplateThumbnail } from '@/components/TemplateThumbnail';
 
 interface Resume {
   id: string;
@@ -98,15 +98,10 @@ export default function MyResumesPage() {
               {resumes.map(resume => {
                  const template = templates.find(t => t.id === resume.templateId);
                  return (
-                    <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:border-primary transform hover:-translate-y-1">
+                    <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:border-primary transform hover:-translate-y-2">
                       <Link href={`/resume/${resume.id}`} className="block overflow-hidden">
                          <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                           <div
-                              className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"
-                              style={{width: '500%', height: '500%'}}
-                            >
-                              <ResumePreview templateId={resume.templateId} data={resume} />
-                            </div>
+                           <TemplateThumbnail templateId={resume.templateId} />
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Eye className="h-12 w-12 text-white" />
                             </div>
