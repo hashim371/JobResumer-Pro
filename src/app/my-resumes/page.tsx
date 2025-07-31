@@ -101,7 +101,7 @@ export default function MyResumesPage() {
                     <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:border-primary transform hover:-translate-y-2">
                       <Link href={`/resume/${resume.id}`} className="block overflow-hidden">
                          <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                           <ResumePreview templateId={resume.templateId} data={resume} />
+                           <ResumePreview templateId={resume.templateId} data={resume} isClickable={false} />
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Eye className="h-12 w-12 text-white" />
                             </div>
@@ -156,5 +156,3 @@ export default function MyResumesPage() {
     </>
   );
 }
-
-    

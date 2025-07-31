@@ -58,7 +58,7 @@ export default function TemplatesPage() {
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block group">
                 <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:border-primary transform hover:-translate-y-2">
                  <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                    <ResumePreview templateId={template.id} />
+                    <ResumePreview templateId={template.id} isClickable={false} />
                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4">
                         <div className="text-center">
                            <Button asChild className="rounded-full bg-white/90 text-gray-900 font-semibold hover:bg-white shadow-md">
@@ -81,5 +81,3 @@ export default function TemplatesPage() {
     </>
   );
 }
-
-    

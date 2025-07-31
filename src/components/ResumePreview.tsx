@@ -36,11 +36,27 @@ const mockData = {
 interface ResumePreviewProps {
   templateId: string;
   data?: any;
+  isClickable?: boolean;
 }
 
-export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewProps) => {
+export const ResumePreview = ({ templateId, data: initialData, isClickable = true }: ResumePreviewProps) => {
   const data = initialData || mockData;
   const { personalInfo, summary, experience, education, skills } = data;
+
+  const ContactLink = ({ type, value }: { type: 'email' | 'website'; value: string }) => {
+    if (!value) return null;
+    const href = type === 'email' ? `mailto:${value}` : value;
+    if (isClickable) {
+      return <a href={href} className="break-all">{value}</a>;
+    }
+    return <span className="break-all">{value}</span>;
+  };
+  
+  const ContactItem = ({ icon: Icon, value, href }: { icon: React.ElementType, value?: string, href?: string }) => {
+    if (!value) return null;
+    const content = isClickable && href ? <a href={href}>{value}</a> : <span>{value}</span>;
+    return <p className="break-all flex items-center gap-2"><Icon size={12}/> {content}</p>;
+  };
 
   // Different Template Layouts
   switch (templateId) {
@@ -53,9 +69,9 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-1 text-xs mt-3 text-gray-600">
                         {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                         {personalInfo?.phone && <span className="text-gray-400">&bull;</span>}
-                        {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                        {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                         {personalInfo?.location && <><span className="text-gray-400">&bull;</span><span>{personalInfo.location}</span></>}
-                        {personalInfo?.website && <><span className="text-gray-400">&bull;</span><a href={personalInfo.website} className="break-all">{personalInfo.website}</a></>}
+                        {personalInfo?.website && <><span className="text-gray-400">&bull;</span><ContactLink type="website" value={personalInfo.website} /></>}
                     </div>
                 </div>
 
@@ -109,9 +125,9 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
             <p className="text-lg text-slate-600 font-medium">{personalInfo?.role}</p>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs mt-2 text-slate-600">
                 {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                 {personalInfo?.location && <span>{personalInfo.location}</span>}
-                {personalInfo?.website && <a href={personalInfo.website} className="break-all">{personalInfo.website}</a>}
+                {personalInfo?.website && <ContactLink type="website" value={personalInfo.website} />}
             </div>
 
             <section className="mt-6">
@@ -166,8 +182,8 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     <div className="text-xs text-gray-500 mt-2 flex justify-center items-center flex-wrap gap-x-3 gap-y-1">
                         {personalInfo?.location && <span>{personalInfo.location}</span>}
                         {personalInfo?.phone && <><span className="text-gray-400">&bull;</span><span>{personalInfo.phone}</span></>}
-                        {personalInfo?.email && <><span className="text-gray-400">&bull;</span><a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a></>}
-                        {personalInfo?.website && <><span className="text-gray-400">&bull;</span><a href={personalInfo.website} className="break-all">{personalInfo.website}</a></>}
+                        {personalInfo?.email && <><span className="text-gray-400">&bull;</span><ContactLink type="email" value={personalInfo.email} /></>}
+                        {personalInfo?.website && <><span className="text-gray-400">&bull;</span><ContactLink type="website" value={personalInfo.website} /></>}
                     </div>
                 </div>
 
@@ -222,10 +238,10 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                         <p className="text-lg font-light text-gray-600">{personalInfo?.role}</p>
                     </div>
                     <div className="text-right text-xs space-y-1">
-                        {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                        {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                         {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                         {personalInfo?.location && <p>{personalInfo.location}</p>}
-                        {personalInfo?.website && <a href={personalInfo.website} className="break-all">{personalInfo.website}</a>}
+                        {personalInfo?.website && <ContactLink type="website" value={personalInfo.website} />}
                     </div>
                 </div>
 
@@ -285,10 +301,10 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
             <div className="space-y-6">
                 <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider font-headline">Contact</h2>
                 <div className="text-xs space-y-2">
-                  {personalInfo?.email && <p className="break-all flex items-center gap-2"><Mail size={12}/> <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a></p>}
-                  {personalInfo?.phone && <p className="flex items-center gap-2"><Phone size={12}/> {personalInfo.phone}</p>}
-                  {personalInfo?.location && <p className="flex items-center gap-2"><MapPin size={12}/> {personalInfo.location}</p>}
-                  {personalInfo?.website && <p className="break-all flex items-center gap-2"><LinkIcon size={12}/> <a href={personalInfo.website}>{personalInfo.website}</a></p>}
+                  <ContactItem icon={Mail} value={personalInfo?.email} href={`mailto:${personalInfo?.email}`} />
+                  <ContactItem icon={Phone} value={personalInfo?.phone} />
+                  <ContactItem icon={MapPin} value={personalInfo?.location} />
+                  <ContactItem icon={LinkIcon} value={personalInfo?.website} href={personalInfo?.website} />
                 </div>
             </div>
 
@@ -343,10 +359,10 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     </div>
                 </div>
                 <div className="flex justify-start items-center flex-wrap text-xs gap-x-6 gap-y-2 mb-6">
-                    {personalInfo?.email && <p className="flex items-center gap-2"><Mail className="h-3 w-3 text-teal-600" /> <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a></p>}
+                    {personalInfo?.email && <p className="flex items-center gap-2"><Mail className="h-3 w-3 text-teal-600" /> <ContactLink type="email" value={personalInfo.email} /></p>}
                     {personalInfo?.phone && <p className="flex items-center gap-2"><Phone className="h-3 w-3 text-teal-600" /> {personalInfo.phone}</p>}
                     {personalInfo?.location && <p className="flex items-center gap-2"><MapPin className="h-3 w-3 text-teal-600" /> {personalInfo.location}</p>}
-                    {personalInfo?.website && <p className="flex items-center gap-2 break-all"><LinkIcon className="h-3 w-3 text-teal-600" /> <a href={personalInfo.website}>{personalInfo.website}</a></p>}
+                    {personalInfo?.website && <p className="flex items-center gap-2 break-all"><LinkIcon className="h-3 w-3 text-teal-600" /> <ContactLink type="website" value={personalInfo.website} /></p>}
                 </div>
                 <div className="mb-6">
                     <h2 className="text-sm font-bold uppercase tracking-widest text-teal-600 mb-3 border-b border-teal-200 pb-1 font-headline">Summary</h2>
@@ -398,7 +414,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                  <div className="flex justify-center items-center flex-wrap text-xs gap-x-4 gap-y-1 mt-4 text-gray-600">
                     {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                     {personalInfo?.phone && <span className="text-rose-300">&bull;</span>}
-                    {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                    {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                     {personalInfo?.location && <><span className="text-rose-300">&bull;</span><span>{personalInfo.location}</span></>}
                 </div>
 
@@ -455,10 +471,10 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     <div className="mb-6">
                         <h2 className="text-md font-semibold uppercase tracking-wider mb-2 font-headline">Contact</h2>
                         <div className="text-xs space-y-2 text-orange-100">
-                            {personalInfo?.email && <p className="break-all flex items-center gap-2"><Mail size={12}/> <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a></p>}
-                            {personalInfo?.phone && <p className="flex items-center gap-2"><Phone size={12}/> {personalInfo.phone}</p>}
-                            {personalInfo?.location && <p className="flex items-center gap-2"><MapPin size={12}/> {personalInfo.location}</p>}
-                            {personalInfo?.website && <p className="break-all flex items-center gap-2"><LinkIcon size={12}/> <a href={personalInfo.website}>{personalInfo.website}</a></p>}
+                             <ContactItem icon={Mail} value={personalInfo?.email} href={`mailto:${personalInfo?.email}`} />
+                             <ContactItem icon={Phone} value={personalInfo?.phone} />
+                             <ContactItem icon={MapPin} value={personalInfo?.location} />
+                             <ContactItem icon={LinkIcon} value={personalInfo?.website} href={personalInfo?.website} />
                         </div>
                     </div>
                     <div className="mb-6">
@@ -509,7 +525,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
             <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-1 text-xs mt-3 text-sky-300">
               {personalInfo?.phone && <span>{personalInfo.phone}</span>}
               {personalInfo?.phone && <span className="text-sky-600">&bull;</span>}
-              {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+              {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
               {personalInfo?.location && <><span className="text-sky-600">&bull;</span><span>{personalInfo.location}</span></>}
             </div>
           </div>
@@ -565,7 +581,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
               <p className="text-lg text-gray-500 mt-1">{personalInfo?.role}</p>
             </div>
             <div className="text-right text-xs space-y-1">
-              {personalInfo?.email && <p><a href={`mailto:${personalInfo.email}`} className="break-all font-semibold text-green-700">{personalInfo.email}</a></p>}
+              {personalInfo?.email && <p><ContactLink type="email" value={personalInfo.email} /></p>}
               {personalInfo?.phone && <p><span className="font-semibold">{personalInfo.phone}</span></p>}
               {personalInfo?.location && <p><span className="font-semibold">{personalInfo.location}</span></p>}
             </div>
@@ -614,9 +630,9 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                   <p className="text-lg font-light text-gray-300 mt-1">{personalInfo?.role}</p>
                   <div className="flex flex-wrap justify-between items-center mt-3 text-xs text-gray-300 gap-x-4 gap-y-1">
                       {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                      {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                      {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                       {personalInfo?.location && <span>{personalInfo.location}</span>}
-                      {personalInfo?.website && <a href={personalInfo.website} className="break-all">{personalInfo.website}</a>}
+                      {personalInfo?.website && <ContactLink type="website" value={personalInfo.website} />}
                   </div>
               </div>
   
@@ -669,7 +685,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                         <p className="text-lg font-light text-gray-600 mt-1">{personalInfo?.role}</p>
                     </div>
                     <div className="text-right text-xs text-gray-600 space-y-1">
-                        {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                        {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                         {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                         {personalInfo?.location && <p>{personalInfo.location}</p>}
                     </div>
@@ -725,7 +741,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
 
                 <div className="flex justify-center flex-wrap items-center text-xs gap-x-6 gap-y-1 mb-8 text-gray-500">
                     {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                    {personalInfo?.email && <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a>}
+                    {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                     {personalInfo?.location && <span>{personalInfo.location}</span>}
                 </div>
 
@@ -774,7 +790,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                         <div className="mb-6">
                             <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-2 font-headline">Contact</h2>
                             <div className="text-xs space-y-1">
-                                {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                                {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                                 {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                                 {personalInfo?.location && <p>{personalInfo.location}</p>}
                             </div>
@@ -826,7 +842,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     <p className="text-lg text-purple-600">{personalInfo?.role}</p>
                     <div className="flex justify-center flex-wrap items-center text-xs gap-x-4 gap-y-1 mt-2 text-gray-500">
                         {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                        {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                        {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                         {personalInfo?.location && <span>{personalInfo.location}</span>}
                     </div>
                 </div>
@@ -895,7 +911,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                         <div className="col-span-1 text-xs space-y-6">
                             <section>
                                 <h2 className="font-bold text-green-700 mb-2 font-headline">CONTACT</h2>
-                                {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                                {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                                 {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                                 {personalInfo?.location && <p>{personalInfo.location}</p>}
                             </section>
@@ -931,7 +947,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                     <div className="col-span-4 space-y-6">
                         <section>
                             <h2 className="font-bold tracking-widest text-gray-500 uppercase mb-2 text-[10px] font-headline">Info</h2>
-                            {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                            {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                             {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                             {personalInfo?.location && <p>{personalInfo.location}</p>}
                         </section>
@@ -981,7 +997,7 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
             <div className="text-xs space-y-6 mt-8">
               <section>
                 <h2 className="font-bold uppercase tracking-wider mb-2 font-headline">Contact</h2>
-                {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                 {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                 {personalInfo?.location && <p>{personalInfo.location}</p>}
               </section>
@@ -1034,10 +1050,10 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 <div className="mb-6">
                   <h2 className="text-sm font-bold uppercase text-gray-400 tracking-wider mb-3 font-headline">Contact</h2>
                   <div className="space-y-1">
-                    {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                    {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                     {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                     {personalInfo?.location && <p>{personalInfo.location}</p>}
-                    {personalInfo?.website && <a href={personalInfo.website} className="break-all">{personalInfo.website}</a>}
+                    {personalInfo?.website && <ContactLink type="website" value={personalInfo.website} />}
                   </div>
                 </div>
 
@@ -1089,9 +1105,9 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
                 <p className="text-lg text-indigo-200 font-light mt-1">{personalInfo?.role}</p>
                 <div className="flex flex-wrap justify-between items-center mt-3 text-xs text-indigo-200 gap-x-4 gap-y-1">
                     {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                    {personalInfo?.email && <a href={`mailto:${personalInfo.email}`} className="break-all">{personalInfo.email}</a>}
+                    {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                     {personalInfo?.location && <span>{personalInfo.location}</span>}
-                    {personalInfo?.website && <a href={personalInfo.website} className="break-all">{personalInfo.website}</a>}
+                    {personalInfo?.website && <ContactLink type="website" value={personalInfo.website} />}
                 </div>
             </div>
 
