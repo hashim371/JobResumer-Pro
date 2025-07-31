@@ -47,7 +47,6 @@ export default function AuthPage() {
   const signInForm = useForm<z.infer<typeof signInSchema>>({ resolver: zodResolver(signInSchema), defaultValues: { email: "", password: "" } });
 
   useEffect(() => {
-    // This effect handles redirecting the user away from the auth page if they are logged in.
     if (!authLoading && user) {
         if (user.email === ADMIN_EMAIL) {
             router.push("/admin/dashboard");
@@ -76,16 +75,19 @@ export default function AuthPage() {
   
   const handleAuthError = (error: any) => {
     setFormLoading(false);
-    console.error("Authentication Error: ", error);
-    let description = error.message;
-    if (error.code === 'auth/invalid-credential') {
+    let description = 'An unexpected error occurred. Please try again.';
+    
+    if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
       description = 'Incorrect email or password.';
+    } else {
+      console.error("Authentication Error: ", error);
     }
+
     toast({ 
         variant: "destructive", 
         title: "Authentication Failed", 
         description: description,
-        duration: 9000,
+        duration: 5000,
     });
   }
 
@@ -95,31 +97,32 @@ export default function AuthPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       await updateProfile(userCredential.user, { displayName: data.email.split('@')[0] });
       await handleAuthSuccess({ ...userCredential.user, displayName: data.email.split('@')[0] });
-      // Redirect handled by useEffect
-    } catch (error) { handleAuthError(error); } finally { setFormLoading(false); }
+    } catch (error) { 
+      handleAuthError(error); 
+    } finally { 
+      setFormLoading(false); 
+    }
   };
 
   const onSignIn = async (data: z.infer<typeof signInSchema>) => {
     setFormLoading(true);
     try {
-      if (data.email === ADMIN_EMAIL && data.password === ADMIN_PASSWORD) {
-          const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-          await handleAuthSuccess(userCredential.user);
-          // Redirect to admin dashboard is handled by useEffect
-      } else {
-          const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-          await handleAuthSuccess(userCredential.user);
-          // Redirect to user dashboard is handled by useEffect
-      }
-    } catch (error) { handleAuthError(error); } finally { setFormLoading(false); }
+      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      await handleAuthSuccess(userCredential.user);
+    } catch (error) { 
+      handleAuthError(error); 
+    } finally { 
+      setFormLoading(false); 
+    }
   };
+
 
   if (authLoading || user) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4 animate-fadeIn">
        <Link href="/" className="absolute top-4 left-4 rounded-md p-2 hover:bg-accent transition-colors">&larr; Back to Home</Link>
       <Tabs defaultValue="signin" className="w-full max-w-md">
         <TabsList className="grid w-full grid-cols-2">
