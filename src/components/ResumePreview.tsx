@@ -43,19 +43,20 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
   const data = initialData || mockData;
   const { personalInfo, summary, experience, education, skills } = data;
 
-  const ContactLink = ({ type, value }: { type: 'email' | 'website'; value: string }) => {
+  const ContactLink = ({ type, value, className = '' }: { type: 'email' | 'website'; value: string, className?: string }) => {
     if (!value) return null;
-    const href = type === 'email' ? `mailto:${value}` : value;
+    const href = type === 'email' ? `mailto:${value}` : value.startsWith('http') ? value : `https://${value}`;
+    const displayValue = value.replace(/^(https?:\/\/)?(www\.)?/, '');
     if (isClickable) {
-      return <a href={href} className="break-all">{value}</a>;
+      return <a href={href} className={`break-all ${className}`}>{displayValue}</a>;
     }
-    return <span className="break-all">{value}</span>;
+    return <span className={`break-all ${className}`}>{displayValue}</span>;
   };
   
-  const ContactItem = ({ icon: Icon, value, href }: { icon: React.ElementType, value?: string, href?: string }) => {
+  const ContactItem = ({ icon: Icon, value, href, className }: { icon: React.ElementType, value?: string, href?: string, className?: string }) => {
     if (!value) return null;
     const content = isClickable && href ? <a href={href}>{value}</a> : <span>{value}</span>;
-    return <p className="break-all flex items-center gap-2"><Icon size={12}/> {content}</p>;
+    return <p className={cn("flex items-center gap-2", className)}><Icon size={12}/> {content}</p>;
   };
 
   // Different Template Layouts
@@ -68,10 +69,11 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                     <p className="text-xl mt-1 text-gray-600 font-light tracking-wide">{personalInfo?.role}</p>
                     <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-1 text-xs mt-3 text-gray-600">
                         {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                        {personalInfo?.phone && <span className="text-gray-400">&bull;</span>}
+                        {personalInfo?.phone && personalInfo?.email && <span className="text-gray-400">&bull;</span>}
                         {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
-                        {personalInfo?.location && <><span className="text-gray-400">&bull;</span><span>{personalInfo.location}</span></>}
-                        {personalInfo?.website && <><span className="text-gray-400">&bull;</span><ContactLink type="website" value={personalInfo.website} /></>}
+                        {(personalInfo.phone || personalInfo.email) && personalInfo.location && <span className="text-gray-400">&bull;</span>}
+                        {personalInfo?.location && <span>{personalInfo.location}</span>}
+                         {personalInfo?.website && <><span className="text-gray-400">&bull;</span><ContactLink type="website" value={personalInfo.website} /></>}
                     </div>
                 </div>
 
@@ -122,8 +124,8 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
       return (
         <div className="p-8 font-body bg-white text-slate-800 min-h-full text-sm">
             <h1 className="text-3xl font-bold font-headline text-slate-900">{personalInfo?.name}</h1>
-            <p className="text-lg text-slate-600 font-medium">{personalInfo?.role}</p>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs mt-2 text-slate-600">
+            <p className="text-lg text-slate-600 font-medium mb-2">{personalInfo?.role}</p>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
                 {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                 {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                 {personalInfo?.location && <span>{personalInfo.location}</span>}
@@ -238,10 +240,10 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                         <p className="text-lg font-light text-gray-600">{personalInfo?.role}</p>
                     </div>
                     <div className="text-right text-xs space-y-1">
-                        {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
+                        <ContactLink type="email" value={personalInfo?.email} className="block"/>
                         {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                         {personalInfo?.location && <p>{personalInfo.location}</p>}
-                        {personalInfo?.website && <ContactLink type="website" value={personalInfo.website} />}
+                        <ContactLink type="website" value={personalInfo?.website} className="block"/>
                     </div>
                 </div>
 
@@ -299,21 +301,23 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
             </div>
 
             <div className="space-y-6">
-                <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider font-headline">Contact</h2>
-                <div className="text-xs space-y-2">
-                  <ContactItem icon={Mail} value={personalInfo?.email} href={`mailto:${personalInfo?.email}`} />
-                  <ContactItem icon={Phone} value={personalInfo?.phone} />
-                  <ContactItem icon={MapPin} value={personalInfo?.location} />
-                  <ContactItem icon={LinkIcon} value={personalInfo?.website} href={personalInfo?.website} />
+                <div>
+                  <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider mb-3 font-headline">Contact</h2>
+                  <div className="text-xs space-y-2">
+                    <ContactItem icon={Mail} value={personalInfo?.email} href={`mailto:${personalInfo?.email}`} />
+                    <ContactItem icon={Phone} value={personalInfo?.phone} />
+                    <ContactItem icon={MapPin} value={personalInfo?.location} />
+                    <ContactItem icon={LinkIcon} value={personalInfo?.website?.replace(/^(https?:\/\/)?(www\.)?/, '')} href={personalInfo?.website} />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider mb-3 font-headline">Skills</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {skills?.map((skill: any, i: number) => <span key={i} className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-sm">{skill.name}</span>)}
+                  </div>
                 </div>
             </div>
 
-             <div className="mt-6">
-              <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider mb-3 font-headline">Skills</h2>
-              <div className="flex flex-wrap gap-2">
-                {skills?.map((skill: any, i: number) => <span key={i} className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-sm">{skill.name}</span>)}
-              </div>
-            </div>
              <div className="mt-auto pt-6">
               <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider mb-3 font-headline">Education</h2>
               {education?.map((edu:any, i:number) => (
@@ -359,10 +363,10 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                     </div>
                 </div>
                 <div className="flex justify-start items-center flex-wrap text-xs gap-x-6 gap-y-2 mb-6">
-                    {personalInfo?.email && <p className="flex items-center gap-2"><Mail className="h-3 w-3 text-teal-600" /> <ContactLink type="email" value={personalInfo.email} /></p>}
-                    {personalInfo?.phone && <p className="flex items-center gap-2"><Phone className="h-3 w-3 text-teal-600" /> {personalInfo.phone}</p>}
-                    {personalInfo?.location && <p className="flex items-center gap-2"><MapPin className="h-3 w-3 text-teal-600" /> {personalInfo.location}</p>}
-                    {personalInfo?.website && <p className="flex items-center gap-2 break-all"><LinkIcon className="h-3 w-3 text-teal-600" /> <ContactLink type="website" value={personalInfo.website} /></p>}
+                    <ContactItem icon={Mail} value={personalInfo?.email} href={`mailto:${personalInfo?.email}`} className="text-gray-600"/>
+                    <ContactItem icon={Phone} value={personalInfo?.phone} className="text-gray-600"/>
+                    <ContactItem icon={MapPin} value={personalInfo?.location} className="text-gray-600"/>
+                    <ContactItem icon={LinkIcon} value={personalInfo?.website?.replace(/^(https?:\/\/)?(www\.)?/, '')} href={personalInfo?.website} className="text-gray-600" />
                 </div>
                 <div className="mb-6">
                     <h2 className="text-sm font-bold uppercase tracking-widest text-teal-600 mb-3 border-b border-teal-200 pb-1 font-headline">Summary</h2>
@@ -413,9 +417,10 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                 </div>
                  <div className="flex justify-center items-center flex-wrap text-xs gap-x-4 gap-y-1 mt-4 text-gray-600">
                     {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                    {personalInfo?.phone && <span className="text-rose-300">&bull;</span>}
+                    {personalInfo?.phone && personalInfo?.email && <span className="text-rose-300">&bull;</span>}
                     {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
-                    {personalInfo?.location && <><span className="text-rose-300">&bull;</span><span>{personalInfo.location}</span></>}
+                    {(personalInfo.phone || personalInfo.email) && personalInfo.location && <span className="text-rose-300">&bull;</span>}
+                    {personalInfo?.location && <span>{personalInfo.location}</span>}
                 </div>
 
                 <div className="mt-6">
@@ -474,7 +479,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                              <ContactItem icon={Mail} value={personalInfo?.email} href={`mailto:${personalInfo?.email}`} />
                              <ContactItem icon={Phone} value={personalInfo?.phone} />
                              <ContactItem icon={MapPin} value={personalInfo?.location} />
-                             <ContactItem icon={LinkIcon} value={personalInfo?.website} href={personalInfo?.website} />
+                             <ContactItem icon={LinkIcon} value={personalInfo?.website?.replace(/^(https?:\/\/)?(www\.)?/, '')} href={personalInfo?.website} />
                         </div>
                     </div>
                     <div className="mb-6">
@@ -581,9 +586,9 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
               <p className="text-lg text-gray-500 mt-1">{personalInfo?.role}</p>
             </div>
             <div className="text-right text-xs space-y-1">
-              {personalInfo?.email && <p><ContactLink type="email" value={personalInfo.email} /></p>}
-              {personalInfo?.phone && <p><span className="font-semibold">{personalInfo.phone}</span></p>}
-              {personalInfo?.location && <p><span className="font-semibold">{personalInfo.location}</span></p>}
+              <ContactLink type="email" value={personalInfo?.email} className="block font-semibold" />
+              {personalInfo?.phone && <p className="font-semibold">{personalInfo.phone}</p>}
+              {personalInfo?.location && <p className="font-semibold">{personalInfo.location}</p>}
             </div>
           </div>
           <div className="mb-6">
@@ -628,7 +633,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
               <div className="bg-gray-800 text-white p-6 -m-8 mb-6">
                   <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
                   <p className="text-lg font-light text-gray-300 mt-1">{personalInfo?.role}</p>
-                  <div className="flex flex-wrap justify-between items-center mt-3 text-xs text-gray-300 gap-x-4 gap-y-1">
+                  <div className="flex flex-wrap justify-start items-center mt-3 text-xs text-gray-300 gap-x-4 gap-y-1">
                       {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                       {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                       {personalInfo?.location && <span>{personalInfo.location}</span>}
@@ -685,7 +690,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                         <p className="text-lg font-light text-gray-600 mt-1">{personalInfo?.role}</p>
                     </div>
                     <div className="text-right text-xs text-gray-600 space-y-1">
-                        {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
+                        <ContactLink type="email" value={personalInfo?.email} className="block" />
                         {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                         {personalInfo?.location && <p>{personalInfo.location}</p>}
                     </div>
@@ -781,16 +786,14 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'dubai':
         return (
             <div className="p-8 font-body bg-gray-900 text-white min-h-full text-sm flex">
-                <div className="w-1/3 bg-gray-800 p-6 flex flex-col justify-between">
-                    <div>
+                <div className="w-1/3 bg-gray-800 p-6 flex flex-col">
+                    <div className="flex-grow">
                         <h1 className="text-4xl font-bold text-amber-400 font-headline">{personalInfo?.name}</h1>
-                        <p className="text-lg text-gray-300 mt-1">{personalInfo?.role}</p>
-                    </div>
-                    <div className="space-y-6">
+                        <p className="text-lg text-gray-300 mt-1 mb-8">{personalInfo?.role}</p>
                         <div className="mb-6">
                             <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-2 font-headline">Contact</h2>
                             <div className="text-xs space-y-1">
-                                {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
+                                <ContactLink type="email" value={personalInfo?.email} className="block" />
                                 {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                                 {personalInfo?.location && <p>{personalInfo.location}</p>}
                             </div>
@@ -803,6 +806,16 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                                 ))}
                             </div>
                         </div>
+                    </div>
+                    <div className="mt-auto">
+                        <h2 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-2 font-headline">Education</h2>
+                         {education?.map((edu: any, i: number) => (
+                            <div key={i} className="mb-2 text-xs">
+                                <h3 className="font-bold">{edu.degree}</h3>
+                                <p className="text-gray-400">{edu.school}</p>
+                                <p className="text-gray-500">{edu.graduationDate}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <div className="w-2/3 p-8">
@@ -817,16 +830,6 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                                 <h3 className="text-md font-bold">{exp.jobTitle}</h3>
                                 <p className="text-sm text-gray-400 italic">{exp.company} / {exp.startDate} - {exp.endDate}</p>
                                 <p className="mt-1 text-xs text-gray-300 leading-normal">{exp.description}</p>
-                            </div>
-                        ))}
-                    </section>
-                    <section>
-                        <h2 className="text-xl font-bold text-amber-400 border-b-2 border-amber-500 pb-2 mb-3 font-headline">Education</h2>
-                        {education?.map((edu: any, i: number) => (
-                            <div key={i} className="mb-2">
-                                <h3 className="text-md font-bold">{edu.degree}</h3>
-                                <p className="text-sm text-gray-400">{edu.school}</p>
-                                <p className="text-xs text-gray-500">{edu.graduationDate}</p>
                             </div>
                         ))}
                     </section>
@@ -911,7 +914,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                         <div className="col-span-1 text-xs space-y-6">
                             <section>
                                 <h2 className="font-bold text-green-700 mb-2 font-headline">CONTACT</h2>
-                                {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
+                                <ContactLink type="email" value={personalInfo?.email} className="block" />
                                 {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                                 {personalInfo?.location && <p>{personalInfo.location}</p>}
                             </section>
@@ -947,7 +950,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                     <div className="col-span-4 space-y-6">
                         <section>
                             <h2 className="font-bold tracking-widest text-gray-500 uppercase mb-2 text-[10px] font-headline">Info</h2>
-                            {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
+                            <ContactLink type="email" value={personalInfo?.email} className="block"/>
                             {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                             {personalInfo?.location && <p>{personalInfo.location}</p>}
                         </section>
@@ -992,12 +995,12 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
       return (
         <div className="font-body min-h-full flex text-sm">
           <div className="w-1/3 bg-blue-800 text-white p-8 flex flex-col items-center text-center">
-             <h1 className="text-2xl font-bold font-headline">{personalInfo?.name}</h1>
-            <p className="text-sm text-blue-200">{personalInfo?.role}</p>
-            <div className="text-xs space-y-6 mt-8">
+             <h1 className="text-2xl font-bold font-headline mb-1">{personalInfo?.name}</h1>
+            <p className="text-sm text-blue-200 mb-6">{personalInfo?.role}</p>
+            <div className="text-xs space-y-6">
               <section>
                 <h2 className="font-bold uppercase tracking-wider mb-2 font-headline">Contact</h2>
-                {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
+                <ContactLink type="email" value={personalInfo?.email} className="block"/>
                 {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                 {personalInfo?.location && <p>{personalInfo.location}</p>}
               </section>
@@ -1046,14 +1049,14 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                 <p className="text-md text-gray-300 mt-1">{personalInfo?.role}</p>
             </div>
 
-            <div className="space-y-6 text-xs">
+            <div className="space-y-6 text-xs flex-grow">
                 <div className="mb-6">
                   <h2 className="text-sm font-bold uppercase text-gray-400 tracking-wider mb-3 font-headline">Contact</h2>
                   <div className="space-y-1">
-                    {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
+                    <ContactLink type="email" value={personalInfo?.email} className="block"/>
                     {personalInfo?.phone && <p>{personalInfo.phone}</p>}
                     {personalInfo?.location && <p>{personalInfo.location}</p>}
-                    {personalInfo?.website && <ContactLink type="website" value={personalInfo.website} />}
+                    <ContactLink type="website" value={personalInfo?.website} className="block"/>
                   </div>
                 </div>
 
@@ -1063,16 +1066,16 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                     {skills?.map((skill: any, i: number) => <li key={i}>{skill.name}</li>)}
                   </ul>
                 </div>
-                 <div className="mt-auto pt-6">
-                  <h2 className="text-sm font-bold uppercase text-gray-400 tracking-wider mb-3 font-headline">Education</h2>
-                  {education?.map((edu:any, i:number) => (
-                    <div key={i} className="mb-3">
-                      <h3 className="font-semibold">{edu.degree}</h3>
-                      <p className="text-gray-300">{edu.school}</p>
-                      <p className="text-gray-400">{edu.graduationDate}</p>
-                    </div>
-                  ))}
+            </div>
+             <div className="mt-auto pt-6">
+              <h2 className="text-sm font-bold uppercase text-gray-400 tracking-wider mb-3 font-headline">Education</h2>
+              {education?.map((edu:any, i:number) => (
+                <div key={i} className="mb-3 text-xs">
+                  <h3 className="font-semibold">{edu.degree}</h3>
+                  <p className="text-gray-300">{edu.school}</p>
+                  <p className="text-gray-400">{edu.graduationDate}</p>
                 </div>
+              ))}
             </div>
           </div>
           <div className="w-2/3 p-10 bg-gray-50">
@@ -1103,7 +1106,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
             <div className="bg-indigo-700 text-white p-6 -m-8 mb-6">
                 <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
                 <p className="text-lg text-indigo-200 font-light mt-1">{personalInfo?.role}</p>
-                <div className="flex flex-wrap justify-between items-center mt-3 text-xs text-indigo-200 gap-x-4 gap-y-1">
+                <div className="flex flex-wrap justify-start items-center mt-3 text-xs text-indigo-200 gap-x-4 gap-y-1">
                     {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                     {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                     {personalInfo?.location && <span>{personalInfo.location}</span>}
@@ -1153,3 +1156,4 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
       );
   }
 };
+const cn = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ');
