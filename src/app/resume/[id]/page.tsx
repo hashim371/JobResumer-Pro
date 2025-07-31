@@ -145,12 +145,13 @@ export default function ResumeViewPage() {
                 </div>
             </header>
 
-            <main className="flex-1 py-8 flex justify-center">
-                 <div className="w-[8.5in] h-[11in] bg-white shadow-2xl">
-                    <ResumePreview templateId={resumeData.templateId} data={resumeData} />
+            <main className="flex-1">
+                <div className="py-8">
+                     <div className="mx-auto w-[8.5in] h-[11in] bg-white shadow-2xl">
+                        <ResumePreview templateId={resumeData.templateId} data={resumeData} />
+                    </div>
                 </div>
             </main>
         </div>
     );
 }
-

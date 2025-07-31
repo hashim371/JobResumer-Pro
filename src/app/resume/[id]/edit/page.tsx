@@ -230,8 +230,8 @@ export default function ResumeEditPage() {
         </div>
       </header>
 
-      <main className="flex-1 grid md:grid-cols-2 gap-8 p-4 md:p-8 bg-muted/20">
-        <div className="h-full overflow-y-auto pr-4">
+      <main className="flex-1 grid md:grid-cols-2 gap-8 bg-muted/20">
+        <div className="h-full overflow-y-auto p-4 md:p-8">
           <Card className="shadow-none border-none bg-transparent">
              <CardContent className="p-0">
                <Form {...form}>
@@ -332,13 +332,13 @@ export default function ResumeEditPage() {
           </Card>
         </div>
         
-        <div className="h-full flex items-start justify-center overflow-hidden">
+        <div className="h-full flex items-start justify-center overflow-hidden p-4 md:p-8">
             <div 
               className="w-[8.5in] bg-white shadow-2xl"
               style={{
                 transform: 'scale(0.8)',
                 transformOrigin: 'top center',
-                height: '11in'
+                minHeight: '11in'
               }}
             >
               <ResumePreview templateId={resumeData.templateId} data={watchedData} />
