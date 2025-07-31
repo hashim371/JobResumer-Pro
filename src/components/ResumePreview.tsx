@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { Mail, Phone, MapPin, Link as LinkIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 // A mock data structure if no data is provided
 const mockData = {
@@ -43,31 +44,31 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
   const data = initialData || mockData;
   const { personalInfo, summary, experience, education, skills } = data;
 
-  const ContactLink = ({ type, value, className = '' }: { type: 'email' | 'website'; value: string, className?: string }) => {
+  const ContactLink = ({ type, value, children, className = '' }: { type: 'email' | 'website'; value: string, children?: React.ReactNode, className?: string }) => {
     if (!value) return null;
     const href = type === 'email' ? `mailto:${value}` : value.startsWith('http') ? value : `https://${value}`;
-    const displayValue = value.replace(/^(https?:\/\/)?(www\.)?/, '');
+    const displayValue = children || value.replace(/^(https?:\/\/)?(www\.)?/, '');
     if (isClickable) {
       return <a href={href} className={`break-all ${className}`}>{displayValue}</a>;
     }
     return <span className={`break-all ${className}`}>{displayValue}</span>;
   };
   
-  const ContactItem = ({ icon: Icon, value, href, className }: { icon: React.ElementType, value?: string, href?: string, className?: string }) => {
+  const ContactItem = ({ icon: Icon, value, href, className, label }: { icon: React.ElementType, value?: string, href?: string, className?: string, label?: string }) => {
     if (!value) return null;
-    const content = isClickable && href ? <a href={href}>{value}</a> : <span>{value}</span>;
-    return <p className={cn("flex items-center gap-2", className)}><Icon size={12}/> {content}</p>;
+    const content = isClickable && href ? <a href={href}>{label || value}</a> : <span>{label || value}</span>;
+    return <div className={cn("flex items-center gap-2", className)}><Icon size={14}/> {content}</div>;
   };
 
   // Different Template Layouts
   switch (templateId) {
     case 'new-york':
         return (
-            <div className="p-8 font-serif bg-white text-gray-800 min-h-full text-sm leading-relaxed">
+            <div className="p-8 font-serif bg-white text-gray-800 min-h-full text-[11pt] leading-relaxed">
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold tracking-tight text-gray-900 font-headline">{personalInfo?.name}</h1>
                     <p className="text-xl mt-1 text-gray-600 font-light tracking-wide">{personalInfo?.role}</p>
-                    <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-1 text-xs mt-3 text-gray-600">
+                    <div className="flex justify-center items-center flex-wrap gap-x-3 gap-y-1 text-xs mt-4 text-gray-500">
                         {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                         {personalInfo?.phone && personalInfo?.email && <span className="text-gray-400">&bull;</span>}
                         {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
@@ -356,13 +357,13 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'seoul':
         return (
             <div className="p-8 font-body bg-white text-gray-700 min-h-full text-sm">
-                <div className="flex items-center mb-6 pb-6 border-b-2 border-teal-500">
-                    <div>
-                        <h1 className="text-5xl font-extrabold text-teal-700 font-headline">{personalInfo?.name}</h1>
-                        <p className="text-xl text-gray-500 mt-1">{personalInfo?.role}</p>
-                    </div>
-                </div>
-                <div className="flex justify-start items-center flex-wrap text-xs gap-x-6 gap-y-2 mb-6">
+                <header className="text-center mb-6 pb-4">
+                    <h1 className="text-4xl font-extrabold text-teal-700 font-headline">{personalInfo?.name}</h1>
+                    <p className="text-lg text-gray-500 mt-1">{personalInfo?.role}</p>
+                     <div className="mt-2 border-b-2 border-teal-500 w-24 mx-auto"></div>
+                </header>
+
+                <div className="flex justify-center flex-wrap text-xs gap-x-6 gap-y-2 mb-6">
                     <ContactItem icon={Mail} value={personalInfo?.email} href={`mailto:${personalInfo?.email}`} className="text-gray-600"/>
                     <ContactItem icon={Phone} value={personalInfo?.phone} className="text-gray-600"/>
                     <ContactItem icon={MapPin} value={personalInfo?.location} className="text-gray-600"/>
@@ -1102,58 +1103,58 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'dublin': // Simple
     default:
       return (
-        <div className="p-8 font-body bg-white text-slate-800 min-h-full text-sm">
-            <div className="bg-indigo-700 text-white p-6 -m-8 mb-6">
+        <div className="font-body bg-white text-slate-800 min-h-full text-sm flex flex-col">
+            <div className="bg-indigo-700 text-white p-8">
                 <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
                 <p className="text-lg text-indigo-200 font-light mt-1">{personalInfo?.role}</p>
-                <div className="flex flex-wrap justify-start items-center mt-3 text-xs text-indigo-200 gap-x-4 gap-y-1">
+                <div className="flex flex-wrap justify-start items-center mt-4 text-xs text-indigo-200 gap-x-4 gap-y-1">
                     {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                     {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                     {personalInfo?.location && <span>{personalInfo.location}</span>}
                     {personalInfo?.website && <ContactLink type="website" value={personalInfo.website} />}
                 </div>
             </div>
+            <div className="p-8 flex-grow">
+              <section className="mb-6">
+                  <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Professional Summary</h2>
+                  <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
+              </section>
+              
+              <section className="mb-6">
+                  <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Work Experience</h2>
+                  {experience?.map((exp:any, i:number) => (
+                      <div key={i} className="mb-4">
+                          <div className="flex justify-between items-baseline">
+                              <h3 className="text-md font-bold text-slate-800">{exp.jobTitle}</h3>
+                              <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
+                          </div>
+                          <h4 className="text-sm font-semibold text-slate-600 italic">{exp.company}</h4>
+                          <p className="text-slate-700 mt-1 text-xs leading-normal">{exp.description}</p>
+                      </div>
+                  ))}
+              </section>
+              
+              <section className="grid grid-cols-2 gap-x-8">
+                   <div>
+                      <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Education</h2>
+                      {education?.map((edu:any, i:number) => (
+                          <div key={i} className="mb-3">
+                              <h3 className="text-md font-bold text-slate-800">{edu.degree}</h3>
+                              <p className="text-sm text-slate-700">{edu.school}</p>
+                              <p className="text-xs text-slate-500">{edu.graduationDate}</p>
+                          </div>
+                      ))}
+                  </div>
 
-            <section className="mb-6">
-                <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Professional Summary</h2>
-                <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
-            </section>
-            
-            <section className="mb-6">
-                <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Work Experience</h2>
-                {experience?.map((exp:any, i:number) => (
-                    <div key={i} className="mb-4">
-                        <div className="flex justify-between items-baseline">
-                            <h3 className="text-md font-bold text-slate-800">{exp.jobTitle}</h3>
-                            <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
-                        </div>
-                        <h4 className="text-sm font-semibold text-slate-600 italic">{exp.company}</h4>
-                        <p className="text-slate-700 mt-1 text-xs leading-normal">{exp.description}</p>
-                    </div>
-                ))}
-            </section>
-            
-            <section className="grid grid-cols-2 gap-x-8">
-                 <div>
-                    <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Education</h2>
-                    {education?.map((edu:any, i:number) => (
-                        <div key={i} className="mb-3">
-                            <h3 className="text-md font-bold text-slate-800">{edu.degree}</h3>
-                            <p className="text-sm text-slate-700">{edu.school}</p>
-                            <p className="text-xs text-slate-500">{edu.graduationDate}</p>
-                        </div>
-                    ))}
-                </div>
-
-                <div>
-                    <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Skills</h2>
-                    <ul className="flex flex-wrap gap-2 mt-2">
-                        {skills?.map((skill: any, i:number) => <li key={i} className="bg-indigo-100 text-indigo-800 text-xs font-medium px-3 py-1 rounded-md">{skill.name}</li>)}
-                    </ul>
-                </div>
-            </section>
+                  <div>
+                      <h2 className="text-lg font-bold uppercase text-indigo-700 tracking-wider mb-2 font-headline">Skills</h2>
+                      <ul className="flex flex-wrap gap-2 mt-2">
+                          {skills?.map((skill: any, i:number) => <li key={i} className="bg-indigo-100 text-indigo-800 text-xs font-medium px-3 py-1 rounded-md">{skill.name}</li>)}
+                      </ul>
+                  </div>
+              </section>
+            </div>
         </div>
       );
   }
 };
-const cn = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ');
