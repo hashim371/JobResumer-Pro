@@ -66,7 +66,7 @@ export default function TemplatesPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-muted/20">
+      <main className="flex-1 bg-muted/20 animate-fadeIn">
         <div className="container mx-auto px-4 py-8 md:py-16">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight font-headline bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">Choose Your Perfect Template</h1>
@@ -89,7 +89,7 @@ export default function TemplatesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {filteredTemplates.map(template => (
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block group">
-                <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-200 ease-in-out hover:border-primary">
+                <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:border-primary transform hover:-translate-y-1">
                  <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                     <div
                       className="absolute inset-0 transform scale-[0.20] origin-top-left transition-transform duration-300 ease-in-out group-hover:scale-[0.21]"

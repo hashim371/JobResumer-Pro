@@ -144,7 +144,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {features.map((feature, index) => (
-                <Card key={index} className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow duration-200 bg-card/80 backdrop-blur-sm">
+                <Card key={index} className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow duration-200 bg-card/80 backdrop-blur-sm transform hover:-translate-y-1">
                   <div className="flex justify-center mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-semibold">{feature.title}</h3>
                   <p className="mt-2 text-muted-foreground">{feature.description}</p>
@@ -186,7 +186,7 @@ export default function Home() {
                 {testimonials.map((testimonial, index) => (
                   <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                     <div className="p-1 h-full">
-                      <Card className="flex flex-col justify-between h-full p-6 shadow-md bg-card/80 backdrop-blur-sm">
+                      <Card className="flex flex-col justify-between h-full p-6 shadow-md bg-card/80 backdrop-blur-sm transform hover:-translate-y-1 transition-transform duration-200">
                         <div>
                           <div className="flex items-center mb-2">
                             {Array(testimonial.stars).fill(0).map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />)}

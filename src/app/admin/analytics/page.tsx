@@ -65,11 +65,13 @@ export default function AdminAnalyticsPage() {
     }
     
     users.forEach(user => {
-        const createdAtDate = new Date(user.createdAt);
-        if (isValid(createdAtDate) && isAfter(createdAtDate, last30Days)) {
-          const dateStr = format(createdAtDate, 'MMM d');
-          if(signups.has(dateStr)) {
-            signups.set(dateStr, (signups.get(dateStr) || 0) + 1);
+        if (user.createdAt && isValid(new Date(user.createdAt))) {
+          const createdAtDate = new Date(user.createdAt);
+          if (isAfter(createdAtDate, last30Days)) {
+            const dateStr = format(createdAtDate, 'MMM d');
+            if(signups.has(dateStr)) {
+              signups.set(dateStr, (signups.get(dateStr) || 0) + 1);
+            }
           }
         }
     });
@@ -82,7 +84,7 @@ export default function AdminAnalyticsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fadeIn">
       <h1 className="text-3xl font-bold tracking-tight">Analytics Dashboard</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
         <Card>

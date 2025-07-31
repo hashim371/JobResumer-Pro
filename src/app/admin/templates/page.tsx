@@ -83,7 +83,7 @@ export default function AdminTemplatesPage() {
   };
 
   return (
-    <div>
+    <div className="animate-fadeIn">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Template Management</h1>
         <Button>Add New Template</Button>
@@ -91,7 +91,7 @@ export default function AdminTemplatesPage() {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {templates.map(template => (
-          <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-200">
+          <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                 <div
                   className="absolute inset-0 transform scale-[0.20] origin-top-left"

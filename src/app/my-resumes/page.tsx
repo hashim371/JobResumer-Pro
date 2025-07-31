@@ -142,7 +142,7 @@ export default function MyResumesPage() {
               })}
             </div>
           ) : (
-            <div className="text-center py-20 rounded-lg border-2 border-dashed border-muted-foreground/30">
+            <div className="text-center py-20 rounded-lg border-2 border-dashed border-muted-foreground/30 animate-fadeIn">
                 <FileText className="mx-auto h-12 w-12 text-muted-foreground/80" />
                 <h3 className="mt-2 text-xl font-semibold">No Resumes Found</h3>
                 <p className="mt-1 text-sm text-muted-foreground">Get started by creating a new resume.</p>
