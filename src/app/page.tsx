@@ -1,3 +1,6 @@
+
+"use client";
+
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -6,11 +9,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { CheckCircle, DraftingCompass, Star } from "lucide-react";
 import { getTemplates } from "@/lib/template-store";
-import { TemplateThumbnail } from "@/components/TemplateThumbnail";
 import { MicrosoftLogo, GoogleLogo, FacebookLogo } from "@/components/CompanyLogos";
+import dynamic from 'next/dynamic';
+import { Skeleton } from "@/components/ui/skeleton";
+
+const ResumePreview = dynamic(() => import('@/components/ResumePreview').then(mod => mod.ResumePreview), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-full" />,
+});
 
 export default function Home() {
-
   const features = [
     {
       icon: <DraftingCompass className="h-10 w-10 text-accent" />,
@@ -93,7 +101,7 @@ export default function Home() {
                             <Link href={`/resume/create?template=${template.id}`} className="block group">
                               <Card className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-primary">
                                 <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                                  <TemplateThumbnail templateId={template.id} />
+                                  <ResumePreview templateId={template.id} />
                                 </CardContent>
                               </Card>
                             </Link>
@@ -198,3 +206,5 @@ export default function Home() {
     </>
   );
 }
+
+    

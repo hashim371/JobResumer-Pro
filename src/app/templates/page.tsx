@@ -1,3 +1,6 @@
+
+"use client";
+
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -5,16 +8,20 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
-import { getTemplates, type Template } from '@/lib/template-store';
-import { TemplateThumbnail } from '@/components/TemplateThumbnail';
+import { getTemplates } from '@/lib/template-store';
+import { useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default function TemplatesPage({
-  searchParams
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined }
-}) {
+const ResumePreview = dynamic(() => import('@/components/ResumePreview').then(mod => mod.ResumePreview), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-full" />,
+});
+
+export default function TemplatesPage() {
+  const searchParams = useSearchParams();
   const currentTemplates = getTemplates();
-  const activeFilter = typeof searchParams?.filter === 'string' ? searchParams.filter : 'All templates';
+  const activeFilter = searchParams.get('filter') || 'All templates';
 
   const filters = ['All templates', ...Array.from(new Set(currentTemplates.map(t => t.category)))];
 
@@ -51,7 +58,7 @@ export default function TemplatesPage({
               <Link key={template.id} href={`/resume/create?template=${template.id}`} className="block group">
                 <Card className="overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:border-primary transform hover:-translate-y-2">
                  <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                    <TemplateThumbnail templateId={template.id} />
+                    <ResumePreview templateId={template.id} />
                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4">
                         <div className="text-center">
                            <Button asChild className="rounded-full bg-white/90 text-gray-900 font-semibold hover:bg-white shadow-md">
@@ -74,3 +81,5 @@ export default function TemplatesPage({
     </>
   );
 }
+
+    

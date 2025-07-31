@@ -32,7 +32,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { TemplateThumbnail } from '@/components/TemplateThumbnail';
+import { ResumePreview } from '@/components/ResumePreview';
 
 const templateSchema = z.object({
   name: z.string().min(1, 'Template name is required.'),
@@ -93,7 +93,7 @@ export default function AdminTemplatesPage() {
         {templates.map(template => (
           <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                <TemplateThumbnail templateId={template.id} />
+                <ResumePreview templateId={template.id} />
             </CardContent>
             <CardFooter className="p-4 bg-card flex flex-col items-start">
                 <div className="w-full flex justify-between items-start">
@@ -183,3 +183,5 @@ export default function AdminTemplatesPage() {
     </div>
   );
 }
+
+    

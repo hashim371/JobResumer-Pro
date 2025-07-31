@@ -17,10 +17,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { toast } from '@/hooks/use-toast';
-import { ResumePreview } from '@/components/ResumePreview';
-import { templates } from '@/app/templates/page';
+import { templates } from '@/lib/templates';
 import Link from 'next/link';
 import { createRoot } from 'react-dom/client';
+import { ResumePreview } from '@/components/ResumePreview';
 
 const experienceSchema = z.object({
   jobTitle: z.string().min(1, 'Job title is required'),
@@ -346,3 +346,5 @@ export default function ResumeEditPage() {
     </div>
   );
 }
+
+    

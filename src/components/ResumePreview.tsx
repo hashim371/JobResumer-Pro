@@ -1135,3 +1135,5 @@ export const ResumePreview = ({ templateId, data: initialData }: ResumePreviewPr
       );
   }
 };
+
+    

@@ -1,151 +1,157 @@
+"use client";
 
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/auth-context';
+import { db } from '@/lib/firebase';
+import { ref, onValue, remove } from 'firebase/database';
+import { useRouter } from 'next/navigation';
+import { Loader2, Plus, Trash2, Edit, FileText, Eye } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import Link from 'next/link';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from '@/hooks/use-toast';
+import { getTemplates } from '@/lib/template-store';
+import { ResumePreview } from '@/components/ResumePreview';
 
-interface TemplateThumbnailProps {
+interface Resume {
+  id: string;
   templateId: string;
+  updatedAt: string;
+  personalInfo: {
+    name: string;
+  };
 }
 
-export const TemplateThumbnail = ({ templateId }: TemplateThumbnailProps) => {
-  // Common styles for the thumbnail container
-  const containerClasses = "w-full h-full p-6 flex flex-col";
-  const barClasses = "h-2 rounded-sm mb-2";
-  const smallBarClasses = "h-1.5 rounded-sm mb-1.5";
-  const circleClasses = "rounded-full";
+export default function MyResumesPage() {
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+  const [resumes, setResumes] = useState<Resume[]>([]);
+  const [loading, setLoading] = useState(true);
+  const templates = getTemplates();
 
-  switch (templateId) {
-    case 'dublin':
-      return (
-        <div className={cn(containerClasses, 'bg-white')}>
-          <div className="w-full h-12 bg-indigo-700 -m-6 mb-6" />
-          <div className={cn(barClasses, "w-1/2 bg-gray-300")} />
-          <div className={cn(barClasses, "w-full bg-gray-200")} />
-          <div className={cn(barClasses, "w-full bg-gray-200")} />
-          <div className="mt-auto grid grid-cols-2 gap-4">
-            <div>
-              <div className={cn(barClasses, "w-1/3 bg-gray-300")} />
-              <div className={cn(smallBarClasses, "w-full bg-gray-200 mt-2")} />
-              <div className={cn(smallBarClasses, "w-full bg-gray-200")} />
-            </div>
-            <div>
-              <div className={cn(barClasses, "w-1/3 bg-gray-300")} />
-              <div className="flex flex-wrap gap-1 mt-2">
-                <div className="w-8 h-3 rounded-full bg-indigo-100" />
-                <div className="w-10 h-3 rounded-full bg-indigo-100" />
-                <div className="w-6 h-3 rounded-full bg-indigo-100" />
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    case 'new-york':
-      return (
-        <div className={cn(containerClasses, 'bg-white text-center font-serif')}>
-            <div className={cn(barClasses, "w-1/2 bg-gray-400 mx-auto mb-1")} />
-            <div className={cn(barClasses, "w-1/3 bg-gray-300 mx-auto")} />
-            <div className="w-full h-px bg-gray-300 my-4" />
-            <div className={cn(barClasses, "w-full bg-gray-200")} />
-            <div className={cn(barClasses, "w-full bg-gray-200")} />
-            <div className="mt-auto grid grid-cols-2 gap-4">
-                <div>
-                  <div className={cn(smallBarClasses, "w-full bg-gray-200")} />
-                  <div className={cn(smallBarClasses, "w-3/4 bg-gray-200")} />
-                </div>
-                 <div>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                        <div className="w-8 h-3 rounded bg-gray-200" />
-                        <div className="w-10 h-3 rounded bg-gray-200" />
-                        <div className="w-6 h-3 rounded bg-gray-200" />
-                    </div>
-                </div>
-            </div>
-        </div>
-      );
-    case 'berlin':
-       return (
-        <div className="w-full h-full flex bg-white">
-            <div className="w-1/3 bg-gray-100 p-4 flex flex-col gap-4">
-                <div className={cn(barClasses, "w-3/4 bg-gray-400 mx-auto")} />
-                <div className={cn(barClasses, "w-1/2 bg-gray-300 mx-auto")} />
-                <div className="space-y-1 mt-4">
-                    <div className={cn(smallBarClasses, "w-full bg-gray-200")} />
-                    <div className={cn(smallBarClasses, "w-full bg-gray-200")} />
-                </div>
-                <div className="mt-auto space-y-1">
-                    <div className={cn(smallBarClasses, "w-full bg-gray-300 rounded-sm")} />
-                    <div className={cn(smallBarClasses, "w-full bg-gray-300 rounded-sm")} />
-                </div>
-            </div>
-            <div className="w-2/3 p-4 space-y-4">
-                <div className={cn(barClasses, "w-full bg-gray-200")} />
-                <div className={cn(barClasses, "w-full bg-gray-200")} />
-                <div className={cn(barClasses, "w-3/4 bg-gray-200")} />
-            </div>
-        </div>
-      );
-    case 'london':
-         return (
-            <div className={cn(containerClasses, 'bg-white')}>
-                <div className="flex justify-between">
-                    <div className="w-1/2">
-                        <div className={cn(barClasses, "w-full h-4 bg-blue-800")} />
-                        <div className={cn(barClasses, "w-3/4 h-2 bg-gray-300 mt-1")} />
-                    </div>
-                    <div className="w-1/4 space-y-1">
-                        <div className={cn(smallBarClasses, "w-full bg-gray-200")} />
-                        <div className={cn(smallBarClasses, "w-full bg-gray-200")} />
-                    </div>
-                </div>
-                <div className="w-full h-0.5 bg-blue-800 my-4" />
-                <div className={cn(barClasses, "w-full bg-gray-200")} />
-                <div className={cn(barClasses, "w-3/4 bg-gray-200")} />
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      router.push('/auth');
+      return;
+    }
 
-                <div className="mt-auto">
-                    <div className="grid grid-cols-4 gap-2">
-                        <div className="col-span-1 space-y-1">
-                            <div className={cn(smallBarClasses, "w-full bg-gray-200")} />
-                             <div className={cn(smallBarClasses, "w-full bg-gray-200")} />
-                        </div>
-                        <div className="col-span-3 space-y-1">
-                            <div className={cn(smallBarClasses, "w-full bg-gray-300")} />
-                             <div className={cn(smallBarClasses, "w-3/4 bg-gray-200")} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    default:
-      // A generic fallback thumbnail
-      return (
-        <div className={cn(containerClasses, 'bg-white space-y-4')}>
-          <div className="flex gap-4">
-            <div className={cn(circleClasses, "w-12 h-12 bg-gray-300 flex-shrink-0")} />
-            <div className="w-full space-y-2">
-              <div className={cn(barClasses, "w-3/4 bg-gray-400")} />
-              <div className={cn(barClasses, "w-1/2 bg-gray-300")} />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className={cn(barClasses, "w-full bg-gray-200")} />
-            <div className={cn(barClasses, "w-full bg-gray-200")} />
-            <div className={cn(barClasses, "w-5/6 bg-gray-200")} />
-          </div>
-          <div className="flex-grow" />
-           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-                <div className={cn(barClasses, "w-1/3 bg-gray-300")} />
-                <div className={cn(smallBarClasses, "w-full bg-gray-200")} />
-                <div className={cn(smallBarClasses, "w-3/4 bg-gray-200")} />
-            </div>
-             <div className="space-y-2">
-                <div className={cn(barClasses, "w-1/3 bg-gray-300")} />
-                <div className="flex flex-wrap gap-1 mt-2">
-                    <div className="w-8 h-3 rounded-full bg-gray-200" />
-                    <div className="w-10 h-3 rounded-full bg-gray-200" />
-                    <div className="w-6 h-3 rounded-full bg-gray-200" />
-                </div>
-            </div>
-          </div>
-        </div>
-      );
+    const resumesRef = ref(db, `users/${user.uid}/resumes`);
+    const unsubscribe = onValue(resumesRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const resumeList = Object.keys(data).map(key => ({
+            id: key,
+            ...data[key]
+        })) as Resume[];
+        setResumes(resumeList.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
+      } else {
+        setResumes([]);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [user, authLoading, router]);
+
+  const handleDelete = async (resumeId: string) => {
+    if (!user) return;
+    const resumeRef = ref(db, `users/${user.uid}/resumes/${resumeId}`);
+    try {
+      await remove(resumeRef);
+      toast({ title: "Success", description: "Resume deleted successfully." });
+    } catch (error) {
+      toast({ variant: "destructive", title: "Error", description: "Failed to delete resume." });
+    }
+  };
+
+  if (loading || authLoading) {
+    return <div className="flex h-[calc(100vh-4rem)] w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
   }
-};
+
+  return (
+    <>
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center">
+            <h1 className="text-2xl font-bold font-headline">My Resumes</h1>
+             <Button asChild className="ml-auto">
+                <Link href="/templates"><Plus className="mr-2 h-4 w-4"/> New Resume</Link>
+             </Button>
+        </div>
+      </header>
+      <main className="flex-1 bg-muted/20">
+        <div className="container mx-auto px-4 py-8 md:py-12 animate-fadeIn">
+          {resumes.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {resumes.map(resume => {
+                 const template = templates.find(t => t.id === resume.templateId);
+                 return (
+                    <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:border-primary transform hover:-translate-y-2">
+                      <Link href={`/resume/${resume.id}`} className="block overflow-hidden">
+                         <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
+                           <ResumePreview templateId={resume.templateId} data={resume} />
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <Eye className="h-12 w-12 text-white" />
+                            </div>
+                        </CardContent>
+                       </Link>
+                       <CardHeader className="flex-grow p-4">
+                          <CardTitle className="truncate text-lg">{resume.personalInfo?.name || "Untitled Resume"}</CardTitle>
+                          <CardDescription>{template?.name || "Unknown"} Template</CardDescription>
+                       </CardHeader>
+                        <CardFooter className="flex justify-end gap-2 p-4 pt-0">
+                           <Button variant="outline" size="sm" asChild>
+                              <Link href={`/resume/${resume.id}/edit`}><Edit className="mr-2 h-4 w-4" /> Edit</Link>
+                           </Button>
+                           <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                 <Button variant="destructive" size="sm"><Trash2 className="mr-2 h-4 w-4" /> Delete</Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                 <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                       This action cannot be undone. This will permanently delete your resume.
+                                    </AlertDialogDescription>
+                                 </AlertDialogHeader>
+                                 <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(resume.id)}>Delete</AlertDialogAction>
+                                 </AlertDialogFooter>
+                              </AlertDialogContent>
+                           </AlertDialog>
+                        </CardFooter>
+                    </Card>
+                 )
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-20 rounded-lg border-2 border-dashed border-muted-foreground/30 animate-fadeIn">
+                <FileText className="mx-auto h-12 w-12 text-muted-foreground/80" />
+                <h3 className="mt-2 text-xl font-semibold">No Resumes Found</h3>
+                <p className="mt-1 text-sm text-muted-foreground">Get started by creating a new resume.</p>
+                <div className="mt-6">
+                    <Button asChild>
+                        <Link href="/templates">
+                        <Plus className="mr-2 h-4 w-4" /> Create New Resume
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+          )}
+        </div>
+      </main>
+    </>
+  );
+}
