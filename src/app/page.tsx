@@ -73,7 +73,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 animate-fadeIn">
         {/* Hero Section */}
         <div className="container mx-auto px-4 py-8 md:py-12 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full bg-grid-slate-900/[0.04] [mask-image:linear-gradient(to_bottom,white_50%,transparent_100%)] dark:bg-grid-slate-400/[0.05]"></div>

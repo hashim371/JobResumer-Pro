@@ -100,45 +100,47 @@ export default function AdminResumesPage() {
     <div className="animate-fadeIn">
       <h1 className="text-3xl font-bold tracking-tight mb-6">Resume Logs</h1>
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Template Used</TableHead>
-              <TableHead className="text-right">Last Updated</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {allResumes.length > 0 ? (
-              allResumes.map(resume => (
-                <TableRow key={resume.user.uid + '-' + resume.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={resume.user.photoURL} alt={resume.user.name} />
-                        <AvatarFallback>{getInitials(resume.user.name)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">{resume.user.name}</p>
-                        <p className="text-sm text-muted-foreground">{resume.user.email}</p>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {templates.find(t => t.id === resume.templateId)?.name || resume.templateId}
-                  </TableCell>
-                  <TableCell className="text-right">{formatDateDistance(resume.updatedAt)}</TableCell>
-                </TableRow>
-              ))
-            ) : (
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={3} className="h-24 text-center">
-                  No resumes found.
-                </TableCell>
+                <TableHead>User</TableHead>
+                <TableHead>Template Used</TableHead>
+                <TableHead className="text-right">Last Updated</TableHead>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {allResumes.length > 0 ? (
+                allResumes.map(resume => (
+                  <TableRow key={resume.user.uid + '-' + resume.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarImage src={resume.user.photoURL} alt={resume.user.name} />
+                          <AvatarFallback>{getInitials(resume.user.name)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{resume.user.name}</p>
+                          <p className="text-sm text-muted-foreground">{resume.user.email}</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {templates.find(t => t.id === resume.templateId)?.name || resume.templateId}
+                    </TableCell>
+                    <TableCell className="text-right">{formatDateDistance(resume.updatedAt)}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="h-24 text-center">
+                    No resumes found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );

@@ -90,14 +90,14 @@ export default function MyResumesPage() {
              </Button>
         </div>
       </header>
-      <main className="flex-1 bg-muted/20">
+      <main className="flex-1 bg-muted/20 animate-fadeIn">
         <div className="container mx-auto px-4 py-8 md:py-12">
           {resumes.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {resumes.map(resume => {
                  const template = templates.find(t => t.id === resume.templateId);
                  return (
-                    <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-200 ease-in-out hover:border-primary">
+                    <Card key={resume.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:border-primary transform hover:-translate-y-1">
                       <Link href={`/resume/${resume.id}`} className="block overflow-hidden">
                          <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                            <div
@@ -106,7 +106,7 @@ export default function MyResumesPage() {
                             >
                               <ResumePreview templateId={resume.templateId} data={resume} />
                             </div>
-                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Eye className="h-12 w-12 text-white" />
                             </div>
                         </CardContent>
