@@ -34,8 +34,6 @@ const signInSchema = z.object({
 });
 
 const ADMIN_EMAIL = "res97ad7777mn@gmail.com";
-const ADMIN_PASSWORD = "adddd@____''[[imnreskk|";
-
 
 export default function AuthPage() {
   const { user, loading: authLoading } = useAuth();
