@@ -17,7 +17,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { toast } from '@/hooks/use-toast';
-import { templates } from '@/lib/templates';
+import { initialTemplates } from '@/lib/templates';
 import Link from 'next/link';
 import { createRoot } from 'react-dom/client';
 import { ResumePreview } from '@/components/ResumePreview';
@@ -208,7 +208,7 @@ export default function ResumeEditPage() {
                 <Link href="/my-resumes" className="flex items-center"><ArrowLeft className="mr-2 h-4 w-4"/> Back to My Resumes</Link>
             </Button>
             <div className="flex-1 text-center font-semibold">
-                Editing: {templates.find(t => t.id === resumeData.templateId)?.name || 'Resume'}
+                Editing: {initialTemplates.find(t => t.id === resumeData.templateId)?.name || 'Resume'}
             </div>
             <div className="flex items-center gap-4">
                 <Button onClick={handleSave} disabled={isSaving || !form.formState.isDirty}>
@@ -346,5 +346,3 @@ export default function ResumeEditPage() {
     </div>
   );
 }
-
-    
