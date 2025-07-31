@@ -17,7 +17,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { toast } from '@/hooks/use-toast';
-import { initialTemplates } from '@/lib/templates';
+import { getTemplates } from '@/lib/template-store';
 import Link from 'next/link';
 import { createRoot } from 'react-dom/client';
 import { ResumePreview } from '@/components/ResumePreview';
@@ -65,6 +65,7 @@ export default function ResumeEditPage() {
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const templates = getTemplates();
 
   const form = useForm<ResumeData>({
     resolver: zodResolver(resumeSchema),
@@ -200,6 +201,8 @@ export default function ResumeEditPage() {
       return null;
   }
 
+  const currentTemplate = templates.find(t => t.id === resumeData.templateId);
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -208,7 +211,7 @@ export default function ResumeEditPage() {
                 <Link href="/my-resumes" className="flex items-center"><ArrowLeft className="mr-2 h-4 w-4"/> Back to My Resumes</Link>
             </Button>
             <div className="flex-1 text-center font-semibold">
-                Editing: {initialTemplates.find(t => t.id === resumeData.templateId)?.name || 'Resume'}
+                Editing: {currentTemplate?.name || 'Resume'}
             </div>
             <div className="flex items-center gap-4">
                 <Button onClick={handleSave} disabled={isSaving || !form.formState.isDirty}>
@@ -217,7 +220,7 @@ export default function ResumeEditPage() {
                 </Button>
                 <Button onClick={() => downloadAs('png')} variant="outline" disabled={isDownloading}>
                     {isDownloading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <ImageIcon className="mr-2 h-4 w-4" />}
-                    Download Image
+                    Download PNG
                 </Button>
                  <Button onClick={() => downloadAs('pdf')} disabled={isDownloading}>
                     {isDownloading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Download className="mr-2 h-4 w-4" />}
@@ -331,18 +334,17 @@ export default function ResumeEditPage() {
         
         <div className="h-full flex items-start justify-center overflow-hidden">
             <div 
-              className="w-[8.5in] h-[11in] bg-white shadow-2xl"
+              className="w-[8.5in] h-[11in] bg-white shadow-2xl origin-top"
               style={{
                 transform: 'scale(0.8)',
                 transformOrigin: 'top center',
               }}
             >
-             <div className="w-full h-full">
               <ResumePreview templateId={resumeData.templateId} data={watchedData} />
-             </div>
             </div>
         </div>
       </main>
     </div>
   );
 }
+

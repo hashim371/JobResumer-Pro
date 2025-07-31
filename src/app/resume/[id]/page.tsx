@@ -135,7 +135,7 @@ export default function ResumeViewPage() {
                         </Button>
                         <Button onClick={() => downloadAs('png')} variant="outline" disabled={isDownloading}>
                             {isDownloading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <ImageIcon className="mr-2 h-4 w-4" />}
-                            Download Image
+                            Download PNG
                         </Button>
                         <Button onClick={() => downloadAs('pdf')} disabled={isDownloading}>
                             {isDownloading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Download className="mr-2 h-4 w-4" />}
@@ -145,13 +145,12 @@ export default function ResumeViewPage() {
                 </div>
             </header>
 
-            <main className="flex-1 py-8 flex items-center justify-center">
-                 <div 
-                    className="w-[8.5in] h-[11in] bg-white shadow-2xl"
-                    >
+            <main className="flex-1 py-8 flex items-start justify-center">
+                 <div className="w-[8.5in] h-[11in] bg-white shadow-2xl">
                     <ResumePreview templateId={resumeData.templateId} data={resumeData} />
                 </div>
             </main>
         </div>
     );
 }
+
