@@ -49,9 +49,9 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     const href = type === 'email' ? `mailto:${value}` : value.startsWith('http') ? value : `https://${value}`;
     const displayValue = children || value.replace(/^(https?:\/\/)?(www\.)?/, '');
     if (isClickable) {
-      return <a href={href} className={`break-all ${className}`}>{displayValue}</a>;
+      return <a href={href} className={cn("break-all", className)}>{displayValue}</a>;
     }
-    return <span className={`break-all ${className}`}>{displayValue}</span>;
+    return <span className={cn("break-all", className)}>{displayValue}</span>;
   };
   
   const ContactItem = ({ icon: Icon, value, href, className, label }: { icon: React.ElementType, value?: string, href?: string, className?: string, label?: string }) => {
