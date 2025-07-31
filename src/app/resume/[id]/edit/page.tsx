@@ -135,14 +135,13 @@ export default function ResumeEditPage() {
     container.style.position = 'absolute';
     container.style.left = '-9999px';
     container.style.width = '8.5in';
-    container.style.height = '11in';
     document.body.appendChild(container);
 
     const root = createRoot(container);
     root.render(<ResumePreview templateId={resumeData.templateId} data={watchedData} />);
     
     try {
-        await document.fonts.ready;
+        await new Promise(resolve => setTimeout(resolve, 100));
     } catch (err) {
         console.warn('Fonts could not be loaded before download.', err);
     }
@@ -332,13 +331,12 @@ export default function ResumeEditPage() {
           </Card>
         </div>
         
-        <div className="h-full flex items-start justify-center overflow-hidden p-4 md:p-8">
+        <div className="h-full flex items-start justify-center overflow-hidden p-4 md:p-8 bg-muted/20">
             <div 
               className="w-[8.5in] bg-white shadow-2xl"
               style={{
                 transform: 'scale(0.8)',
                 transformOrigin: 'top center',
-                minHeight: '11in'
               }}
             >
               <ResumePreview templateId={resumeData.templateId} data={watchedData} />

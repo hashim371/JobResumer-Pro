@@ -56,14 +56,13 @@ export default function ResumeViewPage() {
         container.style.position = 'absolute';
         container.style.left = '-9999px';
         container.style.width = '8.5in';
-        container.style.height = '11in';
         document.body.appendChild(container);
     
         const root = createRoot(container);
         root.render(<ResumePreview templateId={resumeData.templateId} data={resumeData} />);
         
         try {
-            await document.fonts.ready;
+            await new Promise(resolve => setTimeout(resolve, 100)); // Short delay for fonts
         } catch (err) {
             console.warn('Fonts could not be loaded before download.', err);
         }
@@ -73,7 +72,7 @@ export default function ResumeViewPage() {
             const canvas = await html2canvas(container, {
               scale: 4, 
               useCORS: true,
-              logging: false, // Disables logging for cleaner console
+              logging: false,
               width: container.offsetWidth,
               height: container.offsetHeight,
               windowWidth: container.scrollWidth,
@@ -147,7 +146,7 @@ export default function ResumeViewPage() {
 
             <main className="flex-1">
                 <div className="py-8">
-                     <div className="mx-auto w-[8.5in] h-[11in] bg-white shadow-2xl">
+                     <div className="mx-auto w-[8.5in] bg-white shadow-2xl">
                         <ResumePreview templateId={resumeData.templateId} data={resumeData} />
                     </div>
                 </div>
