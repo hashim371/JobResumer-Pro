@@ -61,10 +61,12 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
   };
 
   // Different Template Layouts
+  const parentClass = "w-[8.5in] h-[11in] bg-white text-base";
+
   switch (templateId) {
     case 'new-york':
         return (
-            <div className="p-8 font-serif bg-white text-gray-800 min-h-full text-[11pt] leading-relaxed">
+            <div className={cn(parentClass, "p-8 font-serif bg-white text-gray-800 text-[11pt] leading-relaxed")}>
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold tracking-tight text-gray-900 font-headline">{personalInfo?.name}</h1>
                     <p className="text-xl mt-1 text-gray-600 font-light tracking-wide">{personalInfo?.role}</p>
@@ -123,7 +125,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'sydney': // ATS-friendly
     case 'cairo':
       return (
-        <div className="p-8 font-body bg-white text-slate-800 min-h-full text-sm">
+        <div className={cn(parentClass, "p-8 font-body bg-white text-slate-800 text-sm")}>
             <h1 className="text-3xl font-bold font-headline text-slate-900">{personalInfo?.name}</h1>
             <p className="text-lg text-slate-600 font-medium mb-2">{personalInfo?.role}</p>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
@@ -178,7 +180,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'vienna':
     case 'istanbul':
         return (
-            <div className="p-10 font-serif bg-white text-gray-900 min-h-full text-[10.5pt] leading-normal">
+            <div className={cn(parentClass, "p-10 font-serif bg-white text-gray-900 text-[10.5pt] leading-normal")}>
                 <div className="text-center">
                     <h1 className="text-3xl tracking-widest font-light uppercase font-headline">{personalInfo?.name}</h1>
                     <p className="text-md tracking-widest uppercase text-gray-600 mt-1">{personalInfo?.role}</p>
@@ -234,7 +236,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'helsinki':
     case 'shanghai':
         return (
-             <div className="p-8 font-body bg-white text-gray-800 min-h-full text-sm">
+             <div className={cn(parentClass, "p-8 font-body bg-white text-gray-800 text-sm")}>
                 <div className="grid grid-cols-3 gap-8">
                     <div className="col-span-2">
                         <h1 className="text-5xl font-extrabold text-blue-800 mb-2 font-headline">{personalInfo?.name}</h1>
@@ -294,7 +296,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'berlin': 
     case 'oslo':
       return (
-        <div className="font-body bg-white text-gray-800 min-h-full flex text-sm">
+        <div className={cn(parentClass, "font-body bg-white text-gray-800 flex text-sm")}>
           <div className="w-1/3 bg-gray-100 p-8 text-gray-800 flex flex-col">
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 font-headline">{personalInfo?.name}</h1>
@@ -356,7 +358,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'madrid':
     case 'seoul':
         return (
-            <div className="p-8 font-body bg-white text-gray-700 min-h-full text-sm">
+            <div className={cn(parentClass, "p-8 font-body bg-white text-gray-700 text-sm")}>
                 <header className="text-center mb-6 pb-4">
                     <h1 className="text-4xl font-extrabold text-teal-700 font-headline">{personalInfo?.name}</h1>
                     <p className="text-lg text-gray-500 mt-1">{personalInfo?.role}</p>
@@ -411,7 +413,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'copenhagen':
     case 'prague':
         return (
-             <div className="p-8 font-body bg-white text-gray-800 min-h-full text-sm">
+             <div className={cn(parentClass, "p-8 font-body bg-white text-gray-800 text-sm")}>
                 <div className="text-center pb-4 border-b-4 border-rose-300">
                     <h1 className="text-4xl font-bold text-rose-800 font-headline">{personalInfo?.name}</h1>
                     <p className="text-md text-gray-500 mt-1">{personalInfo?.role}</p>
@@ -469,7 +471,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         )
     case 'amsterdam':
         return (
-            <div className="font-body min-h-full flex text-sm">
+            <div className={cn(parentClass, "font-body flex text-sm")}>
             <div className="w-1/3 bg-orange-500 text-white p-8 flex flex-col">
                 <div className="flex-grow">
                     <h1 className="text-3xl font-bold mb-2 font-headline">{personalInfo?.name}</h1>
@@ -524,7 +526,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'stockholm':
       return (
-        <div className="p-8 font-body bg-sky-950 text-white min-h-full text-sm">
+        <div className={cn(parentClass, "p-8 font-body bg-sky-950 text-white text-sm")}>
           <div className="text-center mb-8">
             <h1 className="text-4xl font-extrabold tracking-tight font-headline">{personalInfo?.name}</h1>
             <p className="text-lg font-light text-sky-200">{personalInfo?.role}</p>
@@ -580,7 +582,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     
     case 'lisbon':
       return (
-        <div className="p-8 font-body bg-white text-gray-700 min-h-full text-sm">
+        <div className={cn(parentClass, "p-8 font-body bg-white text-gray-700 text-sm")}>
           <div className="flex items-start justify-between mb-6 pb-4 border-b-2 border-green-700">
             <div>
               <h1 className="text-4xl font-extrabold text-green-800 font-headline">{personalInfo?.name}</h1>
@@ -630,8 +632,8 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     
     case 'warsaw':
         return (
-          <div className="p-8 font-body bg-white text-slate-800 min-h-full text-sm">
-              <div className="bg-gray-800 text-white p-6 -m-8 mb-6">
+          <div className={cn(parentClass, "font-body bg-white text-slate-800 text-sm")}>
+              <div className="bg-gray-800 text-white p-6 mb-6">
                   <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
                   <p className="text-lg font-light text-gray-300 mt-1">{personalInfo?.role}</p>
                   <div className="flex flex-wrap justify-start items-center mt-3 text-xs text-gray-300 gap-x-4 gap-y-1">
@@ -642,49 +644,51 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                   </div>
               </div>
   
-              <section className="mb-6">
-                  <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Professional Summary</h2>
-                  <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
-              </section>
-              
-              <section className="mb-6">
-                  <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Work Experience</h2>
-                  {experience?.map((exp:any, i:number) => (
-                      <div key={i} className="mb-4">
-                          <div className="flex justify-between items-baseline">
-                              <h3 className="text-md font-bold text-slate-800">{exp.jobTitle}</h3>
-                              <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
-                          </div>
-                          <h4 className="text-sm font-semibold text-slate-600 italic">{exp.company}</h4>
-                          <p className="text-slate-700 mt-1 text-xs leading-normal">{exp.description}</p>
-                      </div>
-                  ))}
-              </section>
-              
-              <section className="grid grid-cols-2 gap-x-8">
-                   <div>
-                      <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Education</h2>
-                      {education?.map((edu:any, i:number) => (
-                          <div key={i} className="mb-3">
-                              <h3 className="text-md font-bold text-slate-800">{edu.degree}</h3>
-                              <p className="text-sm text-slate-700">{edu.school}</p>
-                              <p className="text-xs text-slate-500">{edu.graduationDate}</p>
-                          </div>
-                      ))}
-                  </div>
-  
-                  <div>
-                      <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Skills</h2>
-                      <ul className="flex flex-wrap gap-2 mt-2">
-                          {skills?.map((skill: any, i:number) => <li key={i} className="bg-gray-200 text-gray-800 text-xs font-medium px-3 py-1 rounded-md">{skill.name}</li>)}
-                      </ul>
-                  </div>
-              </section>
+              <div className="px-6">
+                <section className="mb-6">
+                    <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Professional Summary</h2>
+                    <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
+                </section>
+                
+                <section className="mb-6">
+                    <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Work Experience</h2>
+                    {experience?.map((exp:any, i:number) => (
+                        <div key={i} className="mb-4">
+                            <div className="flex justify-between items-baseline">
+                                <h3 className="text-md font-bold text-slate-800">{exp.jobTitle}</h3>
+                                <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
+                            </div>
+                            <h4 className="text-sm font-semibold text-slate-600 italic">{exp.company}</h4>
+                            <p className="text-slate-700 mt-1 text-xs leading-normal">{exp.description}</p>
+                        </div>
+                    ))}
+                </section>
+                
+                <section className="grid grid-cols-2 gap-x-8">
+                    <div>
+                        <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Education</h2>
+                        {education?.map((edu:any, i:number) => (
+                            <div key={i} className="mb-3">
+                                <h3 className="text-md font-bold text-slate-800">{edu.degree}</h3>
+                                <p className="text-sm text-slate-700">{edu.school}</p>
+                                <p className="text-xs text-slate-500">{edu.graduationDate}</p>
+                            </div>
+                        ))}
+                    </div>
+    
+                    <div>
+                        <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Skills</h2>
+                        <ul className="flex flex-wrap gap-2 mt-2">
+                            {skills?.map((skill: any, i:number) => <li key={i} className="bg-gray-200 text-gray-800 text-xs font-medium px-3 py-1 rounded-md">{skill.name}</li>)}
+                        </ul>
+                    </div>
+                </section>
+              </div>
           </div>
         );
     case 'singapore':
         return (
-            <div className="p-8 font-body bg-white text-gray-800 min-h-full text-sm">
+            <div className={cn(parentClass, "p-8 font-body bg-white text-gray-800 text-sm")}>
                 <div className="flex justify-between items-start pb-4 border-b-2 border-red-500">
                     <div>
                         <h1 className="text-4xl font-extrabold text-red-700 font-headline">{personalInfo?.name}</h1>
@@ -739,7 +743,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'kyoto':
         return (
-            <div className="p-10 font-serif bg-cream-50 text-gray-700 min-h-full text-sm leading-relaxed" style={{ backgroundColor: '#FDFBF5' }}>
+            <div className={cn(parentClass, "p-10 font-serif text-gray-700 text-sm leading-relaxed")} style={{ backgroundColor: '#FDFBF5' }}>
                 <div className="text-center mb-10">
                     <h1 className="text-4xl font-thin tracking-widest font-headline">{personalInfo?.name}</h1>
                     <p className="text-lg text-gray-500 mt-2 tracking-wider">{personalInfo?.role}</p>
@@ -786,7 +790,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'dubai':
         return (
-            <div className="p-8 font-body bg-gray-900 text-white min-h-full text-sm flex">
+            <div className={cn(parentClass, "font-body bg-gray-900 text-white text-sm flex")}>
                 <div className="w-1/3 bg-gray-800 p-6 flex flex-col">
                     <div className="flex-grow">
                         <h1 className="text-4xl font-bold text-amber-400 font-headline">{personalInfo?.name}</h1>
@@ -839,7 +843,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'mumbai':
         return (
-            <div className="p-8 font-body bg-white text-gray-800 min-h-full text-sm">
+            <div className={cn(parentClass, "p-8 font-body bg-white text-gray-800 text-sm")}>
                 <div className="relative text-center pb-4">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500"></div>
                     <h1 className="text-4xl font-bold text-gray-900 mt-8 font-headline">{personalInfo?.name}</h1>
@@ -887,7 +891,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'rio':
         return (
-            <div className="p-8 font-body bg-white text-gray-800 min-h-full text-sm relative overflow-hidden">
+            <div className={cn(parentClass, "p-8 font-body bg-white text-gray-800 text-sm relative overflow-hidden")}>
                 <div className="absolute -top-16 -left-16 w-48 h-48 bg-yellow-300 rounded-full opacity-50"></div>
                 <div className="absolute -bottom-24 -right-12 w-64 h-64 bg-green-300 rounded-full opacity-50"></div>
                 <div className="relative z-10">
@@ -942,7 +946,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'zurich':
         return (
-            <div className="p-8 font-body bg-gray-50 text-gray-900 min-h-full text-sm">
+            <div className={cn(parentClass, "p-8 font-body bg-gray-50 text-gray-900 text-sm")}>
                 <header className="flex justify-between items-center pb-4 border-b border-gray-300">
                     <h1 className="text-3xl font-semibold tracking-tighter font-headline">{personalInfo?.name}</h1>
                     <p className="text-md text-gray-600">{personalInfo?.role}</p>
@@ -994,7 +998,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
      case 'mexico-city':
       return (
-        <div className="font-body min-h-full flex text-sm">
+        <div className={cn(parentClass, "font-body flex text-sm")}>
           <div className="w-1/3 bg-blue-800 text-white p-8 flex flex-col items-center text-center">
              <h1 className="text-2xl font-bold font-headline mb-1">{personalInfo?.name}</h1>
             <p className="text-sm text-blue-200 mb-6">{personalInfo?.role}</p>
@@ -1043,7 +1047,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
       );
     case 'toronto':
        return (
-        <div className="font-body bg-white text-gray-800 min-h-full flex text-sm">
+        <div className={cn(parentClass, "font-body bg-white text-gray-800 flex text-sm")}>
           <div className="w-1/3 bg-gray-800 text-white p-8 flex flex-col">
             <div className="text-left mb-8">
                 <h1 className="text-3xl font-bold font-headline">{personalInfo?.name}</h1>
@@ -1103,13 +1107,15 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'dublin': // Simple
     default:
       return (
-        <div className="font-body bg-white text-slate-800 min-h-full text-sm flex flex-col">
-            <div className="bg-primary text-primary-foreground p-8">
-                <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
-                <p className="text-lg text-primary-foreground/80 font-light mt-1">{personalInfo?.role}</p>
-                <div className="flex flex-wrap justify-start items-center mt-4 text-xs text-primary-foreground/80 gap-x-4 gap-y-1">
-                    {personalInfo?.phone && <span>{personalInfo.phone}</span>}
+        <div className={cn(parentClass, "font-body bg-white text-slate-800 text-sm flex flex-col")}>
+            <div className="bg-primary text-primary-foreground p-8 flex justify-between items-center">
+                <div>
+                    <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
+                    <p className="text-lg text-primary-foreground/80 font-light mt-1">{personalInfo?.role}</p>
+                </div>
+                <div className="flex flex-col items-end text-xs text-primary-foreground/80 gap-1">
                     {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
+                    {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                     {personalInfo?.location && <span>{personalInfo.location}</span>}
                     {personalInfo?.website && <ContactLink type="website" value={personalInfo.website} />}
                 </div>
