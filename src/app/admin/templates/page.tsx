@@ -18,6 +18,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {
   Dialog,
@@ -212,8 +213,8 @@ export default function AdminTemplatesPage() {
           <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
              <div className="absolute inset-0 flex items-center justify-center">
-                 <div className="transform scale-[0.28] origin-center">
-                    <ResumePreview templateId={template.id} templates={templates} />
+                <div className="transform scale-[0.28] origin-center">
+                  <ResumePreview templateId={template.id} templates={templates} />
                 </div>
               </div>
             </CardContent>
@@ -314,3 +315,5 @@ export default function AdminTemplatesPage() {
     </div>
   );
 }
+
+    
