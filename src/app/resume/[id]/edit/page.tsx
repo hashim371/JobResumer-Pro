@@ -203,7 +203,7 @@ export default function ResumeEditPage() {
   const currentTemplate = templates.find(t => t.id === resumeData.templateId);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-muted/20">
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center">
             <Button variant="ghost" asChild>
@@ -229,7 +229,7 @@ export default function ResumeEditPage() {
         </div>
       </header>
 
-      <main className="flex-1 grid md:grid-cols-2 gap-8 bg-muted/20">
+      <main className="flex-1 grid md:grid-cols-[1fr,0.9fr] gap-4">
         <div className="h-full overflow-y-auto p-4 md:p-8">
           <Card className="shadow-none border-none bg-transparent">
              <CardContent className="p-0">
@@ -331,20 +331,21 @@ export default function ResumeEditPage() {
           </Card>
         </div>
         
-        <div className="h-full flex items-start justify-center overflow-hidden p-4 md:p-8 bg-muted/20">
-            <div 
-              className="w-[8.5in] bg-white shadow-2xl"
-              style={{
-                transform: 'scale(0.8)',
-                transformOrigin: 'top center',
-              }}
-            >
-              <ResumePreview templateId={resumeData.templateId} data={watchedData} />
+        <div className="h-full overflow-hidden p-4 md:p-8 bg-muted/20 md:sticky md:top-16">
+            <div className="flex justify-center items-start h-full">
+                <div 
+                  className="w-[8.5in] bg-white shadow-2xl"
+                  style={{
+                    transform: 'scale(0.8)',
+                    transformOrigin: 'top center',
+                  }}
+                >
+                  <ResumePreview templateId={resumeData.templateId} data={watchedData} />
+                </div>
             </div>
         </div>
       </main>
     </div>
   );
 }
-
     
