@@ -113,26 +113,38 @@ export default function AdminTemplatesPage() {
   };
 
   const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
-      const dasherizedName = values.name.toLowerCase().replace(/\s+/g, '-');
-      const templateId = `${dasherizedName}-${Math.random().toString(36).substring(2, 6)}`;
-      
-      const newTemplate: Template = {
-          id: templateId,
-          name: values.name,
-          category: values.category,
-          // For now, we will add it with a default "dublin" layout by not providing code.
-      };
+      addForm.formState.isSubmitting = true;
+      const { success, error } = await generateTemplate(values);
+      addForm.formState.isSubmitting = false;
 
-      addTemplate(newTemplate);
-      setTemplates(prev => [newTemplate, ...prev]);
-      
-      toast({
-          title: 'Template Added',
-          description: 'The new template has been added locally.',
-      });
+      if(success) {
+        const dasherizedName = values.name.toLowerCase().replace(/\s+/g, '-');
+        const templateId = `${dasherizedName}-${Math.random().toString(36).substring(2, 6)}`;
+        
+        const newTemplate: Template = {
+            id: templateId,
+            name: values.name,
+            category: values.category,
+            // For now, we will add it with a default "dublin" layout by not providing code.
+        };
 
-      addForm.reset();
-      setIsAddModalOpen(false);
+        addTemplate(newTemplate);
+        setTemplates(prev => [newTemplate, ...prev]);
+        
+        toast({
+            title: 'Template Added',
+            description: 'The new template has been added locally.',
+        });
+
+        addForm.reset();
+        setIsAddModalOpen(false);
+      } else {
+         toast({
+            variant: 'destructive',
+            title: 'Generation Failed',
+            description: error || 'The AI failed to generate a new template. Please try again.',
+        });
+      }
   };
   
   if (loading) {
