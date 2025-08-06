@@ -62,9 +62,9 @@ export default function ResumeEditPage() {
   const { id: resumeId } = useParams();
   const { user, loading: authLoading } = useAuth();
   const [resumeData, setResumeData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [loading, setLoading] useState(true);
+  const [isSaving, setIsSaving] useState(false);
+  const [isDownloading, setIsDownloading] useState(false);
   const templates = getTemplates();
 
   const form = useForm<ResumeData>({
@@ -229,8 +229,8 @@ export default function ResumeEditPage() {
         </div>
       </header>
 
-      <main className="flex-1 grid md:grid-cols-[1fr,0.9fr] gap-4">
-        <div className="h-full overflow-y-auto p-4 md:p-8">
+      <main className="flex-1 flex justify-center gap-8 px-4 sm:px-6 lg:px-8">
+        <div className="flex-grow max-w-[800px] py-8">
           <Card className="shadow-none border-none bg-transparent">
              <CardContent className="p-0">
                <Form {...form}>
@@ -331,18 +331,20 @@ export default function ResumeEditPage() {
           </Card>
         </div>
         
-        <div className="h-full overflow-hidden p-4 md:p-8 bg-muted/20 md:sticky md:top-16">
-            <div className="flex justify-center items-start h-full">
-                <div 
-                  className="w-[8.5in] bg-white shadow-2xl"
-                  style={{
-                    transform: 'scale(0.8)',
-                    transformOrigin: 'top center',
-                  }}
-                >
-                  <ResumePreview templateId={resumeData.templateId} data={watchedData} />
-                </div>
-            </div>
+        <div className="hidden lg:block w-[500px] flex-shrink-0">
+          <div className="sticky top-24 py-8">
+              <div className="flex justify-center items-start">
+                  <div 
+                    className="w-[8.5in] bg-white shadow-2xl"
+                    style={{
+                      transform: 'scale(0.8)',
+                      transformOrigin: 'top center',
+                    }}
+                  >
+                    <ResumePreview templateId={resumeData.templateId} data={watchedData} />
+                  </div>
+              </div>
+          </div>
         </div>
       </main>
     </div>
