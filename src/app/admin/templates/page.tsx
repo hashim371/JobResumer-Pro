@@ -8,7 +8,7 @@ import { getTemplates, addTemplate, invalidateTemplateCache } from '@/lib/templa
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2, Loader2, PlusCircle } from 'lucide-react';
+import { Edit, Trash2, Loader2, PlusCircle, Copy } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,7 +36,9 @@ import { Form, FormControl, FormField, FormItem, FormMessage, FormLabel } from '
 import { ResumePreview } from '@/components/ResumePreview';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { generateTemplate } from '@/ai/flows/generate-template';
+import type { GenerateTemplateOutput } from '@/ai/flows/generate-template';
 import type { Template } from '@/lib/templates';
+import { Textarea } from '@/components/ui/textarea';
 
 const templateSchema = z.object({
   name: z.string().min(1, 'Template name is required.'),
@@ -48,6 +50,8 @@ export default function AdminTemplatesPage() {
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isGeneratedModalOpen, setIsGeneratedModalOpen] = useState(false);
+  const [generatedCode, setGeneratedCode] = useState<GenerateTemplateOutput | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const { toast } = useToast();
 
@@ -69,8 +73,7 @@ export default function AdminTemplatesPage() {
   }, []);
   
   const allCategories = Array.from(new Set(templates.map(t => t.category)));
-  const addTemplateCategories = Array.from(new Set([...allCategories, "Unique", "Elegant", "Bold"]));
-
+  const addTemplateCategories = Array.from(new Set([...allCategories, "Unique", "Elegant", "Bold", "Professional", "Artistic", "Minimalist"]));
 
   const editForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
@@ -83,13 +86,8 @@ export default function AdminTemplatesPage() {
   });
 
   const handleDelete = (templateId: string) => {
-    // Note: Deletion from DB is not implemented in the flow for safety.
-    // This will be a client-side removal for the session.
     setTemplates(prev => prev.filter(t => t.id !== templateId));
-    toast({
-        title: 'Template Hidden',
-        description: 'The template has been hidden for this session.',
-    });
+    toast({ title: 'Template Hidden', description: 'The template has been hidden for this session.' });
   };
 
   const handleEditClick = (template: Template) => {
@@ -100,49 +98,32 @@ export default function AdminTemplatesPage() {
   
   const handleEditSubmit = (values: z.infer<typeof templateSchema>) => {
     if (selectedTemplate) {
-      // Note: Update in DB is not implemented in the flow.
-      // This will be a client-side update for the session.
        setTemplates(prev => prev.map(t => t.id === selectedTemplate.id ? { ...t, ...values } : t));
-      toast({
-        title: 'Template Updated',
-        description: 'The template details have been saved for this session.',
-      });
+      toast({ title: 'Template Updated', description: 'The template details have been saved for this session.' });
       setIsEditModalOpen(false);
       setSelectedTemplate(null);
     }
   };
 
   const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
-      const { success, error } = await generateTemplate(values);
-
-      if(success) {
-        const dasherizedName = values.name.toLowerCase().replace(/\s+/g, '-');
-        const templateId = `${dasherizedName}-${Math.random().toString(36).substring(2, 6)}`;
-        
-        const newTemplate: Template = {
-            id: templateId,
-            name: values.name,
-            category: values.category,
-            // For now, we will add it with a default "dublin" layout by not providing code.
-        };
-
-        addTemplate(newTemplate);
-        setTemplates(prev => [newTemplate, ...prev]);
-        
-        toast({
-            title: 'Template Added',
-            description: 'The new template has been added locally.',
-        });
-
+      try {
+        const result = await generateTemplate(values);
+        setGeneratedCode(result);
+        setIsGeneratedModalOpen(true);
         addForm.reset();
         setIsAddModalOpen(false);
-      } else {
+      } catch (e: any) {
          toast({
             variant: 'destructive',
             title: 'Generation Failed',
-            description: error || 'The AI failed to generate a new template. Please try again.',
+            description: e.message || 'The AI failed to generate a new template. Please try again.',
         });
       }
+  };
+
+  const copyToClipboard = (text: string, fieldName: string) => {
+    navigator.clipboard.writeText(text);
+    toast({ title: "Copied!", description: `${fieldName} code has been copied to your clipboard.` });
   };
   
   if (loading) {
@@ -161,7 +142,7 @@ export default function AdminTemplatesPage() {
             <DialogHeader>
               <DialogTitle>Generate New Template</DialogTitle>
               <DialogDescription>
-                Add a new template to the collection.
+                Use AI to generate a unique, new resume template. Provide a name and a category.
               </DialogDescription>
             </DialogHeader>
             <Form {...addForm}>
@@ -205,7 +186,7 @@ export default function AdminTemplatesPage() {
                    <Button type="button" variant="ghost" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
                   <Button type="submit" disabled={addForm.formState.isSubmitting}>
                     {addForm.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                    Add Template
+                    Generate Template
                   </Button>
                 </DialogFooter>
               </form>
@@ -316,6 +297,40 @@ export default function AdminTemplatesPage() {
               </DialogFooter>
             </form>
           </Form>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={isGeneratedModalOpen} onOpenChange={setIsGeneratedModalOpen}>
+        <DialogContent className="max-w-4xl">
+           <DialogHeader>
+              <DialogTitle>Template Code Generated!</DialogTitle>
+              <DialogDescription>
+                  The AI has generated the code for your new template. To add it to the app, please copy and paste the following code snippets into their respective files.
+              </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 max-h-[60vh] overflow-y-auto p-1">
+              <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label className="font-semibold">1. Add to `src/lib/templates.ts`</Label>
+                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard(generatedCode?.templateListEntry || '', 'Template list entry')}>
+                        <Copy className="mr-2 h-3 w-3" /> Copy
+                    </Button>
+                  </div>
+                  <Textarea readOnly value={generatedCode?.templateListEntry || ''} rows={5} className="bg-muted/50 font-mono text-xs"/>
+              </div>
+               <div>
+                  <div className="flex justify-between items-center mb-2">
+                     <Label className="font-semibold">2. Add to `src/components/ResumePreview.tsx`</Label>
+                     <Button variant="ghost" size="sm" onClick={() => copyToClipboard(generatedCode?.caseStatement || '', 'ResumePreview case')}>
+                        <Copy className="mr-2 h-3 w-3" /> Copy
+                    </Button>
+                  </div>
+                   <Textarea readOnly value={generatedCode?.caseStatement || ''} rows={15} className="bg-muted/50 font-mono text-xs"/>
+              </div>
+          </div>
+          <DialogFooter>
+              <Button onClick={() => setIsGeneratedModalOpen(false)}>Done</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
