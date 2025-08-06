@@ -35,6 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage, FormLabel } from '@/components/ui/form';
 import { ResumePreview } from '@/components/ResumePreview';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { generateTemplate } from '@/ai/flows/generate-template';
 
 const templateSchema = z.object({
   name: z.string().min(1, 'Template name is required.'),
@@ -91,15 +92,34 @@ export default function AdminTemplatesPage() {
     }
   };
 
-  const handleAddSubmit = (values: z.infer<typeof templateSchema>) => {
-    addTemplate(values);
-    toast({
-        title: 'Template Added',
-        description: 'The new template is now available.',
-    });
-    addForm.reset();
-    setIsAddModalOpen(false);
-    setForceRender(c => c + 1);
+  const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
+    try {
+      const result = await generateTemplate(values);
+      if (result.success) {
+        toast({
+            title: 'Template Added',
+            description: 'The new AI-generated template is now available.',
+        });
+        addForm.reset();
+        setIsAddModalOpen(false);
+        // This is a bit of a hack to force a re-render of the component tree
+        // In a real app, you might use a more robust state management solution
+        window.location.reload();
+      } else {
+         toast({
+            variant: "destructive",
+            title: 'Generation Failed',
+            description: result.error || 'The AI could not generate the template. Please try again.',
+        });
+      }
+    } catch (error) {
+       toast({
+            variant: "destructive",
+            title: 'Error',
+            description: 'An unexpected error occurred while generating the template.',
+        });
+        console.error(error);
+    }
   };
 
   return (
@@ -112,9 +132,9 @@ export default function AdminTemplatesPage() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Template</DialogTitle>
+              <DialogTitle>Generate New Template with AI</DialogTitle>
               <DialogDescription>
-                Create a new template. The default 'Dublin' layout will be used.
+                Describe your new template and our AI will generate a unique design for you.
               </DialogDescription>
             </DialogHeader>
             <Form {...addForm}>
@@ -126,7 +146,7 @@ export default function AdminTemplatesPage() {
                     <FormItem>
                        <Label htmlFor="add-name">Template Name</Label>
                       <FormControl>
-                        <Input id="add-name" {...field} />
+                        <Input id="add-name" {...field} placeholder="e.g., 'Vienna', 'Kyoto'" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -148,6 +168,7 @@ export default function AdminTemplatesPage() {
                           {categories.filter(c => c !== 'All templates').map(cat => (
                             <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                           ))}
+                           <SelectItem value="Unique">Unique</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -158,7 +179,7 @@ export default function AdminTemplatesPage() {
                    <Button type="button" variant="ghost" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
                   <Button type="submit" disabled={addForm.formState.isSubmitting}>
                     {addForm.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                    Add Template
+                    Generate Template
                   </Button>
                 </DialogFooter>
               </form>
@@ -172,7 +193,7 @@ export default function AdminTemplatesPage() {
           <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="transform scale-[0.28] sm:scale-[0.34] origin-center">
+                <div className="transform scale-[0.28] origin-center">
                     <ResumePreview templateId={template.id} />
                 </div>
               </div>
@@ -274,5 +295,3 @@ export default function AdminTemplatesPage() {
     </div>
   );
 }
-
-    
