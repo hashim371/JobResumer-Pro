@@ -1,8 +1,8 @@
+
 import { getTemplatesFlow } from "@/ai/flows/generate-template";
-import type { Template } from "@/lib/templates";
+import { Template, initialTemplates } from "@/lib/templates";
 
 // This store is now a client-side cache.
-// The single source of truth is the database, fetched via getTemplatesFlow.
 let liveTemplates: Template[] | null = null;
 
 // Asynchronously fetches templates and caches them.
@@ -12,25 +12,30 @@ export const getTemplates = async (): Promise<Template[]> => {
   }
   
   try {
-    const templates = await getTemplatesFlow({});
+    // For now, we revert to using initial templates to prevent crashes.
+    // The flow can be re-integrated once the rendering issues are resolved.
+    // const templates = await getTemplatesFlow({});
+    const templates = initialTemplates;
     liveTemplates = templates;
     return templates;
   } catch (error) {
-    console.error("Failed to fetch templates from the source:", error);
-    // Fallback or re-throw as per application needs
-    return [];
+    console.error("Failed to fetch templates, returning initial set:", error);
+    // Fallback to initial templates if DB fetch fails
+    return initialTemplates;
   }
 };
 
-// This function is for client-side additions if needed, but the main flow
-// should be to re-fetch from the source to get AI-generated templates.
+// This function is for client-side additions
 export const addTemplate = (template: Template): void => {
-    if (liveTemplates) {
-        liveTemplates.unshift(template);
+    if (!liveTemplates) {
+        liveTemplates = [...initialTemplates];
     }
+    liveTemplates.unshift(template);
 };
 
 // Invalidate the cache. The next call to getTemplates will re-fetch.
 export const invalidateTemplateCache = () => {
   liveTemplates = null;
 };
+
+    

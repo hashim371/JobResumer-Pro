@@ -1,4 +1,12 @@
-import type { Template } from '@/lib/template-store';
+
+
+export interface Template {
+  id: string;
+  name: string;
+  category: string;
+  code?: string;
+}
+
 
 export const initialTemplates: Template[] = [
   { id: 'dublin', name: 'Dublin', category: 'Simple' },
@@ -36,3 +44,5 @@ export const initialTemplates: Template[] = [
   { id: 'mexico-city', name: 'Mexico City', category: 'Artistic' },
   { id: 'lahore', name: 'Lahore', category: 'Professional' },
 ];
+
+    

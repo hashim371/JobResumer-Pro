@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getTemplates, invalidateTemplateCache } from '@/lib/template-store';
+import { getTemplates, addTemplate, invalidateTemplateCache } from '@/lib/template-store';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -68,8 +68,9 @@ export default function AdminTemplatesPage() {
     fetchTemplates();
   }, []);
   
-  const allCategories = Array.from(new Set([...templates.map(t => t.category), "Unique", "Elegant", "Bold"]));
-  const filterCategories = ['All templates', ...allCategories];
+  const allCategories = Array.from(new Set(templates.map(t => t.category)));
+  const addTemplateCategories = Array.from(new Set([...allCategories, "Unique", "Elegant", "Bold"]));
+
 
   const editForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
@@ -112,32 +113,26 @@ export default function AdminTemplatesPage() {
   };
 
   const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
-    try {
-      const result = await generateTemplate(values);
-      if (result.success) {
-        toast({
-            title: 'Template Generation Started',
-            description: 'The new AI-generated template is being created and will appear shortly.',
-        });
-        addForm.reset();
-        setIsAddModalOpen(false);
-        // Refetch templates to show the new one
-        setTimeout(() => fetchTemplates(), 1000); // Give DB some time
-      } else {
-         toast({
-            variant: "destructive",
-            title: 'Generation Failed',
-            description: result.error || 'The AI could not generate the template. Please try again.',
-        });
-      }
-    } catch (error) {
-       toast({
-            variant: "destructive",
-            title: 'Error',
-            description: 'An unexpected error occurred while generating the template.',
-        });
-        console.error(error);
-    }
+      const dasherizedName = values.name.toLowerCase().replace(/\s+/g, '-');
+      const templateId = `${dasherizedName}-${Math.random().toString(36).substring(2, 6)}`;
+      
+      const newTemplate: Template = {
+          id: templateId,
+          name: values.name,
+          category: values.category,
+          // For now, we will add it with a default "dublin" layout by not providing code.
+      };
+
+      addTemplate(newTemplate);
+      setTemplates(prev => [newTemplate, ...prev]);
+      
+      toast({
+          title: 'Template Added',
+          description: 'The new template has been added locally.',
+      });
+
+      addForm.reset();
+      setIsAddModalOpen(false);
   };
   
   if (loading) {
@@ -154,9 +149,9 @@ export default function AdminTemplatesPage() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Generate New Template with AI</DialogTitle>
+              <DialogTitle>Generate New Template</DialogTitle>
               <DialogDescription>
-                Describe your new template and our AI will generate a unique design for you.
+                Add a new template to the collection.
               </DialogDescription>
             </DialogHeader>
             <Form {...addForm}>
@@ -187,7 +182,7 @@ export default function AdminTemplatesPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {allCategories.map(cat => (
+                          {addTemplateCategories.map(cat => (
                             <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                           ))}
                         </SelectContent>
@@ -200,7 +195,7 @@ export default function AdminTemplatesPage() {
                    <Button type="button" variant="ghost" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
                   <Button type="submit" disabled={addForm.formState.isSubmitting}>
                     {addForm.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                    Generate Template
+                    Add Template
                   </Button>
                 </DialogFooter>
               </form>
@@ -316,3 +311,5 @@ export default function AdminTemplatesPage() {
     </div>
   );
 }
+
+    

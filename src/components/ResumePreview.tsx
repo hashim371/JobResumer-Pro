@@ -43,22 +43,6 @@ interface ResumePreviewProps {
   templates?: any[];
 }
 
-// A simple and safe eval environment
-const safeEval = (code: string, data: any, helpers: any) => {
-    const fullCode = `
-        const { ContactLink, ContactItem } = helpers;
-        const Component = ${code};
-        return Component({ data });
-    `;
-    try {
-        const fn = new Function('data', 'helpers', fullCode);
-        return fn(data, helpers);
-    } catch (e) {
-        console.error("Error evaluating template code:", e);
-        return <div className="w-[8.5in] h-[11in] bg-red-100 flex items-center justify-center p-8"><pre className="text-red-500 whitespace-pre-wrap">Error rendering template: {e.message}</pre></div>;
-    }
-}
-
 
 export const ResumePreview = ({ templateId, data: initialData, isClickable = true, templates: allTemplates }: ResumePreviewProps) => {
   const data = initialData || mockData;
@@ -85,9 +69,10 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
   const templatesToUse = allTemplates || initialTemplates;
   const template = templatesToUse.find(t => t.id === templateId);
 
-  if (template && template.code) {
-      // This is a dynamically generated template from the DB
-      return safeEval(template.code, data, { ContactLink, ContactItem });
+  if (template && (template as any).code) {
+      // This is a dynamically generated template from the DB, which is currently not supported due to rendering issues.
+      // Fallback to a default template to avoid crashing.
+      return <div className="w-[8.5in] h-[11in] bg-gray-100 flex items-center justify-center p-8"><pre className="text-gray-500 whitespace-pre-wrap">Dynamically generated templates are currently disabled.</pre></div>;
   }
 
   // Fallback to hardcoded templates if code doesn't exist in DB
@@ -1212,3 +1197,5 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
   }
 };
+
+    
