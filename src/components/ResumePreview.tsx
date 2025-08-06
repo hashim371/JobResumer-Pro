@@ -1105,64 +1105,82 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
       );
     case 'dublin': // Simple
     default:
-      return (
-        <div className={cn(parentClass, "font-body bg-white text-slate-800 text-sm flex flex-col")}>
-            <div className="bg-primary text-primary-foreground p-8 flex justify-between items-start">
-                <div>
-                    <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
-                    <p className="text-lg text-primary-foreground/80 font-light mt-1">{personalInfo?.role}</p>
-                </div>
-                <div className="flex flex-col items-end text-xs text-primary-foreground/80 gap-1">
-                    {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
-                    {personalInfo?.phone && <span>{personalInfo.phone}</span>}
-                    {personalInfo?.location && <span>{personalInfo.location}</span>}
-                    {personalInfo?.website && <ContactLink type="website" value={personalInfo.website} />}
-                </div>
-            </div>
-            <div className="p-8 flex-grow">
-              <div className="grid grid-cols-3 gap-8">
-                <div className="col-span-2 space-y-6">
-                   <section>
-                      <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Professional Summary</h2>
-                      <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
-                  </section>
-                  
-                  <section>
-                      <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Work Experience</h2>
-                      {experience?.map((exp:any, i:number) => (
-                          <div key={i} className="mb-4">
-                              <div className="flex justify-between items-baseline">
-                                  <h3 className="text-md font-bold text-slate-800">{exp.jobTitle}</h3>
-                                  <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
-                              </div>
-                              <h4 className="text-sm font-semibold text-slate-600 italic">{exp.company}</h4>
-                              <p className="text-slate-700 mt-1 text-xs leading-normal">{exp.description}</p>
-                          </div>
-                      ))}
-                  </section>
-                </div>
-                <div className="col-span-1 space-y-6">
-                    <section>
-                        <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Education</h2>
-                        {education?.map((edu:any, i:number) => (
-                            <div key={i} className="mb-3">
-                                <h3 className="text-md font-bold text-slate-800">{edu.degree}</h3>
-                                <p className="text-sm text-slate-700">{edu.school}</p>
-                                <p className="text-xs text-slate-500">{edu.graduationDate}</p>
-                            </div>
-                        ))}
-                    </section>
+        const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-blue-800 mb-2 font-headline">{children}</h2>
+        );
 
-                    <section>
-                        <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Skills</h2>
-                        <ul className="flex flex-wrap gap-2 mt-2">
-                            {skills?.map((skill: any, i:number) => <li key={i} className="bg-secondary text-secondary-foreground text-xs font-medium px-3 py-1 rounded-md">{skill.name}</li>)}
-                        </ul>
-                    </section>
-                </div>
-              </div>
+        const SkillBadge = ({ children }: { children: React.ReactNode }) => (
+          <span className="bg-gray-200 text-gray-700 text-[10px] font-medium px-3 py-1 rounded-md">{children}</span>
+        )
+
+        return (
+            <div className={cn(parentClass, "font-body bg-white text-gray-800 text-[10pt] leading-normal flex flex-col")}>
+                {/* Header */}
+                <header className="bg-blue-600 text-white p-8 flex justify-between items-start">
+                    <div>
+                        <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
+                        <p className="text-lg font-light mt-1">{personalInfo?.role}</p>
+                    </div>
+                    <div className="flex flex-col items-end text-xs gap-1">
+                        <ContactLink type="email" value={personalInfo?.email} />
+                        <span>{personalInfo?.phone}</span>
+                        <span>{personalInfo?.location}</span>
+                        <ContactLink type="website" value={personalInfo?.website} />
+                    </div>
+                </header>
+                
+                {/* Body */}
+                <main className="p-8 flex-grow grid grid-cols-3 gap-8">
+                    <div className="col-span-2 space-y-6">
+                        {/* Summary */}
+                        <section>
+                            <SectionTitle>Professional Summary</SectionTitle>
+                            <p className="text-xs text-gray-600 leading-relaxed">{summary}</p>
+                        </section>
+                        
+                        {/* Experience */}
+                        <section>
+                            <SectionTitle>Work Experience</SectionTitle>
+                            <div className="space-y-4">
+                                {experience?.map((exp: any, i: number) => (
+                                    <div key={i}>
+                                        <div className="flex justify-between items-baseline">
+                                            <h3 className="font-bold text-sm">{exp.jobTitle}</h3>
+                                            <p className="text-xs text-gray-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</p>
+                                        </div>
+                                        <h4 className="text-sm italic text-gray-600">{exp.company}</h4>
+                                        <p className="text-xs text-gray-600 mt-1 leading-relaxed">{exp.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+
+                    <div className="col-span-1 space-y-6">
+                        {/* Education */}
+                        <section>
+                            <SectionTitle>Education</SectionTitle>
+                            {education?.map((edu: any, i: number) => (
+                                <div key={i}>
+                                    <h3 className="font-bold text-sm">{edu.degree}</h3>
+                                    <p className="text-xs text-gray-700">{edu.school}</p>
+                                    <p className="text-xs text-gray-500">{edu.graduationDate}</p>
+                                </div>
+                            ))}
+                        </section>
+                        
+                        {/* Skills */}
+                        <section>
+                            <SectionTitle>Skills</SectionTitle>
+                            <div className="flex flex-wrap gap-2">
+                                {skills?.map((skill: any, i: number) => (
+                                    <SkillBadge key={i}>{skill.name}</SkillBadge>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+                </main>
             </div>
-        </div>
-      );
+        );
   }
 };
