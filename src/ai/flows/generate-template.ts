@@ -126,7 +126,7 @@ const generateTemplateFlow = ai.defineFlow(
 export const getTemplatesFlow = ai.defineFlow(
   {
     name: 'getTemplatesFlow',
-    inputSchema: z.undefined(),
+    inputSchema: z.object({}),
     outputSchema: z.array(z.any()), // Using z.any() for simplicity with Firebase data structure
   },
   async () => {
@@ -138,7 +138,6 @@ export const getTemplatesFlow = ai.defineFlow(
         // Combine initial templates with DB templates, ensuring no duplicates
         const dbTemplates = Object.values(data) as Template[];
         const combined = [...initialTemplates];
-        const dbIds = new Set(dbTemplates.map(t => t.id));
         
         dbTemplates.forEach(dbTemplate => {
             const index = combined.findIndex(t => t.id === dbTemplate.id);

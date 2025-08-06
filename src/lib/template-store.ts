@@ -12,7 +12,7 @@ export const getTemplates = async (): Promise<Template[]> => {
   }
   
   try {
-    const templates = await getTemplatesFlow();
+    const templates = await getTemplatesFlow({});
     liveTemplates = templates;
     return templates;
   } catch (error) {
