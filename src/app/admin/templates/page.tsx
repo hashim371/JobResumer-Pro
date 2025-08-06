@@ -1,3 +1,4 @@
+
 "use client"
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -31,8 +32,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage, FormLabel } from '@/components/ui/form';
 import { ResumePreview } from '@/components/ResumePreview';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const templateSchema = z.object({
   name: z.string().min(1, 'Template name is required.'),
@@ -41,7 +43,9 @@ const templateSchema = z.object({
 
 export default function AdminTemplatesPage() {
   const [forceRender, setForceRender] = useState(0); 
-  const templates = getTemplates();
+  const allTemplates = getTemplates();
+  const categories = ['All templates', ...Array.from(new Set(allTemplates.map(t => t.category)))];
+
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -132,12 +136,21 @@ export default function AdminTemplatesPage() {
                   control={addForm.control}
                   name="category"
                   render={({ field }) => (
-                    <FormItem>
-                       <Label htmlFor="add-category">Category</Label>
-                      <FormControl>
-                        <Input id="add-category" {...field} />
-                      </FormControl>
-                       <FormMessage />
+                     <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories.filter(c => c !== 'All templates').map(cat => (
+                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -155,11 +168,13 @@ export default function AdminTemplatesPage() {
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {templates.map(template => (
+        {allTemplates.map(template => (
           <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-              <div className="transform scale-[0.28] sm:scale-[0.34] origin-top-left">
-                  <ResumePreview templateId={template.id} />
+             <div className="absolute inset-0 flex items-center justify-center">
+                <div className="transform scale-[0.28] sm:scale-[0.34] origin-center">
+                    <ResumePreview templateId={template.id} />
+                </div>
               </div>
             </CardContent>
             <CardFooter className="p-4 bg-card flex flex-col items-start">
@@ -228,10 +243,19 @@ export default function AdminTemplatesPage() {
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                     <Label htmlFor="edit-category">Category</Label>
-                    <FormControl>
-                      <Input id="edit-category" {...field} />
-                    </FormControl>
+                     <FormLabel>Category</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories.filter(c => c !== 'All templates').map(cat => (
+                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                      <FormMessage />
                   </FormItem>
                 )}
@@ -250,3 +274,5 @@ export default function AdminTemplatesPage() {
     </div>
   );
 }
+
+    
