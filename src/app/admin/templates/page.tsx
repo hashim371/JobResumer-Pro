@@ -113,9 +113,7 @@ export default function AdminTemplatesPage() {
   };
 
   const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
-      addForm.formState.isSubmitting = true;
       const { success, error } = await generateTemplate(values);
-      addForm.formState.isSubmitting = false;
 
       if(success) {
         const dasherizedName = values.name.toLowerCase().replace(/\s+/g, '-');
@@ -323,5 +321,3 @@ export default function AdminTemplatesPage() {
     </div>
   );
 }
-
-    
