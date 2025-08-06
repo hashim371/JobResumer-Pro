@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getTemplates, deleteTemplate, updateTemplate, Template } from '@/lib/template-store';
+import { getTemplates, deleteTemplate, updateTemplate, addTemplate, Template } from '@/lib/template-store';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2, Loader2 } from 'lucide-react';
+import { Edit, Trash2, Loader2, PlusCircle } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +27,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,16 +41,21 @@ const templateSchema = z.object({
 });
 
 export default function AdminTemplatesPage() {
-  // We need a way to force a re-render when the store changes.
-  const [_, setForceRender] = useState(0); 
+  const [forceRender, setForceRender] = useState(0); 
   const templates = getTemplates();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof templateSchema>>({
+  const editForm = useForm<z.infer<typeof templateSchema>>({
+    resolver: zodResolver(templateSchema),
+    defaultValues: { name: '', category: '' },
+  });
+
+  const addForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
     defaultValues: { name: '', category: '' },
   });
@@ -60,12 +66,12 @@ export default function AdminTemplatesPage() {
         title: 'Template Deleted',
         description: 'The template has been removed.',
     });
-    setForceRender(c => c + 1); // Force re-render
+    setForceRender(c => c + 1);
   };
 
   const handleEditClick = (template: Template) => {
     setSelectedTemplate(template);
-    form.reset({ name: template.name, category: template.category });
+    editForm.reset({ name: template.name, category: template.category });
     setIsEditModalOpen(true);
   };
   
@@ -78,24 +84,84 @@ export default function AdminTemplatesPage() {
       });
       setIsEditModalOpen(false);
       setSelectedTemplate(null);
-      setForceRender(c => c + 1); // Force re-render
+      setForceRender(c => c + 1);
     }
+  };
+
+  const handleAddSubmit = (values: z.infer<typeof templateSchema>) => {
+    addTemplate(values);
+    toast({
+        title: 'Template Added',
+        description: 'The new template is now available.',
+    });
+    addForm.reset();
+    setIsAddModalOpen(false);
+    setForceRender(c => c + 1);
   };
 
   return (
     <div className="animate-fadeIn">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Template Management</h1>
-        <Button>Add New Template</Button>
+        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+          <DialogTrigger asChild>
+            <Button><PlusCircle className="mr-2 h-4 w-4"/>Add New Template</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Template</DialogTitle>
+              <DialogDescription>
+                Create a new template. The default 'Dublin' layout will be used.
+              </DialogDescription>
+            </DialogHeader>
+            <Form {...addForm}>
+              <form onSubmit={addForm.handleSubmit(handleAddSubmit)} className="space-y-4 py-4">
+                <FormField
+                  control={addForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                       <Label htmlFor="add-name">Template Name</Label>
+                      <FormControl>
+                        <Input id="add-name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={addForm.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                       <Label htmlFor="add-category">Category</Label>
+                      <FormControl>
+                        <Input id="add-category" {...field} />
+                      </FormControl>
+                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <DialogFooter>
+                   <Button type="button" variant="ghost" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+                  <Button type="submit" disabled={addForm.formState.isSubmitting}>
+                    {addForm.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                    Add Template
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {templates.map(template => (
           <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                <div className="transform scale-[0.28] sm:scale-[0.34] origin-top-left">
+              <div className="absolute inset-0 transform scale-[0.28] sm:scale-[0.34] origin-top-left">
                   <ResumePreview templateId={template.id} />
-                </div>
+              </div>
             </CardContent>
             <CardFooter className="p-4 bg-card flex flex-col items-start">
                 <div className="w-full flex justify-between items-start">
@@ -143,29 +209,29 @@ export default function AdminTemplatesPage() {
               Change the details for the &quot;{selectedTemplate?.name}&quot; template.
             </DialogDescription>
           </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleEditSubmit)} className="space-y-4 py-4">
+          <Form {...editForm}>
+            <form onSubmit={editForm.handleSubmit(handleEditSubmit)} className="space-y-4 py-4">
               <FormField
-                control={form.control}
+                control={editForm.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                     <Label htmlFor="name">Template Name</Label>
+                     <Label htmlFor="edit-name">Template Name</Label>
                     <FormControl>
-                      <Input id="name" {...field} />
+                      <Input id="edit-name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
                <FormField
-                control={form.control}
+                control={editForm.control}
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                     <Label htmlFor="category">Category</Label>
+                     <Label htmlFor="edit-category">Category</Label>
                     <FormControl>
-                      <Input id="category" {...field} />
+                      <Input id="edit-category" {...field} />
                     </FormControl>
                      <FormMessage />
                   </FormItem>
@@ -173,15 +239,8 @@ export default function AdminTemplatesPage() {
               />
                <DialogFooter>
                  <Button type="button" variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                <Button type="submit" disabled={editForm.formState.isSubmitting}>
+                  {editForm.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
                   Save Changes
                 </Button>
               </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
