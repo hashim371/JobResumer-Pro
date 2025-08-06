@@ -93,7 +93,9 @@ export default function AdminTemplatesPage() {
         {templates.map(template => (
           <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                <ResumePreview templateId={template.id} />
+                <div className="transform scale-[0.28] sm:scale-[0.34] origin-top-left">
+                  <ResumePreview templateId={template.id} />
+                </div>
             </CardContent>
             <CardFooter className="p-4 bg-card flex flex-col items-start">
                 <div className="w-full flex justify-between items-start">
@@ -183,5 +185,3 @@ export default function AdminTemplatesPage() {
     </div>
   );
 }
-
-    
