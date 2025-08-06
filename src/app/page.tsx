@@ -101,7 +101,9 @@ export default function Home() {
                             <Link href={`/resume/create?template=${template.id}`} className="block group">
                               <Card className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-primary">
                                 <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-                                  <ResumePreview templateId={template.id} isClickable={false} />
+                                  <div className="transform scale-[0.28] origin-top-left">
+                                      <ResumePreview templateId={template.id} isClickable={false} />
+                                  </div>
                                 </CardContent>
                               </Card>
                             </Link>
