@@ -19,11 +19,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from '@/hooks/use-toast';
 import { getTemplates } from '@/lib/template-store';
 import { ResumePreview } from '@/components/ResumePreview';
+import type { Template } from '@/lib/templates';
 
 interface Resume {
   id: string;
@@ -38,8 +38,16 @@ export default function MyResumesPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [resumes, setResumes] = useState<Resume[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
-  const templates = getTemplates();
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+        const fetchedTemplates = await getTemplates();
+        setTemplates(fetchedTemplates);
+    };
+    fetchTemplates();
+  }, []);
 
   useEffect(() => {
     if (authLoading) return;
@@ -77,7 +85,7 @@ export default function MyResumesPage() {
     }
   };
 
-  if (loading || authLoading) {
+  if (loading || authLoading || templates.length === 0) {
     return <div className="flex h-[calc(100vh-4rem)] w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
   }
 
@@ -102,7 +110,7 @@ export default function MyResumesPage() {
                       <Link href={`/resume/${resume.id}`} className="block overflow-hidden">
                          <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                            <div className="transform scale-[0.28] sm:scale-[0.34] origin-top-left">
-                                <ResumePreview templateId={resume.templateId} data={resume} isClickable={false} />
+                                <ResumePreview templateId={resume.templateId} data={resume} isClickable={false} templates={templates} />
                            </div>
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Eye className="h-12 w-12 text-white" />

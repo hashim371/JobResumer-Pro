@@ -1,33 +1,36 @@
-import { initialTemplates } from "@/lib/templates";
-import { v4 as uuidv4 } from 'uuid';
+import { getTemplatesFlow } from "@/ai/flows/generate-template";
+import type { Template } from "@/lib/templates";
 
-export interface Template {
-  id: string;
-  name: string;
-  category: string;
-}
+// This store is now a client-side cache.
+// The single source of truth is the database, fetched via getTemplatesFlow.
+let liveTemplates: Template[] | null = null;
 
-let liveTemplates: Template[] = [...initialTemplates];
-
-export const getTemplates = (): Template[] => {
-  return liveTemplates;
+// Asynchronously fetches templates and caches them.
+export const getTemplates = async (): Promise<Template[]> => {
+  if (liveTemplates) {
+    return liveTemplates;
+  }
+  
+  try {
+    const templates = await getTemplatesFlow();
+    liveTemplates = templates;
+    return templates;
+  } catch (error) {
+    console.error("Failed to fetch templates from the source:", error);
+    // Fallback or re-throw as per application needs
+    return [];
+  }
 };
 
-export const addTemplate = (templateData: Omit<Template, 'id'>): Template => {
-    const newId = templateData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    const newTemplate: Template = {
-        id: `${newId}-${uuidv4().slice(0, 4)}`, // Ensure unique ID
-        ...templateData,
-    };
-    liveTemplates.unshift(newTemplate);
-    return newTemplate;
+// This function is for client-side additions if needed, but the main flow
+// should be to re-fetch from the source to get AI-generated templates.
+export const addTemplate = (template: Template): void => {
+    if (liveTemplates) {
+        liveTemplates.unshift(template);
+    }
 };
 
-export const deleteTemplate = (templateId: string): void => {
-  liveTemplates = liveTemplates.filter(t => t.id !== templateId);
+// Invalidate the cache. The next call to getTemplates will re-fetch.
+export const invalidateTemplateCache = () => {
+  liveTemplates = null;
 };
-
-export const updateTemplate = (templateId: string, updatedData: Partial<Omit<Template, 'id'>>): void => {
-  liveTemplates = liveTemplates.map(t =>
-    t.id === templateId ? { ...t, ...updatedData } : t
-  );

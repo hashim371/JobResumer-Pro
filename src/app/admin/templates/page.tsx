@@ -1,10 +1,10 @@
 
 "use client"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getTemplates, deleteTemplate, updateTemplate, addTemplate, Template } from '@/lib/template-store';
+import { getTemplates, invalidateTemplateCache } from '@/lib/template-store';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {
   Dialog,
@@ -36,6 +35,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage, FormLabel } from '
 import { ResumePreview } from '@/components/ResumePreview';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { generateTemplate } from '@/ai/flows/generate-template';
+import type { Template } from '@/lib/templates';
 
 const templateSchema = z.object({
   name: z.string().min(1, 'Template name is required.'),
@@ -43,16 +43,31 @@ const templateSchema = z.object({
 });
 
 export default function AdminTemplatesPage() {
-  const [forceRender, setForceRender] = useState(0); 
-  const allTemplates = getTemplates();
-  const categories = ['All templates', ...Array.from(new Set(allTemplates.map(t => t.category)))];
-
-
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
-  
   const { toast } = useToast();
+
+  const fetchTemplates = async () => {
+    setLoading(true);
+    try {
+      invalidateTemplateCache(); // Ensure we get fresh data
+      const allTemplates = await getTemplates();
+      setTemplates(allTemplates);
+    } catch (error) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch templates.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTemplates();
+  }, []);
+  
+  const categories = ['All templates', ...Array.from(new Set(templates.map(t => t.category)))];
 
   const editForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
@@ -65,12 +80,13 @@ export default function AdminTemplatesPage() {
   });
 
   const handleDelete = (templateId: string) => {
-    deleteTemplate(templateId);
+    // Note: Deletion from DB is not implemented in the flow for safety.
+    // This will be a client-side removal for the session.
+    setTemplates(prev => prev.filter(t => t.id !== templateId));
     toast({
-        title: 'Template Deleted',
-        description: 'The template has been removed.',
+        title: 'Template Hidden',
+        description: 'The template has been hidden for this session.',
     });
-    setForceRender(c => c + 1);
   };
 
   const handleEditClick = (template: Template) => {
@@ -81,14 +97,15 @@ export default function AdminTemplatesPage() {
   
   const handleEditSubmit = (values: z.infer<typeof templateSchema>) => {
     if (selectedTemplate) {
-      updateTemplate(selectedTemplate.id, { ...selectedTemplate, ...values });
+      // Note: Update in DB is not implemented in the flow.
+      // This will be a client-side update for the session.
+       setTemplates(prev => prev.map(t => t.id === selectedTemplate.id ? { ...t, ...values } : t));
       toast({
         title: 'Template Updated',
-        description: 'The template details have been saved.',
+        description: 'The template details have been saved for this session.',
       });
       setIsEditModalOpen(false);
       setSelectedTemplate(null);
-      setForceRender(c => c + 1);
     }
   };
 
@@ -97,14 +114,13 @@ export default function AdminTemplatesPage() {
       const result = await generateTemplate(values);
       if (result.success) {
         toast({
-            title: 'Template Added',
-            description: 'The new AI-generated template is now available.',
+            title: 'Template Generation Started',
+            description: 'The new AI-generated template is being created and will appear shortly.',
         });
         addForm.reset();
         setIsAddModalOpen(false);
-        // This is a bit of a hack to force a re-render of the component tree
-        // In a real app, you might use a more robust state management solution
-        window.location.reload();
+        // Refetch templates to show the new one
+        setTimeout(() => fetchTemplates(), 1000); // Give DB some time
       } else {
          toast({
             variant: "destructive",
@@ -121,6 +137,10 @@ export default function AdminTemplatesPage() {
         console.error(error);
     }
   };
+  
+  if (loading) {
+    return <div className="flex h-full w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
+  }
 
   return (
     <div className="animate-fadeIn">
@@ -165,10 +185,9 @@ export default function AdminTemplatesPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {categories.filter(c => c !== 'All templates').map(cat => (
+                          {[...categories.filter(c => c !== 'All templates'), "Unique", "Elegant", "Bold"].map(cat => (
                             <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                           ))}
-                           <SelectItem value="Unique">Unique</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -189,12 +208,12 @@ export default function AdminTemplatesPage() {
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {allTemplates.map(template => (
+        {templates.map(template => (
           <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="transform scale-[0.28] origin-center">
-                    <ResumePreview templateId={template.id} />
+                 <div className="transform scale-[0.28] origin-center">
+                    <ResumePreview templateId={template.id} templates={templates} />
                 </div>
               </div>
             </CardContent>

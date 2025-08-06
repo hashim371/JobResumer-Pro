@@ -12,14 +12,25 @@ import { ResumePreview } from '@/components/ResumePreview';
 import Link from 'next/link';
 import { toast } from '@/hooks/use-toast';
 import { createRoot } from 'react-dom/client';
+import { getTemplates } from '@/lib/template-store';
+import type { Template } from '@/lib/templates';
 
 export default function ResumeViewPage() {
     const { id: resumeId } = useParams();
     const router = useRouter();
     const { user, loading: authLoading } = useAuth();
     const [resumeData, setResumeData] = useState<any>(null);
+    const [templates, setTemplates] = useState<Template[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDownloading, setIsDownloading] = useState(false);
+
+    useEffect(() => {
+        const fetchTemplates = async () => {
+          const fetchedTemplates = await getTemplates();
+          setTemplates(fetchedTemplates);
+        };
+        fetchTemplates();
+    }, []);
 
     useEffect(() => {
         if (authLoading) return;
@@ -59,7 +70,7 @@ export default function ResumeViewPage() {
         document.body.appendChild(container);
     
         const root = createRoot(container);
-        root.render(<ResumePreview templateId={resumeData.templateId} data={resumeData} />);
+        root.render(<ResumePreview templateId={resumeData.templateId} data={resumeData} templates={templates} />);
         
         try {
             await new Promise(resolve => setTimeout(resolve, 100)); // Short delay for fonts
@@ -112,7 +123,7 @@ export default function ResumeViewPage() {
         }, 500); 
     };
 
-    if (loading || authLoading) {
+    if (loading || authLoading || templates.length === 0) {
         return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
     }
     
@@ -144,15 +155,11 @@ export default function ResumeViewPage() {
                 </div>
             </header>
 
-            <main className="flex-1">
-                <div className="py-8">
-                     <div className="mx-auto w-[8.5in] bg-white shadow-2xl">
-                        <ResumePreview templateId={resumeData.templateId} data={resumeData} />
-                    </div>
+            <main className="flex-1 py-8">
+                <div className="mx-auto w-[8.5in] bg-white shadow-2xl">
+                    <ResumePreview templateId={resumeData.templateId} data={resumeData} templates={templates} />
                 </div>
             </main>
         </div>
     );
 }
-
-    

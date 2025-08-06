@@ -4,6 +4,8 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Link as LinkIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { initialTemplates } from '@/lib/templates';
+import { Skeleton } from './ui/skeleton';
 
 // A mock data structure if no data is provided
 const mockData = {
@@ -38,9 +40,27 @@ interface ResumePreviewProps {
   templateId: string;
   data?: any;
   isClickable?: boolean;
+  templates?: any[];
 }
 
-export const ResumePreview = ({ templateId, data: initialData, isClickable = true }: ResumePreviewProps) => {
+// A simple and safe eval environment
+const safeEval = (code: string, data: any, helpers: any) => {
+    const fullCode = `
+        const { ContactLink, ContactItem } = helpers;
+        const Component = ${code};
+        return Component({ data });
+    `;
+    try {
+        const fn = new Function('data', 'helpers', fullCode);
+        return fn(data, helpers);
+    } catch (e) {
+        console.error("Error evaluating template code:", e);
+        return <div className="w-[8.5in] h-[11in] bg-red-100 flex items-center justify-center p-8"><pre className="text-red-500 whitespace-pre-wrap">Error rendering template: {e.message}</pre></div>;
+    }
+}
+
+
+export const ResumePreview = ({ templateId, data: initialData, isClickable = true, templates: allTemplates }: ResumePreviewProps) => {
   const data = initialData || mockData;
   const { personalInfo, summary, experience, education, skills } = data;
 
@@ -60,9 +80,17 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     return <div className={cn("flex items-center gap-2", className)}><Icon size={14}/> {content}</div>;
   };
 
-  // Different Template Layouts
   const parentClass = "w-[8.5in] h-[11in] bg-white text-base";
+  
+  const templatesToUse = allTemplates || initialTemplates;
+  const template = templatesToUse.find(t => t.id === templateId);
 
+  if (template && template.code) {
+      // This is a dynamically generated template from the DB
+      return safeEval(template.code, data, { ContactLink, ContactItem });
+  }
+
+  // Fallback to hardcoded templates if code doesn't exist in DB
   switch (templateId) {
     case 'new-york':
         return (

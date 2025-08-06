@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { CheckCircle, DraftingCompass, Star } from "lucide-react";
+import { CheckCircle, DraftingCompass, Star, Loader2 } from "lucide-react";
 import { getTemplates } from "@/lib/template-store";
 import { MicrosoftLogo, GoogleLogo, FacebookLogo } from "@/components/CompanyLogos";
 import dynamic from 'next/dynamic';
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect } from "react";
+import type { Template } from "@/lib/templates";
 
 const ResumePreview = dynamic(() => import('@/components/ResumePreview').then(mod => mod.ResumePreview), {
   ssr: false,
@@ -19,6 +21,20 @@ const ResumePreview = dynamic(() => import('@/components/ResumePreview').then(mo
 });
 
 export default function Home() {
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      setLoading(true);
+      const allTemplates = await getTemplates();
+      setTemplates(allTemplates);
+      setLoading(false);
+    };
+    fetchTemplates();
+  }, []);
+
+
   const features = [
     {
       icon: <DraftingCompass className="h-10 w-10 text-accent" />,
@@ -64,9 +80,9 @@ export default function Home() {
     { name: "Microsoft", component: <MicrosoftLogo /> },
     { name: "Facebook", component: <FacebookLogo /> },
   ];
-  const allTemplates = getTemplates();
+  
   const featuredTemplateIds = ["dublin", "new-york", "sydney", "paris", "london", "geneva"];
-  const featuredTemplates = allTemplates.filter(t => featuredTemplateIds.includes(t.id));
+  const featuredTemplates = templates.filter(t => featuredTemplateIds.includes(t.id));
 
   return (
     <>
@@ -90,6 +106,9 @@ export default function Home() {
                 </Button>
               </div>
                <div className="mt-20">
+                {loading ? (
+                    <div className="flex h-64 w-full items-center justify-center"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>
+                ) : (
                   <Carousel
                     opts={{ align: "start", loop: true, }}
                     className="w-full max-w-5xl mx-auto"
@@ -102,7 +121,7 @@ export default function Home() {
                               <Card className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 border-transparent hover:border-primary">
                                 <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
                                   <div className="transform scale-[0.28] origin-top-left">
-                                      <ResumePreview templateId={template.id} isClickable={false} />
+                                      <ResumePreview templateId={template.id} isClickable={false} templates={templates} />
                                   </div>
                                 </CardContent>
                               </Card>
@@ -114,6 +133,7 @@ export default function Home() {
                     <CarouselPrevious className="hidden lg:flex" />
                     <CarouselNext className="hidden lg:flex" />
                   </Carousel>
+                )}
               </div>
             </div>
         </div>

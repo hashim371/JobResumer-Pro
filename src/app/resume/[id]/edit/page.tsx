@@ -21,6 +21,7 @@ import { getTemplates } from '@/lib/template-store';
 import Link from 'next/link';
 import { createRoot } from 'react-dom/client';
 import { ResumePreview } from '@/components/ResumePreview';
+import type { Template } from '@/lib/templates';
 
 const experienceSchema = z.object({
   jobTitle: z.string().min(1, 'Job title is required'),
@@ -62,10 +63,18 @@ export default function ResumeEditPage() {
   const { id: resumeId } = useParams();
   const { user, loading: authLoading } = useAuth();
   const [resumeData, setResumeData] = useState<any>(null);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const templates = getTemplates();
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      const fetchedTemplates = await getTemplates();
+      setTemplates(fetchedTemplates);
+    };
+    fetchTemplates();
+  }, []);
 
   const form = useForm<ResumeData>({
     resolver: zodResolver(resumeSchema),
@@ -138,7 +147,7 @@ export default function ResumeEditPage() {
     document.body.appendChild(container);
 
     const root = createRoot(container);
-    root.render(<ResumePreview templateId={resumeData.templateId} data={watchedData} />);
+    root.render(<ResumePreview templateId={resumeData.templateId} data={watchedData} templates={templates} />);
     
     await new Promise(resolve => setTimeout(resolve, 500));
     
@@ -186,7 +195,7 @@ export default function ResumeEditPage() {
   };
 
 
-  if (loading) {
+  if (loading || templates.length === 0) {
     return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-16 w-16 animate-spin text-primary" /></div>;
   }
   
@@ -326,7 +335,7 @@ export default function ResumeEditPage() {
               </Card>
             </div>
             
-            <div className="hidden lg:block w-full lg:w-1/2">
+             <div className="hidden lg:block w-full lg:w-[500px] flex-shrink-0">
                 <div className="sticky top-24 py-8">
                     <div className="flex justify-center items-start">
                         <div 
@@ -336,7 +345,7 @@ export default function ResumeEditPage() {
                             transformOrigin: 'top center',
                             }}
                         >
-                            <ResumePreview templateId={resumeData.templateId} data={watchedData} />
+                            <ResumePreview templateId={resumeData.templateId} data={watchedData} templates={templates} />
                         </div>
                     </div>
                 </div>
@@ -346,5 +355,3 @@ export default function ResumeEditPage() {
     </div>
   );
 }
-
-    

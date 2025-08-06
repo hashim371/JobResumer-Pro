@@ -34,4 +34,5 @@ export const initialTemplates: Template[] = [
   { id: 'istanbul', name: 'Istanbul', category: 'Classic' },
   { id: 'shanghai', name: 'Shanghai', category: 'Modern' },
   { id: 'mexico-city', name: 'Mexico City', category: 'Artistic' },
+  { id: 'lahore', name: 'Lahore', category: 'Professional' },
 ];
