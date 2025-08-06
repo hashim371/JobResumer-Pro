@@ -62,9 +62,9 @@ export default function ResumeEditPage() {
   const { id: resumeId } = useParams();
   const { user, loading: authLoading } = useAuth();
   const [resumeData, setResumeData] = useState<any>(null);
-  const [loading, setLoading] useState(true);
-  const [isSaving, setIsSaving] useState(false);
-  const [isDownloading, setIsDownloading] useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const templates = getTemplates();
 
   const form = useForm<ResumeData>({
@@ -126,10 +126,10 @@ export default function ResumeEditPage() {
   const downloadAs = async (format: 'pdf' | 'png') => {
     setIsDownloading(true);
 
-    const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-      import('jspdf'),
-      import('html2canvas'),
-    ]);
+    const jsPDFModule = await import('jspdf');
+    const html2canvasModule = await import('html2canvas');
+    const jsPDF = jsPDFModule.default;
+    const html2canvas = html2canvasModule.default;
 
     const container = document.createElement('div');
     container.style.position = 'absolute';
@@ -350,4 +350,6 @@ export default function ResumeEditPage() {
     </div>
   );
 }
+    
+
     
