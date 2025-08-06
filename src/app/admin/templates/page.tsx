@@ -68,7 +68,8 @@ export default function AdminTemplatesPage() {
     fetchTemplates();
   }, []);
   
-  const categories = ['All templates', ...Array.from(new Set(templates.map(t => t.category)))];
+  const allCategories = Array.from(new Set([...templates.map(t => t.category), "Unique", "Elegant", "Bold"]));
+  const filterCategories = ['All templates', ...allCategories];
 
   const editForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
@@ -186,7 +187,7 @@ export default function AdminTemplatesPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {[...categories.filter(c => c !== 'All templates'), "Unique", "Elegant", "Bold"].map(cat => (
+                          {allCategories.map(cat => (
                             <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                           ))}
                         </SelectContent>
@@ -211,7 +212,7 @@ export default function AdminTemplatesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {templates.map(template => (
           <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-            <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
+             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
              <div className="absolute inset-0 flex items-center justify-center">
                 <div className="transform scale-[0.28] origin-center">
                   <ResumePreview templateId={template.id} templates={templates} />
@@ -292,7 +293,7 @@ export default function AdminTemplatesPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {categories.filter(c => c !== 'All templates').map(cat => (
+                          {allCategories.map(cat => (
                             <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                           ))}
                         </SelectContent>
@@ -315,5 +316,3 @@ export default function AdminTemplatesPage() {
     </div>
   );
 }
-
-    
