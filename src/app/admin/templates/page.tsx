@@ -1,4 +1,3 @@
-
 "use client"
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -159,7 +158,7 @@ export default function AdminTemplatesPage() {
         {templates.map(template => (
           <Card key={template.id} className="group flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <CardContent className="p-0 relative aspect-[8.5/11] w-full bg-background overflow-hidden">
-              <div className="absolute inset-0 transform scale-[0.28] sm:scale-[0.34] origin-top-left">
+              <div className="transform scale-[0.28] sm:scale-[0.34] origin-top-left">
                   <ResumePreview templateId={template.id} />
               </div>
             </CardContent>
@@ -244,3 +243,10 @@ export default function AdminTemplatesPage() {
                   Save Changes
                 </Button>
               </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
