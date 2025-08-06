@@ -66,7 +66,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
   switch (templateId) {
     case 'new-york':
         return (
-            <div className={cn(parentClass, "p-8 font-serif bg-white text-gray-800 text-[11pt] leading-relaxed")}>
+            <div className={cn(parentClass, "p-10 font-serif bg-white text-gray-800 text-[11pt] leading-relaxed")}>
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold tracking-tight text-gray-900 font-headline">{personalInfo?.name}</h1>
                     <p className="text-xl mt-1 text-gray-600 font-light tracking-wide">{personalInfo?.role}</p>
@@ -125,9 +125,9 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'sydney': // ATS-friendly
     case 'cairo':
       return (
-        <div className={cn(parentClass, "p-8 font-body bg-white text-slate-800 text-sm")}>
+        <div className={cn(parentClass, "p-10 font-body bg-white text-slate-800 text-sm")}>
             <h1 className="text-3xl font-bold font-headline text-slate-900">{personalInfo?.name}</h1>
-            <p className="text-lg text-slate-600 font-medium mb-2">{personalInfo?.role}</p>
+            <p className="text-lg text-slate-600 font-medium mb-4">{personalInfo?.role}</p>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
                 {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                 {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
@@ -140,10 +140,10 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                 <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
             </section>
             
-            <section className="mt-4">
+            <section className="mt-6">
                 <h2 className="text-md font-bold uppercase text-slate-700 tracking-wider border-b border-slate-300 pb-1 mb-2 font-headline">Work Experience</h2>
                 {experience?.map((exp:any, i:number) => (
-                    <div key={i} className="mb-3">
+                    <div key={i} className="mb-4">
                         <div className="flex justify-between items-baseline">
                             <h3 className="text-sm font-bold text-slate-800">{exp.jobTitle}</h3>
                             <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
@@ -154,10 +154,10 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                 ))}
             </section>
             
-             <section className="mt-4">
+             <section className="mt-6">
                 <h2 className="text-md font-bold uppercase text-slate-700 tracking-wider border-b border-slate-300 pb-1 mb-2 font-headline">Education</h2>
                 {education?.map((edu:any, i:number) => (
-                    <div key={i} className="mb-2">
+                    <div key={i} className="mb-3">
                         <h3 className="text-sm font-bold text-slate-800">{edu.degree}</h3>
                         <p className="text-xs text-slate-700">{edu.school}</p>
                         <p className="text-xs text-slate-500">{edu.graduationDate}</p>
@@ -165,7 +165,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                 ))}
             </section>
 
-            <section className="mt-4">
+            <section className="mt-6">
                 <h2 className="text-md font-bold uppercase text-slate-700 tracking-wider border-b border-slate-300 pb-1 mb-2 font-headline">Skills</h2>
                 <p className="text-xs text-slate-700">
                     {skills?.map((skill: any) => skill.name).join(', ')}
@@ -184,7 +184,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                 <div className="text-center">
                     <h1 className="text-3xl tracking-widest font-light uppercase font-headline">{personalInfo?.name}</h1>
                     <p className="text-md tracking-widest uppercase text-gray-600 mt-1">{personalInfo?.role}</p>
-                    <div className="text-xs text-gray-500 mt-2 flex justify-center items-center flex-wrap gap-x-3 gap-y-1">
+                    <div className="text-xs text-gray-500 mt-4 flex justify-center items-center flex-wrap gap-x-3 gap-y-1">
                         {personalInfo?.location && <span>{personalInfo.location}</span>}
                         {personalInfo?.phone && <><span className="text-gray-400">&bull;</span><span>{personalInfo.phone}</span></>}
                         {personalInfo?.email && <><span className="text-gray-400">&bull;</span><ContactLink type="email" value={personalInfo.email} /></>}
@@ -192,15 +192,15 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                     </div>
                 </div>
 
-                <div className="mt-6">
+                <div className="mt-8">
                     <h2 className="text-[11pt] font-semibold tracking-[.2em] text-center uppercase border-y border-gray-400 py-1 my-3 font-headline">Summary</h2>
                     <p className="text-center text-xs leading-normal">{summary}</p>
                 </div>
 
-                <div className="mt-5">
+                <div className="mt-6">
                     <h2 className="text-[11pt] font-semibold tracking-[.2em] text-center uppercase border-y border-gray-400 py-1 my-3 font-headline">Experience</h2>
                     {experience?.map((exp: any, i: number) => (
-                        <div key={i} className="mb-3">
+                        <div key={i} className="mb-4">
                             <div className="flex justify-between items-baseline">
                                 <h3 className="font-bold text-sm">{exp.company}</h3>
                                 <p className="text-sm whitespace-nowrap">{exp.startDate} &mdash; {exp.endDate}</p>
@@ -211,10 +211,10 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                     ))}
                 </div>
 
-                <div className="mt-5">
+                <div className="mt-6">
                     <h2 className="text-[11pt] font-semibold tracking-[.2em] text-center uppercase border-y border-gray-400 py-1 my-3 font-headline">Education</h2>
                     {education?.map((edu: any, i: number) => (
-                         <div key={i} className="flex justify-between mb-1">
+                         <div key={i} className="flex justify-between mb-2">
                             <div>
                                 <h3 className="font-bold text-sm">{edu.school}</h3>
                                 <p className="text-sm">{edu.degree}</p>
@@ -224,7 +224,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                     ))}
                 </div>
 
-                <div className="mt-5">
+                <div className="mt-6">
                     <h2 className="text-[11pt] font-semibold tracking-[.2em] text-center uppercase border-y border-gray-400 py-1 my-3 font-headline">Skills</h2>
                      <p className="text-center text-xs">{skills?.map((skill: any) => skill.name).join(' &bull; ')}</p>
                 </div>
@@ -236,7 +236,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'helsinki':
     case 'shanghai':
         return (
-             <div className={cn(parentClass, "p-8 font-body bg-white text-gray-800 text-sm")}>
+             <div className={cn(parentClass, "p-10 font-body bg-white text-gray-800 text-sm")}>
                 <div className="grid grid-cols-3 gap-8">
                     <div className="col-span-2">
                         <h1 className="text-5xl font-extrabold text-blue-800 mb-2 font-headline">{personalInfo?.name}</h1>
@@ -289,7 +289,6 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                         </ul>
                     </div>
                 </div>
-
             </div>
         )
 
@@ -332,7 +331,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
               ))}
             </div>
           </div>
-          <div className="w-2/3 p-8">
+          <div className="w-2/3 p-10">
              <section className="mb-8">
                 <h2 className="text-xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4 font-headline">Summary</h2>
                 <p className="leading-relaxed text-xs">{summary}</p>
@@ -358,14 +357,14 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'madrid':
     case 'seoul':
         return (
-            <div className={cn(parentClass, "p-8 font-body bg-white text-gray-700 text-sm")}>
-                <header className="text-center mb-6 pb-4">
+            <div className={cn(parentClass, "p-10 font-body bg-white text-gray-700 text-sm")}>
+                <header className="text-center mb-8 pb-4">
                     <h1 className="text-4xl font-extrabold text-teal-700 font-headline">{personalInfo?.name}</h1>
                     <p className="text-lg text-gray-500 mt-1">{personalInfo?.role}</p>
-                     <div className="mt-2 border-b-2 border-teal-500 w-24 mx-auto"></div>
+                     <div className="mt-4 border-b-2 border-teal-500 w-24 mx-auto"></div>
                 </header>
 
-                <div className="flex justify-center flex-wrap text-xs gap-x-6 gap-y-2 mb-6">
+                <div className="flex justify-center flex-wrap text-xs gap-x-6 gap-y-2 mb-8">
                     <ContactItem icon={Mail} value={personalInfo?.email} href={`mailto:${personalInfo?.email}`} className="text-gray-600"/>
                     <ContactItem icon={Phone} value={personalInfo?.phone} className="text-gray-600"/>
                     <ContactItem icon={MapPin} value={personalInfo?.location} className="text-gray-600"/>
@@ -378,7 +377,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                 <div className="mb-6">
                     <h2 className="text-sm font-bold uppercase tracking-widest text-teal-600 mb-3 border-b border-teal-200 pb-1 font-headline">Experience</h2>
                     {experience?.map((exp: any, i:number) => (
-                        <div key={i} className="mb-3">
+                        <div key={i} className="mb-4">
                             <div className="flex justify-between items-baseline">
                                 <h3 className="font-semibold text-md text-teal-800">{exp.jobTitle}</h3>
                                 <p className="text-xs text-gray-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</p>
@@ -392,7 +391,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                     <div>
                         <h2 className="text-sm font-bold uppercase tracking-widest text-teal-600 mb-3 border-b border-teal-200 pb-1 font-headline">Education</h2>
                         {education?.map((edu: any, i:number) => (
-                             <div key={i} className="mb-2">
+                             <div key={i} className="mb-3">
                                 <p className="font-semibold text-md">{edu.degree}</p>
                                 <p className="text-sm">{edu.school}</p>
                                 <p className="text-xs text-gray-500">{edu.graduationDate}</p>
@@ -413,7 +412,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'copenhagen':
     case 'prague':
         return (
-             <div className={cn(parentClass, "p-8 font-body bg-white text-gray-800 text-sm")}>
+             <div className={cn(parentClass, "p-10 font-body bg-white text-gray-800 text-sm")}>
                 <div className="text-center pb-4 border-b-4 border-rose-300">
                     <h1 className="text-4xl font-bold text-rose-800 font-headline">{personalInfo?.name}</h1>
                     <p className="text-md text-gray-500 mt-1">{personalInfo?.role}</p>
@@ -426,12 +425,12 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                     {personalInfo?.location && <span>{personalInfo.location}</span>}
                 </div>
 
-                <div className="mt-6">
+                <div className="mt-8">
                     <h2 className="text-lg font-semibold uppercase text-rose-700 tracking-wider mb-2 text-center font-headline">Summary</h2>
                     <p className="leading-relaxed text-center text-xs">{summary}</p>
                 </div>
 
-                <div className="mt-6">
+                <div className="mt-8">
                     <h2 className="text-lg font-semibold uppercase text-rose-700 tracking-wider mb-3 text-center font-headline">Experience</h2>
                      {experience?.map((exp: any, i: number) => (
                         <div key={i} className="mb-4">
@@ -441,12 +440,12 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                                 <h4 className="font-bold inline">{exp.company}</h4>
                                 <p className="text-xs text-gray-500">{exp.startDate} - {exp.endDate}</p>
                            </div>
-                           <p className="mt-1 leading-relaxed text-xs">{exp.description}</p>
+                           <p className="mt-1 leading-relaxed text-xs text-center">{exp.description}</p>
                         </div>
                     ))}
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-8">
+                <div className="mt-8 grid grid-cols-2 gap-8">
                      <div>
                         <h2 className="text-lg font-semibold uppercase text-rose-700 tracking-wider mb-2 text-center font-headline">Education</h2>
                         {education?.map((edu: any, i: number) => (
@@ -503,7 +502,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                 ))}
                 </div>
             </div>
-            <div className="w-2/3 p-8 bg-white text-gray-800">
+            <div className="w-2/3 p-10 bg-white text-gray-800">
                 <section className="mb-6">
                     <h2 className="text-xl font-bold text-orange-600 border-b-2 border-orange-200 pb-2 mb-3 font-headline">Summary</h2>
                     <p className="leading-relaxed text-xs">{summary}</p>
@@ -526,7 +525,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'stockholm':
       return (
-        <div className={cn(parentClass, "p-8 font-body bg-sky-950 text-white text-sm")}>
+        <div className={cn(parentClass, "p-10 font-body bg-sky-950 text-white text-sm")}>
           <div className="text-center mb-8">
             <h1 className="text-4xl font-extrabold tracking-tight font-headline">{personalInfo?.name}</h1>
             <p className="text-lg font-light text-sky-200">{personalInfo?.role}</p>
@@ -582,7 +581,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     
     case 'lisbon':
       return (
-        <div className={cn(parentClass, "p-8 font-body bg-white text-gray-700 text-sm")}>
+        <div className={cn(parentClass, "p-10 font-body bg-white text-gray-700 text-sm")}>
           <div className="flex items-start justify-between mb-6 pb-4 border-b-2 border-green-700">
             <div>
               <h1 className="text-4xl font-extrabold text-green-800 font-headline">{personalInfo?.name}</h1>
@@ -633,10 +632,10 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'warsaw':
         return (
           <div className={cn(parentClass, "font-body bg-white text-slate-800 text-sm")}>
-              <div className="bg-gray-800 text-white p-6 mb-6">
+              <div className="bg-gray-800 text-white p-8 mb-8">
                   <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
                   <p className="text-lg font-light text-gray-300 mt-1">{personalInfo?.role}</p>
-                  <div className="flex flex-wrap justify-start items-center mt-3 text-xs text-gray-300 gap-x-4 gap-y-1">
+                  <div className="flex flex-wrap justify-start items-center mt-4 text-xs text-gray-300 gap-x-4 gap-y-1">
                       {personalInfo?.phone && <span>{personalInfo.phone}</span>}
                       {personalInfo?.email && <ContactLink type="email" value={personalInfo.email} />}
                       {personalInfo?.location && <span>{personalInfo.location}</span>}
@@ -644,7 +643,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                   </div>
               </div>
   
-              <div className="px-6">
+              <div className="px-8">
                 <section className="mb-6">
                     <h2 className="text-lg font-bold uppercase text-gray-700 tracking-wider mb-2 font-headline">Professional Summary</h2>
                     <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
@@ -688,7 +687,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'singapore':
         return (
-            <div className={cn(parentClass, "p-8 font-body bg-white text-gray-800 text-sm")}>
+            <div className={cn(parentClass, "p-10 font-body bg-white text-gray-800 text-sm")}>
                 <div className="flex justify-between items-start pb-4 border-b-2 border-red-500">
                     <div>
                         <h1 className="text-4xl font-extrabold text-red-700 font-headline">{personalInfo?.name}</h1>
@@ -791,7 +790,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     case 'dubai':
         return (
             <div className={cn(parentClass, "font-body bg-gray-900 text-white text-sm flex")}>
-                <div className="w-1/3 bg-gray-800 p-6 flex flex-col">
+                <div className="w-1/3 bg-gray-800 p-8 flex flex-col">
                     <div className="flex-grow">
                         <h1 className="text-4xl font-bold text-amber-400 font-headline">{personalInfo?.name}</h1>
                         <p className="text-lg text-gray-300 mt-1 mb-8">{personalInfo?.role}</p>
@@ -823,7 +822,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                         ))}
                     </div>
                 </div>
-                <div className="w-2/3 p-8">
+                <div className="w-2/3 p-10">
                     <section className="mb-6">
                         <h2 className="text-xl font-bold text-amber-400 border-b-2 border-amber-500 pb-2 mb-3 font-headline">Summary</h2>
                         <p className="leading-relaxed text-gray-300 text-xs">{summary}</p>
@@ -843,7 +842,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'mumbai':
         return (
-            <div className={cn(parentClass, "p-8 font-body bg-white text-gray-800 text-sm")}>
+            <div className={cn(parentClass, "p-10 font-body bg-white text-gray-800 text-sm")}>
                 <div className="relative text-center pb-4">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500"></div>
                     <h1 className="text-4xl font-bold text-gray-900 mt-8 font-headline">{personalInfo?.name}</h1>
@@ -891,7 +890,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'rio':
         return (
-            <div className={cn(parentClass, "p-8 font-body bg-white text-gray-800 text-sm relative overflow-hidden")}>
+            <div className={cn(parentClass, "p-10 font-body bg-white text-gray-800 text-sm relative overflow-hidden")}>
                 <div className="absolute -top-16 -left-16 w-48 h-48 bg-yellow-300 rounded-full opacity-50"></div>
                 <div className="absolute -bottom-24 -right-12 w-64 h-64 bg-green-300 rounded-full opacity-50"></div>
                 <div className="relative z-10">
@@ -946,7 +945,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
         );
     case 'zurich':
         return (
-            <div className={cn(parentClass, "p-8 font-body bg-gray-50 text-gray-900 text-sm")}>
+            <div className={cn(parentClass, "p-10 font-body bg-gray-50 text-gray-900 text-sm")}>
                 <header className="flex justify-between items-center pb-4 border-b border-gray-300">
                     <h1 className="text-3xl font-semibold tracking-tighter font-headline">{personalInfo?.name}</h1>
                     <p className="text-md text-gray-600">{personalInfo?.role}</p>
@@ -1021,7 +1020,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
               </section>
             </div>
           </div>
-          <div className="w-2/3 p-8 bg-white">
+          <div className="w-2/3 p-10 bg-white">
             <section className="mb-6">
               <h2 className="text-xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-3 font-headline">Summary</h2>
               <p className="leading-relaxed text-xs">{summary}</p>
@@ -1108,7 +1107,7 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
     default:
       return (
         <div className={cn(parentClass, "font-body bg-white text-slate-800 text-sm flex flex-col")}>
-            <div className="bg-primary text-primary-foreground p-8 flex justify-between items-center">
+            <div className="bg-primary text-primary-foreground p-8 flex justify-between items-start">
                 <div>
                     <h1 className="text-4xl font-bold font-headline">{personalInfo?.name}</h1>
                     <p className="text-lg text-primary-foreground/80 font-light mt-1">{personalInfo?.role}</p>
@@ -1121,44 +1120,47 @@ export const ResumePreview = ({ templateId, data: initialData, isClickable = tru
                 </div>
             </div>
             <div className="p-8 flex-grow">
-              <section className="mb-6">
-                  <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Professional Summary</h2>
-                  <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
-              </section>
-              
-              <section className="mb-6">
-                  <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Work Experience</h2>
-                  {experience?.map((exp:any, i:number) => (
-                      <div key={i} className="mb-4">
-                          <div className="flex justify-between items-baseline">
-                              <h3 className="text-md font-bold text-slate-800">{exp.jobTitle}</h3>
-                              <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
-                          </div>
-                          <h4 className="text-sm font-semibold text-slate-600 italic">{exp.company}</h4>
-                          <p className="text-slate-700 mt-1 text-xs leading-normal">{exp.description}</p>
-                      </div>
-                  ))}
-              </section>
-              
-              <section className="grid grid-cols-2 gap-x-8">
-                   <div>
-                      <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Education</h2>
-                      {education?.map((edu:any, i:number) => (
-                          <div key={i} className="mb-3">
-                              <h3 className="text-md font-bold text-slate-800">{edu.degree}</h3>
-                              <p className="text-sm text-slate-700">{edu.school}</p>
-                              <p className="text-xs text-slate-500">{edu.graduationDate}</p>
+              <div className="grid grid-cols-3 gap-8">
+                <div className="col-span-2 space-y-6">
+                   <section>
+                      <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Professional Summary</h2>
+                      <p className="text-slate-700 leading-relaxed text-xs">{summary}</p>
+                  </section>
+                  
+                  <section>
+                      <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Work Experience</h2>
+                      {experience?.map((exp:any, i:number) => (
+                          <div key={i} className="mb-4">
+                              <div className="flex justify-between items-baseline">
+                                  <h3 className="text-md font-bold text-slate-800">{exp.jobTitle}</h3>
+                                  <div className="text-xs text-slate-500 whitespace-nowrap">{exp.startDate} - {exp.endDate}</div>
+                              </div>
+                              <h4 className="text-sm font-semibold text-slate-600 italic">{exp.company}</h4>
+                              <p className="text-slate-700 mt-1 text-xs leading-normal">{exp.description}</p>
                           </div>
                       ))}
-                  </div>
+                  </section>
+                </div>
+                <div className="col-span-1 space-y-6">
+                    <section>
+                        <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Education</h2>
+                        {education?.map((edu:any, i:number) => (
+                            <div key={i} className="mb-3">
+                                <h3 className="text-md font-bold text-slate-800">{edu.degree}</h3>
+                                <p className="text-sm text-slate-700">{edu.school}</p>
+                                <p className="text-xs text-slate-500">{edu.graduationDate}</p>
+                            </div>
+                        ))}
+                    </section>
 
-                  <div>
-                      <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Skills</h2>
-                      <ul className="flex flex-wrap gap-2 mt-2">
-                          {skills?.map((skill: any, i:number) => <li key={i} className="bg-secondary text-secondary-foreground text-xs font-medium px-3 py-1 rounded-md">{skill.name}</li>)}
-                      </ul>
-                  </div>
-              </section>
+                    <section>
+                        <h2 className="text-primary font-bold uppercase tracking-widest text-sm mb-2 font-headline">Skills</h2>
+                        <ul className="flex flex-wrap gap-2 mt-2">
+                            {skills?.map((skill: any, i:number) => <li key={i} className="bg-secondary text-secondary-foreground text-xs font-medium px-3 py-1 rounded-md">{skill.name}</li>)}
+                        </ul>
+                    </section>
+                </div>
+              </div>
             </div>
         </div>
       );
