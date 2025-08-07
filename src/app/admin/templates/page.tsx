@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getTemplates, addTemplate, invalidateTemplateCache } from '@/lib/template-store';
+import { getTemplates, addTemplate, deleteTemplate, invalidateTemplateCache } from '@/lib/template-store';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -85,9 +85,14 @@ export default function AdminTemplatesPage() {
     defaultValues: { name: '', category: '' },
   });
 
-  const handleDelete = (templateId: string) => {
-    setTemplates(prev => prev.filter(t => t.id !== templateId));
-    toast({ title: 'Template Hidden', description: 'The template has been hidden for this session.' });
+  const handleDelete = async (templateId: string) => {
+    try {
+      await deleteTemplate(templateId);
+      toast({ title: 'Template Deleted', description: 'The template has been permanently deleted.' });
+      fetchTemplates(); // Re-fetch templates to update the UI
+    } catch (error) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Failed to delete template.' });
+    }
   };
 
   const handleEditClick = (template: Template) => {
@@ -98,8 +103,10 @@ export default function AdminTemplatesPage() {
   
   const handleEditSubmit = (values: z.infer<typeof templateSchema>) => {
     if (selectedTemplate) {
+       // Note: This only updates the view for the current session.
+       // A proper implementation would update the template in the database.
        setTemplates(prev => prev.map(t => t.id === selectedTemplate.id ? { ...t, ...values } : t));
-      toast({ title: 'Template Updated', description: 'The template details have been saved for this session.' });
+      toast({ title: 'Template Updated', description: 'The template details have been updated for this session.' });
       setIsEditModalOpen(false);
       setSelectedTemplate(null);
     }
@@ -227,7 +234,7 @@ export default function AdminTemplatesPage() {
                              <AlertDialogHeader>
                                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                   This action will remove the template from view for all users for this session. This cannot be undone.
+                                   This action will permanently delete this template. This cannot be undone.
                                 </AlertDialogDescription>
                              </AlertDialogHeader>
                              <AlertDialogFooter>
@@ -248,7 +255,7 @@ export default function AdminTemplatesPage() {
           <DialogHeader>
             <DialogTitle>Edit Template</DialogTitle>
             <DialogDescription>
-              Change the details for the &quot;{selectedTemplate?.name}&quot; template.
+              Change the details for the &quot;{selectedTemplate?.name}&quot; template. Note: this is a temporary edit.
             </DialogDescription>
           </DialogHeader>
           <Form {...editForm}>

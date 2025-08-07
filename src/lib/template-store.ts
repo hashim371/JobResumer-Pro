@@ -1,31 +1,49 @@
 
-import { getTemplatesFlow } from "@/ai/flows/generate-template";
 import { Template, initialTemplates } from "@/lib/templates";
+import { db } from "@/lib/firebase";
+import { ref, get, set, remove } from "firebase/database";
 
-// This store is now a client-side cache.
 let liveTemplates: Template[] | null = null;
+let hasSeeded = false;
+
+// Seed the database with initial templates if it's empty
+const seedDatabaseWithInitialTemplates = async () => {
+    if (hasSeeded) return;
+    const templatesRef = ref(db, 'templates');
+    const snapshot = await get(templatesRef);
+    if (!snapshot.exists()) {
+        console.log("No templates found in DB, seeding with initial data...");
+        const updates: { [key: string]: Template } = {};
+        initialTemplates.forEach(template => {
+            updates[template.id] = template;
+        });
+        await set(templatesRef, updates);
+    }
+    hasSeeded = true;
+};
 
 // Asynchronously fetches templates and caches them.
 export const getTemplates = async (): Promise<Template[]> => {
-  if (liveTemplates) {
-    return liveTemplates;
-  }
-  
-  try {
-    // For now, we revert to using initial templates to prevent crashes.
-    // The flow can be re-integrated once the rendering issues are resolved.
-    // const templates = await getTemplatesFlow({});
-    const templates = initialTemplates;
-    liveTemplates = templates;
-    return templates;
-  } catch (error) {
-    console.error("Failed to fetch templates, returning initial set:", error);
-    // Fallback to initial templates if DB fetch fails
+    if (liveTemplates) {
+        return liveTemplates;
+    }
+    
+    await seedDatabaseWithInitialTemplates();
+
+    const templatesRef = ref(db, 'templates');
+    const snapshot = await get(templatesRef);
+    if (snapshot.exists()) {
+        const data = snapshot.val();
+        const templates = Object.values(data) as Template[];
+        liveTemplates = templates;
+        return templates;
+    }
+    
+    // Fallback if DB is empty and seeding fails
     return initialTemplates;
-  }
 };
 
-// This function is for client-side additions
+// This function is for client-side additions for the current session
 export const addTemplate = (template: Template): void => {
     if (!liveTemplates) {
         liveTemplates = [...initialTemplates];
@@ -33,9 +51,16 @@ export const addTemplate = (template: Template): void => {
     liveTemplates.unshift(template);
 };
 
+// Permanently delete a template from the database
+export const deleteTemplate = async (templateId: string): Promise<void> => {
+    const templateRef = ref(db, `templates/${templateId}`);
+    await remove(templateRef);
+    // Invalidate cache after deletion
+    invalidateTemplateCache();
+};
+
 // Invalidate the cache. The next call to getTemplates will re-fetch.
 export const invalidateTemplateCache = () => {
   liveTemplates = null;
+  hasSeeded = false; // Allow re-checking on next load
 };
-
-    
