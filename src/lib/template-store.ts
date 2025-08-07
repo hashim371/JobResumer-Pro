@@ -6,13 +6,18 @@ import { ref, get, set, remove } from "firebase/database";
 let liveTemplates: Template[] | null = null;
 let hasSeeded = false;
 
-// Seed the database with initial templates if it's empty
+// Seed the database with initial templates if it's empty or invalid
 const seedDatabaseWithInitialTemplates = async () => {
     if (hasSeeded) return;
     const templatesRef = ref(db, 'templates');
     const snapshot = await get(templatesRef);
-    if (!snapshot.exists()) {
-        console.log("No templates found in DB, seeding with initial data...");
+    
+    // Check if the data exists and is a valid, non-empty object
+    const data = snapshot.val();
+    const isDataInvalid = !snapshot.exists() || typeof data !== 'object' || Object.keys(data).length === 0;
+
+    if (isDataInvalid) {
+        console.log("Templates data is invalid or empty, re-seeding with initial data...");
         const updates: { [key: string]: Template } = {};
         initialTemplates.forEach(template => {
             updates[template.id] = template;
@@ -24,10 +29,8 @@ const seedDatabaseWithInitialTemplates = async () => {
 
 // Asynchronously fetches templates and caches them.
 export const getTemplates = async (): Promise<Template[]> => {
-    if (liveTemplates) {
-        return liveTemplates;
-    }
-    
+    // For admin pages, we always want the freshest data.
+    // In a real-world high-traffic app, you might use a more sophisticated caching strategy.
     await seedDatabaseWithInitialTemplates();
 
     const templatesRef = ref(db, 'templates');
@@ -35,7 +38,7 @@ export const getTemplates = async (): Promise<Template[]> => {
     if (snapshot.exists()) {
         const data = snapshot.val();
         const templates = Object.values(data) as Template[];
-        liveTemplates = templates;
+        liveTemplates = templates; // Update cache
         return templates;
     }
     
