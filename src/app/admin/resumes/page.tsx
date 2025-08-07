@@ -16,6 +16,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import { getTemplates } from '@/lib/template-store';
+import type { Template } from '@/lib/templates';
 
 interface Resume {
   id: string;
@@ -33,40 +34,51 @@ interface UserWithResumes {
 
 export default function AdminResumesPage() {
   const [usersWithResumes, setUsersWithResumes] = useState<UserWithResumes[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
-  const templates = getTemplates();
 
   useEffect(() => {
-    const usersRef = ref(db, 'users/');
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const usersData = snapshot.val();
-        const usersList: UserWithResumes[] = Object.keys(usersData)
-          .map(uid => {
-            const user = usersData[uid];
-            if (user.resumes) {
-              return {
-                uid,
-                name: user.name,
-                email: user.email,
-                photoURL: user.photoURL,
-                resumes: Object.keys(user.resumes).map(resumeId => ({
-                  id: resumeId,
-                  ...user.resumes[resumeId]
-                }))
-              };
-            }
-            return null;
-          })
-          .filter((user): user is UserWithResumes => user !== null);
-        setUsersWithResumes(usersList);
-      } else {
-        setUsersWithResumes([]);
-      }
-      setLoading(false);
-    });
+    const fetchData = async () => {
+      setLoading(true);
+      const fetchedTemplates = await getTemplates();
+      setTemplates(fetchedTemplates);
 
-    return () => unsubscribe();
+      const usersRef = ref(db, 'users/');
+      const unsubscribe = onValue(usersRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const usersData = snapshot.val();
+          const usersList: UserWithResumes[] = Object.keys(usersData)
+            .map(uid => {
+              const user = usersData[uid];
+              if (user.resumes) {
+                return {
+                  uid,
+                  name: user.name,
+                  email: user.email,
+                  photoURL: user.photoURL,
+                  resumes: Object.keys(user.resumes).map(resumeId => ({
+                    id: resumeId,
+                    ...user.resumes[resumeId]
+                  }))
+                };
+              }
+              return null;
+            })
+            .filter((user): user is UserWithResumes => user !== null);
+          setUsersWithResumes(usersList);
+        } else {
+          setUsersWithResumes([]);
+        }
+        setLoading(false);
+      }, (error) => {
+        console.error(error);
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    };
+
+    fetchData();
   }, []);
   
   const getInitials = (name: string) => {

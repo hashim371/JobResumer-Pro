@@ -9,6 +9,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Users, FileText, Loader2 } from "lucide-react";
 import { getTemplates } from '@/lib/template-store';
 import { subDays, format, isAfter, isValid } from 'date-fns';
+import type { Template } from '@/lib/templates';
 
 interface Resume {
   templateId: string;
@@ -21,20 +22,32 @@ interface User {
 
 export default function AdminAnalyticsPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
-  const templates = getTemplates();
 
   useEffect(() => {
-    const usersRef = ref(db, 'users/');
-    const unsubscribe = onValue(usersRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const usersData = snapshot.val();
-        const usersList: User[] = Object.values(usersData);
-        setUsers(usersList);
-      }
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    const fetchData = async () => {
+      setLoading(true);
+      const fetchedTemplates = await getTemplates();
+      setTemplates(fetchedTemplates);
+
+      const usersRef = ref(db, 'users/');
+      const unsubscribe = onValue(usersRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const usersData = snapshot.val();
+          const usersList: User[] = Object.values(usersData);
+          setUsers(usersList);
+        }
+        setLoading(false);
+      }, (error) => {
+        console.error(error);
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    };
+
+    fetchData();
   }, []);
 
   const totalUsers = users.length;
@@ -43,6 +56,7 @@ export default function AdminAnalyticsPage() {
   }, [users]);
 
   const templateUsageData = useMemo(() => {
+    if (templates.length === 0) return [];
     const usage = new Map<string, number>();
     users.forEach(user => {
       if (user.resumes) {
