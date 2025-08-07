@@ -1,15 +1,17 @@
 
 'use server';
 /**
- * @fileOverview An AI flow for generating new resume template code.
+ * @fileOverview An AI flow for generating a new resume template's style and layout data.
  *
  * This flow takes a template name and category and uses an AI prompt
- * to generate the TSX code for a new React component, along with the
- * corresponding entry for the template list.
+ * to generate a JSON object defining the template's visual properties.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
+import { ref, set } from 'firebase/database';
+import { db } from '@/lib/firebase';
+import type { Template } from '@/lib/templates';
 
 const GenerateTemplateInputSchema = z.object({
   name: z.string().describe('The name of the new template, e.g., "Vienna" or "Kyoto".'),
@@ -17,11 +19,24 @@ const GenerateTemplateInputSchema = z.object({
 });
 export type GenerateTemplateInput = z.infer<typeof GenerateTemplateInputSchema>;
 
+// The output is now a success flag, as the main result is writing to the DB.
 const GenerateTemplateOutputSchema = z.object({
-  caseStatement: z.string().describe("The full `case 'template-id':` block to be added to the switch statement in `ResumePreview.tsx`."),
-  templateListEntry: z.string().describe("The new object to be added to the `initialTemplates` array in `lib/templates.ts`."),
+  success: z.boolean(),
+  error: z.string().optional(),
 });
 export type GenerateTemplateOutput = z.infer<typeof GenerateTemplateOutputSchema>;
+
+
+const TemplateStyleSchema = z.object({
+    layout: z.enum(['single-column', 'two-column-left', 'two-column-right']).describe("The overall layout structure. 'two-column-left' means a sidebar on the left."),
+    fontFamily: z.string().describe("A Google Font name for the body text, e.g., 'Lato', 'Roboto', 'Montserrat'."),
+    colors: z.object({
+        primary: z.string().describe("A hex color code for primary elements like headers and titles. E.g., '#2c5282'."),
+        secondary: z.string().describe("A hex color code for the sidebar or background accents. E.g., '#f7fafc'."),
+        text: z.string().describe("A hex color code for main body text. E.g., '#2d3748'."),
+        textOnPrimary: z.string().describe("A hex color code for text that appears on a primary color background. E.g., '#ffffff'."),
+    }).describe("A unique and professional color scheme."),
+}).describe("A JSON object describing the visual style of a new resume template.");
 
 
 export async function generateTemplate(input: GenerateTemplateInput): Promise<GenerateTemplateOutput> {
@@ -38,45 +53,55 @@ const generateTemplateFlow = ai.defineFlow(
     const templateId = input.name.toLowerCase().replace(/\s+/g, '-');
 
     const prompt = `
-      You are an expert React/Tailwind developer tasked with creating a new resume template component.
+      You are an expert resume designer. Your task is to generate a JSON object defining the style for a new resume template.
+      The design must be unique, professional, and aesthetically pleasing. Do NOT reuse color schemes or layouts from common designs.
 
       **Request:**
       - Template Name: "${input.name}"
       - Template Category: "${input.category}"
-      - Template ID: "${templateId}"
 
       **Instructions:**
-      1.  **Design a NEW, UNIQUE, and aesthetically pleasing resume layout.** It must be completely different from common or existing designs. Be creative and aim for a professional, premium look and feel. Do not copy existing templates. Use sophisticated color schemes, typography, and layout structures.
-      2.  **Generate a TSX \`case\` statement** for a React switch block. This case will render the new resume template.
-          - The code must be self-contained within the \`return (...)\` statement.
-          - It must use TailwindCSS for all styling.
-          - It must use the data variables provided (e.g., \`personalInfo.name\`).
-          - It must use the provided helper components like \`<ContactItem />\` and \`<ContactLink />\`.
-      3.  **Generate the template list entry.** This is a single line of code representing the object to be added to the \`initialTemplates\` array in \`lib/templates.ts\`. The format is \`{ id: '${templateId}', name: '${input.name}', category: '${input.category}' },\`.
+      1.  **Choose a Layout:** Select one of 'single-column', 'two-column-left', or 'two-column-right'.
+      2.  **Choose a Font:** Select a professional and readable Google Font.
+      3.  **Create a Color Scheme:** Generate a unique, harmonious color palette with four hex color codes for 'primary', 'secondary', 'text', and 'textOnPrimary'.
 
       **Output Format:**
-      Provide a JSON object with two keys: "caseStatement" and "templateListEntry".
-
-      - \`caseStatement\`: A string containing the full JS/TSX code for the \`case '${templateId}': ... return (...);\` block.
-      - \`templateListEntry\`: A string containing the object to be added to the templates list, e.g., \`{ id: '...', name: '...', category: '...' },\`.
+      Provide ONLY a valid JSON object matching the defined schema. Do not include any other text or markdown.
     `;
 
-    const { output } = await ai.generate({
-      prompt: prompt,
-      model: 'googleai/gemini-2.0-flash',
-      output: {
-        format: 'json',
-        schema: GenerateTemplateOutputSchema,
-      },
-       config: {
-        temperature: 0.8, // Increase creativity
-      },
-    });
-    
-    if (!output) {
-      throw new Error('AI failed to generate template code.');
+    try {
+        const { output } = await ai.generate({
+          prompt: prompt,
+          model: 'googleai/gemini-2.0-flash',
+          output: {
+            format: 'json',
+            schema: TemplateStyleSchema,
+          },
+          config: {
+            temperature: 0.9, // Higher creativity
+          },
+        });
+        
+        if (!output) {
+          throw new Error('AI failed to generate template style.');
+        }
+
+        const newTemplate: Template = {
+            id: templateId,
+            name: input.name,
+            category: input.category,
+            style: output,
+        };
+
+        // Save the new template directly to Firebase
+        const newTemplateRef = ref(db, `templates/${templateId}`);
+        await set(newTemplateRef, newTemplate);
+
+        return { success: true };
+
+    } catch (e: any) {
+        console.error("Error in generateTemplateFlow:", e);
+        return { success: false, error: e.message || 'An unexpected error occurred.' };
     }
-    
-    return output;
   }
 );

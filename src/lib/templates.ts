@@ -4,7 +4,18 @@ export interface Template {
   id: string;
   name: string;
   category: string;
-  code?: string;
+  style?: TemplateStyle; // Style is now an object
+}
+
+export interface TemplateStyle {
+  layout: 'single-column' | 'two-column-left' | 'two-column-right';
+  fontFamily: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    text: string;
+    textOnPrimary: string;
+  };
 }
 
 

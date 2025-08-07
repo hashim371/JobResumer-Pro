@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getTemplates, addTemplate, deleteTemplate, invalidateTemplateCache } from '@/lib/template-store';
+import { getTemplates, deleteTemplate, invalidateTemplateCache } from '@/lib/template-store';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2, Loader2, PlusCircle, Copy } from 'lucide-react';
+import { Edit, Trash2, Loader2, PlusCircle } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,9 +36,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage, FormLabel } from '
 import { ResumePreview } from '@/components/ResumePreview';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { generateTemplate } from '@/ai/flows/generate-template';
-import type { GenerateTemplateOutput } from '@/ai/flows/generate-template';
 import type { Template } from '@/lib/templates';
-import { Textarea } from '@/components/ui/textarea';
 
 const templateSchema = z.object({
   name: z.string().min(1, 'Template name is required.'),
@@ -48,11 +46,7 @@ const templateSchema = z.object({
 export default function AdminTemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isGeneratedModalOpen, setIsGeneratedModalOpen] = useState(false);
-  const [generatedCode, setGeneratedCode] = useState<GenerateTemplateOutput | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const { toast } = useToast();
 
   const fetchTemplates = async () => {
@@ -75,11 +69,6 @@ export default function AdminTemplatesPage() {
   const allCategories = Array.from(new Set(templates.map(t => t.category)));
   const addTemplateCategories = Array.from(new Set([...allCategories, "Unique", "Elegant", "Bold", "Professional", "Artistic", "Minimalist"]));
 
-  const editForm = useForm<z.infer<typeof templateSchema>>({
-    resolver: zodResolver(templateSchema),
-    defaultValues: { name: '', category: '' },
-  });
-
   const addForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
     defaultValues: { name: '', category: '' },
@@ -94,43 +83,29 @@ export default function AdminTemplatesPage() {
       toast({ variant: 'destructive', title: 'Error', description: 'Failed to delete template.' });
     }
   };
-
-  const handleEditClick = (template: Template) => {
-    setSelectedTemplate(template);
-    editForm.reset({ name: template.name, category: template.category });
-    setIsEditModalOpen(true);
-  };
   
-  const handleEditSubmit = (values: z.infer<typeof templateSchema>) => {
-    if (selectedTemplate) {
-       // Note: This only updates the view for the current session.
-       // A proper implementation would update the template in the database.
-       setTemplates(prev => prev.map(t => t.id === selectedTemplate.id ? { ...t, ...values } : t));
-      toast({ title: 'Template Updated', description: 'The template details have been updated for this session.' });
-      setIsEditModalOpen(false);
-      setSelectedTemplate(null);
-    }
-  };
-
   const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
       try {
         const result = await generateTemplate(values);
-        setGeneratedCode(result);
-        setIsGeneratedModalOpen(true);
-        addForm.reset();
-        setIsAddModalOpen(false);
+        if (result.success) {
+            toast({
+                title: 'Template Generated!',
+                description: `The "${values.name}" template has been successfully created.`,
+            });
+            fetchTemplates(); // Re-fetch to show the new template
+        } else {
+            throw new Error(result.error || 'The AI failed to generate a new template.');
+        }
       } catch (e: any) {
          toast({
             variant: 'destructive',
             title: 'Generation Failed',
-            description: e.message || 'The AI failed to generate a new template. Please try again.',
+            description: e.message,
         });
+      } finally {
+        addForm.reset();
+        setIsAddModalOpen(false);
       }
-  };
-
-  const copyToClipboard = (text: string, fieldName: string) => {
-    navigator.clipboard.writeText(text);
-    toast({ title: "Copied!", description: `${fieldName} code has been copied to your clipboard.` });
   };
   
   if (loading) {
@@ -219,7 +194,7 @@ export default function AdminTemplatesPage() {
                         <Badge variant="secondary" className="mt-2">{template.category}</Badge>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleEditClick(template)}>
+                        <Button variant="ghost" size="icon" onClick={() => alert("Editing is disabled for this version.")}>
                             <Edit className="h-4 w-4"/>
                             <span className="sr-only">Edit</span>
                         </Button>
@@ -234,7 +209,7 @@ export default function AdminTemplatesPage() {
                              <AlertDialogHeader>
                                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                   This action will permanently delete this template. This cannot be undone.
+                                   This action will permanently delete the "{template.name}" template. This cannot be undone.
                                 </AlertDialogDescription>
                              </AlertDialogHeader>
                              <AlertDialogFooter>
@@ -249,97 +224,6 @@ export default function AdminTemplatesPage() {
           </Card>
         ))}
       </div>
-
-       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Template</DialogTitle>
-            <DialogDescription>
-              Change the details for the &quot;{selectedTemplate?.name}&quot; template. Note: this is a temporary edit.
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...editForm}>
-            <form onSubmit={editForm.handleSubmit(handleEditSubmit)} className="space-y-4 py-4">
-              <FormField
-                control={editForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                     <Label htmlFor="edit-name">Template Name</Label>
-                    <FormControl>
-                      <Input id="edit-name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-               <FormField
-                control={editForm.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                     <FormLabel>Category</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {allCategories.map(cat => (
-                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                     <FormMessage />
-                  </FormItem>
-                )}
-              />
-               <DialogFooter>
-                 <Button type="button" variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
-                <Button type="submit" disabled={editForm.formState.isSubmitting}>
-                  {editForm.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                  Save Changes
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-      
-      <Dialog open={isGeneratedModalOpen} onOpenChange={setIsGeneratedModalOpen}>
-        <DialogContent className="max-w-4xl">
-           <DialogHeader>
-              <DialogTitle>Template Code Generated!</DialogTitle>
-              <DialogDescription>
-                  The AI has generated the code for your new template. To add it to the app, please copy and paste the following code snippets into their respective files.
-              </DialogDescription>
-          </DialogHeader>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 max-h-[60vh] overflow-y-auto p-1">
-              <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <Label className="font-semibold">1. Add to `src/lib/templates.ts`</Label>
-                    <Button variant="ghost" size="sm" onClick={() => copyToClipboard(generatedCode?.templateListEntry || '', 'Template list entry')}>
-                        <Copy className="mr-2 h-3 w-3" /> Copy
-                    </Button>
-                  </div>
-                  <Textarea readOnly value={generatedCode?.templateListEntry || ''} rows={5} className="bg-muted/50 font-mono text-xs"/>
-              </div>
-               <div>
-                  <div className="flex justify-between items-center mb-2">
-                     <Label className="font-semibold">2. Add to `src/components/ResumePreview.tsx`</Label>
-                     <Button variant="ghost" size="sm" onClick={() => copyToClipboard(generatedCode?.caseStatement || '', 'ResumePreview case')}>
-                        <Copy className="mr-2 h-3 w-3" /> Copy
-                    </Button>
-                  </div>
-                   <Textarea readOnly value={generatedCode?.caseStatement || ''} rows={15} className="bg-muted/50 font-mono text-xs"/>
-              </div>
-          </div>
-          <DialogFooter>
-              <Button onClick={() => setIsGeneratedModalOpen(false)}>Done</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
