@@ -43,22 +43,17 @@ export async function generateTemplate(input: GenerateTemplateInput): Promise<Ge
   return generateTemplateFlow(input);
 }
 
-const generateTemplateFlow = ai.defineFlow(
-  {
-    name: 'generateTemplateFlow',
-    inputSchema: GenerateTemplateInputSchema,
-    outputSchema: GenerateTemplateOutputSchema,
-  },
-  async (input) => {
-    const templateId = input.name.toLowerCase().replace(/\s+/g, '-');
-
-    const prompt = `
+const prompt = ai.definePrompt({
+    name: 'generateTemplateStylePrompt',
+    input: { schema: GenerateTemplateInputSchema },
+    output: { schema: TemplateStyleSchema },
+    prompt: `
       You are an expert resume designer. Your task is to generate a JSON object defining the style for a new resume template.
       The design must be unique, professional, and aesthetically pleasing. Do NOT reuse color schemes or layouts from common designs.
 
       **Request:**
-      - Template Name: "${input.name}"
-      - Template Category: "${input.category}"
+      - Template Name: "{{name}}"
+      - Template Category: "{{category}}"
 
       **Instructions:**
       1.  **Choose a Layout:** Select one of 'single-column', 'two-column-left', or 'two-column-right'.
@@ -67,25 +62,28 @@ const generateTemplateFlow = ai.defineFlow(
 
       **Output Format:**
       Provide ONLY a valid JSON object matching the defined schema. Do not include any other text or markdown.
-    `;
+    `,
+    config: {
+        temperature: 0.9, // Higher creativity
+    },
+});
 
+
+const generateTemplateFlow = ai.defineFlow(
+  {
+    name: 'generateTemplateFlow',
+    inputSchema: GenerateTemplateInputSchema,
+    outputSchema: GenerateTemplateOutputSchema,
+  },
+  async (input) => {
     try {
-        const { output } = await ai.generate({
-          prompt: prompt,
-          model: 'googleai/gemini-2.0-flash',
-          output: {
-            format: 'json',
-            schema: TemplateStyleSchema,
-          },
-          config: {
-            temperature: 0.9, // Higher creativity
-          },
-        });
+        const { output } = await prompt(input);
         
         if (!output) {
           throw new Error('AI failed to generate template style.');
         }
 
+        const templateId = input.name.toLowerCase().replace(/\s+/g, '-');
         const newTemplate: Template = {
             id: templateId,
             name: input.name,
