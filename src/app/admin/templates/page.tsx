@@ -37,6 +37,9 @@ import { ResumePreview } from '@/components/ResumePreview';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { generateTemplate } from '@/ai/flows/generate-template';
 import type { Template } from '@/lib/templates';
+import { db } from '@/lib/firebase';
+import { ref, set } from 'firebase/database';
+
 
 const templateSchema = z.object({
   name: z.string().min(1, 'Template name is required.'),
@@ -86,21 +89,33 @@ export default function AdminTemplatesPage() {
   
   const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
       try {
-        const result = await generateTemplate(values);
-        if (result.success) {
-            toast({
-                title: 'Template Generated!',
-                description: `The "${values.name}" template has been successfully created.`,
-            });
-            fetchTemplates(); // Re-fetch to show the new template
-        } else {
-            throw new Error(result.error || 'The AI failed to generate a new template.');
+        const style = await generateTemplate(values);
+        if (!style) {
+             throw new Error('The AI failed to generate a new template style.');
         }
+
+        const templateId = values.name.toLowerCase().replace(/\s+/g, '-');
+        const newTemplate: Template = {
+            id: templateId,
+            name: values.name,
+            category: values.category,
+            style: style,
+        };
+
+        const newTemplateRef = ref(db, `templates/${templateId}`);
+        await set(newTemplateRef, newTemplate);
+
+        toast({
+            title: 'Template Generated!',
+            description: `The "${values.name}" template has been successfully created.`,
+        });
+        fetchTemplates(); // Re-fetch to show the new template
+
       } catch (e: any) {
          toast({
             variant: 'destructive',
             title: 'Generation Failed',
-            description: e.message,
+            description: e.message || 'An unexpected error occurred.',
         });
       } finally {
         addForm.reset();

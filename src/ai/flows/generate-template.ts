@@ -4,28 +4,17 @@
  * @fileOverview An AI flow for generating a new resume template's style and layout data.
  *
  * This flow takes a template name and category and uses an AI prompt
- * to generate a JSON object defining the template's visual properties,
- * then saves the complete template to Firebase.
+ * to generate a JSON object defining the template's visual properties.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { ref, set } from 'firebase/database';
-import { db } from '@/lib/firebase';
-import type { Template } from '@/lib/templates';
 
 const GenerateTemplateInputSchema = z.object({
   name: z.string().describe('The name of the new template, e.g., "Vienna" or "Kyoto".'),
   category: z.string().describe('The category for the new template, e.g., "Modern", "Classic", "Creative".'),
 });
 export type GenerateTemplateInput = z.infer<typeof GenerateTemplateInputSchema>;
-
-const GenerateTemplateOutputSchema = z.object({
-  success: z.boolean(),
-  error: z.string().optional(),
-});
-export type GenerateTemplateOutput = z.infer<typeof GenerateTemplateOutputSchema>;
-
 
 const TemplateStyleSchema = z.object({
     layout: z.enum(['single-column', 'two-column-left', 'two-column-right']).describe("The overall layout structure. 'two-column-left' means a sidebar on the left."),
@@ -37,6 +26,8 @@ const TemplateStyleSchema = z.object({
         textOnPrimary: z.string().describe("A hex color code for text that appears on a primary color background. E.g., '#ffffff'."),
     }).describe("A unique and professional color scheme."),
 }).describe("A JSON object describing the visual style of a new resume template.");
+
+export type TemplateStyle = z.infer<typeof TemplateStyleSchema>;
 
 
 const prompt = ai.definePrompt({
@@ -70,37 +61,21 @@ const generateTemplateFlow = ai.defineFlow(
   {
     name: 'generateTemplateFlow',
     inputSchema: GenerateTemplateInputSchema,
-    outputSchema: GenerateTemplateOutputSchema,
+    outputSchema: TemplateStyleSchema,
   },
   async (input) => {
-    try {
-        const { output } = await prompt(input);
-        
-        if (!output) {
-          throw new Error('AI failed to generate template style.');
-        }
-
-        const templateId = input.name.toLowerCase().replace(/\s+/g, '-');
-        const newTemplate: Template = {
-            id: templateId,
-            name: input.name,
-            category: input.category,
-            style: output,
-        };
-
-        const newTemplateRef = ref(db, `templates/${templateId}`);
-        await set(newTemplateRef, newTemplate);
-
-        return { success: true };
-
-    } catch (e: any) {
-        console.error("Error in generateTemplateFlow:", e);
-        return { success: false, error: e.message || 'An unexpected error occurred during template generation.' };
+    const { output } = await prompt(input);
+    if (!output) {
+      throw new Error('AI failed to generate template style.');
     }
+    return output;
   }
 );
 
-
-export async function generateTemplate(input: GenerateTemplateInput): Promise<GenerateTemplateOutput> {
-  return generateTemplateFlow(input);
+export async function generateTemplate(input: GenerateTemplateInput): Promise<TemplateStyle> {
+  const result = await generateTemplateFlow(input);
+  if (!result) {
+    throw new Error('Flow did not return a result.');
+  }
+  return result;
 }
