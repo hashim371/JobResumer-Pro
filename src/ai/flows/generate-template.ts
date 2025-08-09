@@ -47,6 +47,7 @@ const prompt = ai.definePrompt({
     name: 'generateTemplateStylePrompt',
     input: { schema: GenerateTemplateInputSchema },
     output: { schema: TemplateStyleSchema },
+    model: 'googleai/gemini-2.0-flash', // Explicitly define the model here
     prompt: `
       You are an expert resume designer. Your task is to generate a JSON object defining the style for a new resume template.
       The design must be unique, professional, and aesthetically pleasing. Do NOT reuse color schemes or layouts from common designs.
