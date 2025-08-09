@@ -39,10 +39,6 @@ const TemplateStyleSchema = z.object({
 }).describe("A JSON object describing the visual style of a new resume template.");
 
 
-export async function generateTemplate(input: GenerateTemplateInput): Promise<GenerateTemplateOutput> {
-  return generateTemplateFlow(input);
-}
-
 const prompt = ai.definePrompt({
     name: 'generateTemplateStylePrompt',
     input: { schema: GenerateTemplateInputSchema },
@@ -104,3 +100,8 @@ const generateTemplateFlow = ai.defineFlow(
     }
   }
 );
+
+
+export async function generateTemplate(input: GenerateTemplateInput): Promise<GenerateTemplateOutput> {
+  return generateTemplateFlow(input);
+}
