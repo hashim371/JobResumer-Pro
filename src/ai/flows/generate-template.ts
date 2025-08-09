@@ -4,7 +4,8 @@
  * @fileOverview An AI flow for generating a new resume template's style and layout data.
  *
  * This flow takes a template name and category and uses an AI prompt
- * to generate a JSON object defining the template's visual properties.
+ * to generate a JSON object defining the template's visual properties,
+ * then saves the complete template to Firebase.
  */
 
 import { ai } from '@/ai/genkit';
@@ -19,7 +20,6 @@ const GenerateTemplateInputSchema = z.object({
 });
 export type GenerateTemplateInput = z.infer<typeof GenerateTemplateInputSchema>;
 
-// The output is now a success flag, as the main result is writing to the DB.
 const GenerateTemplateOutputSchema = z.object({
   success: z.boolean(),
   error: z.string().optional(),
@@ -43,7 +43,7 @@ const prompt = ai.definePrompt({
     name: 'generateTemplateStylePrompt',
     input: { schema: GenerateTemplateInputSchema },
     output: { schema: TemplateStyleSchema },
-    model: 'googleai/gemini-2.0-flash', // Explicitly define the model here
+    model: 'googleai/gemini-2.0-flash', 
     prompt: `
       You are an expert resume designer. Your task is to generate a JSON object defining the style for a new resume template.
       The design must be unique, professional, and aesthetically pleasing. Do NOT reuse color schemes or layouts from common designs.
@@ -61,7 +61,7 @@ const prompt = ai.definePrompt({
       Provide ONLY a valid JSON object matching the defined schema. Do not include any other text or markdown.
     `,
     config: {
-        temperature: 0.9, // Higher creativity
+        temperature: 0.9, 
     },
 });
 
@@ -88,7 +88,6 @@ const generateTemplateFlow = ai.defineFlow(
             style: output,
         };
 
-        // Save the new template directly to Firebase
         const newTemplateRef = ref(db, `templates/${templateId}`);
         await set(newTemplateRef, newTemplate);
 
@@ -96,7 +95,7 @@ const generateTemplateFlow = ai.defineFlow(
 
     } catch (e: any) {
         console.error("Error in generateTemplateFlow:", e);
-        return { success: false, error: e.message || 'An unexpected error occurred.' };
+        return { success: false, error: e.message || 'An unexpected error occurred during template generation.' };
     }
   }
 );
