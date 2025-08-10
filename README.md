@@ -100,9 +100,11 @@ To get a local copy up and running, follow these simple steps.
     *   Firebase will provide a configuration object. You will need these values for your environment file.
 
 4.  **Set up Environment Variables:**
-    *   Create a new file named `.env` in the root of your project.
-    *   Copy the contents of `.env.example` into your new `.env` file.
-    *   Fill in the `NEXT_PUBLIC_FIREBASE_*` variables with the configuration values from your Firebase project.
+    *   Create a new file named `.env` in the root of your project by copying the example file:
+        ```bash
+        cp .env.example .env
+        ```
+    *   Open the new `.env` file and fill in the `NEXT_PUBLIC_FIREBASE_*` variables with the configuration values from your Firebase project.
     *   Go to [Google AI Studio](https://aistudio.google.com/) and create an API key.
     *   Add your API key to the `.env` file for the `GEMINI_API_KEY` variable.
 
@@ -136,7 +138,7 @@ First, ensure all your code is pushed to a GitHub repository.
 **This is a critical step for the live application.** The AI features and Firebase connection will not work without it.
 
 1.  On the "Configure Project" screen in Vercel, expand the **"Environment Variables"** section.
-2.  You need to add all the variables from your local `.env` file.
+2.  You need to add all the variables from your local `.env` file. For each variable, copy the name and its corresponding value from your `.env` file and add it to Vercel.
     *   `NEXT_PUBLIC_FIREBASE_API_KEY`
     *   `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
     *   `NEXT_PUBLIC_FIREBASE_DATABASE_URL`
@@ -146,8 +148,7 @@ First, ensure all your code is pushed to a GitHub repository.
     *   `NEXT_PUBLIC_FIREBASE_APP_ID`
     *   `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`
     *   `GEMINI_API_KEY`
-3.  For each variable, enter the name and the corresponding value from your local `.env` file.
-4.  Click **"Deploy"**. Vercel will build and deploy your application. Any future pushes to your `main` branch on GitHub will automatically trigger a new deployment.
+3.  Click **"Deploy"**. Vercel will build and deploy your application. Any future pushes to your `main` branch on GitHub will automatically trigger a new deployment.
 
 ---
 
@@ -160,5 +161,3 @@ To access the admin dashboard, a specific email is hardcoded for simplicity and 
 To gain access, you must sign up for a new account on your live website using this exact email address. Once you sign in with this account, you will be automatically redirected to the admin dashboard at `/admin/dashboard`.
 
 You can change this hardcoded value in the file: `src/app/admin/layout.tsx`.
-
-

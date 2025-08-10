@@ -20,7 +20,7 @@ if (
     !firebaseConfig.authDomain ||
     !firebaseConfig.projectId
 ) {
-    console.error("Firebase configuration environment variables are not set. Please check your .env file.");
+    console.error("Firebase configuration environment variables are not set. Please check your .env file or Vercel project settings.");
 }
 
 
