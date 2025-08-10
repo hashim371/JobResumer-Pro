@@ -1,3 +1,4 @@
+
 # JobResumer - AI-Powered Resume Builder & Full-Stack SaaS Platform
 
 <div align="center">
@@ -96,16 +97,14 @@ To get a local copy up and running, follow these simple steps.
     *   Go to the **Realtime Database** section and create a new database. Start in **test mode** for easy setup (you can change security rules later).
     *   Navigate to your Project Settings (click the gear icon) > General tab.
     *   Under "Your apps", create a new Web App.
-    *   Firebase will provide a configuration object. Copy this entire object.
-    *   Paste the configuration object into the `src/lib/firebase.ts` file, replacing the existing placeholder.
+    *   Firebase will provide a configuration object. You will need these values for your environment file.
 
-4.  **Set up Google AI (for local development):**
+4.  **Set up Environment Variables:**
+    *   Create a new file named `.env` in the root of your project.
+    *   Copy the contents of `.env.example` into your new `.env` file.
+    *   Fill in the `NEXT_PUBLIC_FIREBASE_*` variables with the configuration values from your Firebase project.
     *   Go to [Google AI Studio](https://aistudio.google.com/) and create an API key.
-    *   Create a file named `.env` in the root of your project.
-    *   Add your API key to the `.env` file like this:
-        ```
-        GEMINI_API_KEY=your_google_ai_api_key_here
-        ```
+    *   Add your API key to the `.env` file for the `GEMINI_API_KEY` variable.
 
 ### Running the Application
 
@@ -124,16 +123,13 @@ This application is optimized for deployment on [Vercel](https://vercel.com/).
 
 ### Environment Variables
 
-**This is a critical step for the live application.** The AI features will not work without it.
+**This is a critical step for the live application.** The AI features and Firebase connection will not work without it.
 
 1.  After deploying your project to Vercel, navigate to your project's dashboard.
 2.  Go to the **Settings** tab.
 3.  Click on **Environment Variables** in the left sidebar.
-4.  Create a new variable:
-    *   **Name:** `GEMINI_API_KEY`
-    *   **Value:** Paste the Google AI API key you generated earlier.
-5.  Ensure the variable is available for all environments (Production, Preview, and Development).
-6.  Save the variable. Vercel will automatically redeploy your application with the new environment variable.
+4.  Add all the variables from your local `.env` file to Vercel's environment variables. This includes all `NEXT_PUBLIC_FIREBASE_*` keys and the `GEMINI_API_KEY`.
+5.  Save the variables. Vercel will automatically redeploy your application with the new environment variables.
 
 ---
 
@@ -144,4 +140,3 @@ To access the admin dashboard, a specific email is hardcoded for simplicity and 
 *   **Admin Email**: `res97ad7777mn@gmail.com`
 *   You can change this hardcoded value in the file: `src/app/admin/layout.tsx`.
 *   To gain access, simply sign up for a new account using this exact email address. Upon login, you will be automatically redirected to the admin dashboard at `/admin/dashboard`.
-```
