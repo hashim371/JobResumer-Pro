@@ -119,17 +119,35 @@ To get a local copy up and running, follow these simple steps.
 
 ## Deployment
 
-This application is optimized for deployment on [Vercel](https://vercel.com/).
+This application is optimized for deployment on [Vercel](https://vercel.com/), which provides a seamless experience for Next.js projects.
 
-### Environment Variables
+### Step 1: Push to GitHub
+
+First, ensure all your code is pushed to a GitHub repository.
+
+### Step 2: Import Project on Vercel
+
+1.  Sign up for a Vercel account and connect it to your GitHub account.
+2.  From your Vercel dashboard, click **"Add New... -> Project"**.
+3.  Find your `JobResumer-Pro` repository and click **"Import"**.
+
+### Step 3: Configure Environment Variables
 
 **This is a critical step for the live application.** The AI features and Firebase connection will not work without it.
 
-1.  After deploying your project to Vercel, navigate to your project's dashboard.
-2.  Go to the **Settings** tab.
-3.  Click on **Environment Variables** in the left sidebar.
-4.  Add all the variables from your local `.env` file to Vercel's environment variables. This includes all `NEXT_PUBLIC_FIREBASE_*` keys and the `GEMINI_API_KEY`.
-5.  Save the variables. Vercel will automatically redeploy your application with the new environment variables.
+1.  On the "Configure Project" screen in Vercel, expand the **"Environment Variables"** section.
+2.  You need to add all the variables from your local `.env` file.
+    *   `NEXT_PUBLIC_FIREBASE_API_KEY`
+    *   `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+    *   `NEXT_PUBLIC_FIREBASE_DATABASE_URL`
+    *   `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+    *   `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+    *   `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+    *   `NEXT_PUBLIC_FIREBASE_APP_ID`
+    *   `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`
+    *   `GEMINI_API_KEY`
+3.  For each variable, enter the name and the corresponding value from your local `.env` file.
+4.  Click **"Deploy"**. Vercel will build and deploy your application. Any future pushes to your `main` branch on GitHub will automatically trigger a new deployment.
 
 ---
 
@@ -138,5 +156,9 @@ This application is optimized for deployment on [Vercel](https://vercel.com/).
 To access the admin dashboard, a specific email is hardcoded for simplicity and security.
 
 *   **Admin Email**: `res97ad7777mn@gmail.com`
-*   You can change this hardcoded value in the file: `src/app/admin/layout.tsx`.
-*   To gain access, simply sign up for a new account using this exact email address. Upon login, you will be automatically redirected to the admin dashboard at `/admin/dashboard`.
+
+To gain access, you must sign up for a new account on your live website using this exact email address. Once you sign in with this account, you will be automatically redirected to the admin dashboard at `/admin/dashboard`.
+
+You can change this hardcoded value in the file: `src/app/admin/layout.tsx`.
+
+
