@@ -81,7 +81,7 @@ export default function AdminTemplatesPage() {
       await deleteTemplate(templateId);
       toast({ title: 'Template Deleted', description: 'The template has been permanently deleted.' });
       fetchTemplates(); // Re-fetch templates to update the UI
-    } catch (error) => {
+    } catch (error) {
       toast({ variant: 'destructive', title: 'Error', description: 'Failed to delete template.' });
     }
   };
@@ -249,3 +249,4 @@ export default function AdminTemplatesPage() {
     </div>
   );
 }
+
