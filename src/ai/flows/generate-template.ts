@@ -1,22 +1,20 @@
 
 'use server';
 /**
- * @fileOverview An AI flow for generating a new resume template's style and layout data.
- *
- * This flow takes a template name and category and uses an AI prompt
- * to generate a JSON object defining the template's visual properties.
+ * @fileOverview Defines the AI prompt and schemas for generating resume template styles.
+ * This file is used by the /api/generate-template API route.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
-const GenerateTemplateInputSchema = z.object({
+export const GenerateTemplateInputSchema = z.object({
   name: z.string().describe('The name of the new template, e.g., "Vienna" or "Kyoto".'),
   category: z.string().describe('The category for the new template, e.g., "Modern", "Classic", "Creative".'),
 });
 export type GenerateTemplateInput = z.infer<typeof GenerateTemplateInputSchema>;
 
-const TemplateStyleSchema = z.object({
+export const TemplateStyleSchema = z.object({
     layout: z.enum(['single-column', 'two-column-left', 'two-column-right']).describe("The overall layout structure. 'two-column-left' means a sidebar on the left."),
     fontFamily: z.string().describe("A Google Font name for the body text, e.g., 'Lato', 'Roboto', 'Montserrat'."),
     colors: z.object({
@@ -30,7 +28,7 @@ const TemplateStyleSchema = z.object({
 export type TemplateStyle = z.infer<typeof TemplateStyleSchema>;
 
 
-const prompt = ai.definePrompt({
+export const generateTemplateStylePrompt = ai.definePrompt({
     name: 'generateTemplateStylePrompt',
     input: { schema: GenerateTemplateInputSchema },
     output: { schema: TemplateStyleSchema },
@@ -55,27 +53,3 @@ const prompt = ai.definePrompt({
         temperature: 0.9, 
     },
 });
-
-
-const generateTemplateFlow = ai.defineFlow(
-  {
-    name: 'generateTemplateFlow',
-    inputSchema: GenerateTemplateInputSchema,
-    outputSchema: TemplateStyleSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    if (!output) {
-      throw new Error('AI failed to generate template style.');
-    }
-    return output;
-  }
-);
-
-export async function generateTemplate(input: GenerateTemplateInput): Promise<TemplateStyle> {
-  const result = await generateTemplateFlow(input);
-  if (!result) {
-    throw new Error('Flow did not return a result.');
-  }
-  return result;
-}

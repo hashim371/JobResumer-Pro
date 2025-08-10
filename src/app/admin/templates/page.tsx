@@ -35,8 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage, FormLabel } from '@/components/ui/form';
 import { ResumePreview } from '@/components/ResumePreview';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { generateTemplate } from '@/ai/flows/generate-template';
-import type { Template } from '@/lib/templates';
+import type { Template, TemplateStyle } from '@/lib/templates';
 import { db } from '@/lib/firebase';
 import { ref, set } from 'firebase/database';
 
@@ -82,17 +81,25 @@ export default function AdminTemplatesPage() {
       await deleteTemplate(templateId);
       toast({ title: 'Template Deleted', description: 'The template has been permanently deleted.' });
       fetchTemplates(); // Re-fetch templates to update the UI
-    } catch (error) {
+    } catch (error) => {
       toast({ variant: 'destructive', title: 'Error', description: 'Failed to delete template.' });
     }
   };
   
   const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
       try {
-        const style = await generateTemplate(values);
-        if (!style) {
-             throw new Error('The AI failed to generate a new template style.');
+        const response = await fetch('/api/generate-template', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(values),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'The AI failed to generate a new template style.');
         }
+
+        const style: TemplateStyle = await response.json();
 
         const templateId = values.name.toLowerCase().replace(/\s+/g, '-');
         const newTemplate: Template = {
