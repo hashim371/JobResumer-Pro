@@ -24,10 +24,6 @@ JobResumer is a modern, full-stack web application designed to help job seekers 
 
 This project is built with a production-ready, scalable tech stack, making it a perfect turnkey solution for an entrepreneur looking to launch a SaaS business in the career services niche.
 
-## Live Demo
-
-**(Link to your deployed Vercel application will go here)**
-
 ---
 
 ## Key Features
@@ -37,7 +33,7 @@ JobResumer is packed with features for both end-users and administrators, provid
 ### User-Facing Features
 
 *   **Effortless Resume Editing**: A clean, intuitive editor allows users to input their personal information, professional summary, work experience, education, and skills. The interface is designed for speed and ease of use.
-*   **Diverse Template Gallery**: Users can choose from a wide variety of professionally designed resume templates, filterable by category (e.g., Modern, Creative, ATS-Friendly), ensuring there's a style for every industry.
+*   **Diverse Template Gallery**: Users can choose from a wide variety of professionally designed templates, filterable by category (e.g., Modern, Creative, ATS-Friendly), ensuring there's a style for every industry.
 *   **Real-time Preview**: As users edit their information, a live preview of the resume updates instantly, showing exactly how the final document will look in their chosen template.
 *   **Secure Authentication**: A standard and secure email/password authentication system to manage user accounts and protect their data.
 *   **Personal Resume Dashboard**: Registered users get a personal dashboard (`/my-resumes`) to view, edit, preview, and delete all their created resumes in one place.
@@ -103,7 +99,7 @@ To get a local copy up and running, follow these simple steps.
     *   Firebase will provide a configuration object. Copy this entire object.
     *   Paste the configuration object into the `src/lib/firebase.ts` file, replacing the existing placeholder.
 
-4.  **Set up Google AI (for AI features):**
+4.  **Set up Google AI (for local development):**
     *   Go to [Google AI Studio](https://aistudio.google.com/) and create an API key.
     *   Create a file named `.env` in the root of your project.
     *   Add your API key to the `.env` file like this:
@@ -120,11 +116,24 @@ To get a local copy up and running, follow these simple steps.
 
 2.  Open [http://localhost:9002](http://localhost:9002) with your browser to see the result.
 
-3.  To use AI features locally, you may also need to run the Genkit developer UI in a separate terminal:
-    ```bash
-    npm run genkit:dev
-    ```
-    This opens a local UI on port 4000 to inspect and test your AI flows.
+---
+
+## Deployment
+
+This application is optimized for deployment on [Vercel](https://vercel.com/).
+
+### Environment Variables
+
+**This is a critical step for the live application.** The AI features will not work without it.
+
+1.  After deploying your project to Vercel, navigate to your project's dashboard.
+2.  Go to the **Settings** tab.
+3.  Click on **Environment Variables** in the left sidebar.
+4.  Create a new variable:
+    *   **Name:** `GEMINI_API_KEY`
+    *   **Value:** Paste the Google AI API key you generated earlier.
+5.  Ensure the variable is available for all environments (Production, Preview, and Development).
+6.  Save the variable. Vercel will automatically redeploy your application with the new environment variable.
 
 ---
 
@@ -135,3 +144,4 @@ To access the admin dashboard, a specific email is hardcoded for simplicity and 
 *   **Admin Email**: `res97ad7777mn@gmail.com`
 *   You can change this hardcoded value in the file: `src/app/admin/layout.tsx`.
 *   To gain access, simply sign up for a new account using this exact email address. Upon login, you will be automatically redirected to the admin dashboard at `/admin/dashboard`.
+```
