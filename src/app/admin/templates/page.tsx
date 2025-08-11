@@ -96,8 +96,15 @@ export default function AdminTemplatesPage() {
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'The AI failed to generate a new template style.');
+          let errorMessage = 'The AI failed to generate a new template style.';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            // The response was not JSON, which likely means a server error page was returned.
+            errorMessage = `A server error occurred (status: ${response.status}).`;
+          }
+          throw new Error(errorMessage);
         }
 
         const style: TemplateStyle = await response.json();
