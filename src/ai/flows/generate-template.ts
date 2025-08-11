@@ -1,4 +1,5 @@
 
+'use server';
 /**
  * @fileOverview Defines the AI prompt and schemas for generating resume template styles.
  * This file is used by the /api/generate-template API route.
@@ -31,7 +32,7 @@ export const generateTemplateStylePrompt = ai.definePrompt({
     name: 'generateTemplateStylePrompt',
     input: { schema: GenerateTemplateInputSchema },
     output: { schema: TemplateStyleSchema },
-    model: 'googleai/gemini-2.0-flash', 
+    model: 'googleai/gemini-2.0-flash',
     prompt: `
       You are an expert brand and visual designer with a keen eye for resume typography, layout, and color theory. Your task is to generate a JSON object that defines a unique and compelling visual style for a new resume template.
 
@@ -65,3 +66,11 @@ export const generateTemplateStylePrompt = ai.definePrompt({
         temperature: 1.0, 
     },
 });
+
+export async function generateTemplateStyle(input: GenerateTemplateInput): Promise<TemplateStyle> {
+    const { output } = await generateTemplateStylePrompt(input);
+    if (!output) {
+      throw new Error('AI failed to generate a response.');
+    }
+    return output;
+}

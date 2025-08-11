@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { generateTemplateStylePrompt, GenerateTemplateInputSchema } from '@/ai/flows/generate-template';
+import { generateTemplateStyle, GenerateTemplateInputSchema } from '@/ai/flows/generate-template';
 
 export const dynamic = 'force-dynamic'; // Ensures this route is always run dynamically
 
@@ -9,11 +9,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const input = GenerateTemplateInputSchema.parse(body);
 
-    const { output } = await generateTemplateStylePrompt(input);
-
-    if (!output) {
-      throw new Error('AI failed to generate a response.');
-    }
+    const output = await generateTemplateStyle(input);
 
     return NextResponse.json(output);
   } catch (error: any) {
