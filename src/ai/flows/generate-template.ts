@@ -2,7 +2,7 @@
 'use server';
 /**
  * @fileOverview Defines the AI prompt and schemas for generating resume template styles.
- * This file is used by the /api/generate-template API route.
+ * This file is a Server Action and is called directly from the client.
  */
 
 import { ai } from '@/ai/genkit';
@@ -28,7 +28,7 @@ export const TemplateStyleSchema = z.object({
 export type TemplateStyle = z.infer<typeof TemplateStyleSchema>;
 
 
-export const generateTemplateStylePrompt = ai.definePrompt({
+const generateTemplateStylePrompt = ai.definePrompt({
     name: 'generateTemplateStylePrompt',
     input: { schema: GenerateTemplateInputSchema },
     output: { schema: TemplateStyleSchema },
@@ -68,9 +68,14 @@ export const generateTemplateStylePrompt = ai.definePrompt({
 });
 
 export async function generateTemplateStyle(input: GenerateTemplateInput): Promise<TemplateStyle> {
-    const { output } = await generateTemplateStylePrompt(input);
-    if (!output) {
-      throw new Error('AI failed to generate a response.');
+    try {
+        const { output } = await generateTemplateStylePrompt(input);
+        if (!output) {
+          throw new Error('AI failed to generate a response.');
+        }
+        return output;
+    } catch (error: any) {
+        console.error('Error in generateTemplateStyle server action:', error);
+        throw new Error('Failed to generate template style. The AI model may be temporarily unavailable.');
     }
-    return output;
 }

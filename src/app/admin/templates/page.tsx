@@ -1,4 +1,3 @@
-
 "use client"
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -38,6 +37,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Template, TemplateStyle } from '@/lib/templates';
 import { db } from '@/lib/firebase';
 import { ref, set } from 'firebase/database';
+import { generateTemplateStyle } from '@/ai/flows/generate-template';
 
 
 const templateSchema = z.object({
@@ -88,25 +88,7 @@ export default function AdminTemplatesPage() {
   
   const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
       try {
-        const response = await fetch('/api/generate-template', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(values),
-        });
-
-        if (!response.ok) {
-          let errorMessage = 'The AI failed to generate a new template style.';
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.error || errorMessage;
-          } catch (e) {
-            // The response was not JSON, which likely means a server error page was returned.
-            errorMessage = `A server error occurred (status: ${response.status}).`;
-          }
-          throw new Error(errorMessage);
-        }
-
-        const style: TemplateStyle = await response.json();
+        const style: TemplateStyle = await generateTemplateStyle(values);
 
         const templateId = values.name.toLowerCase().replace(/\s+/g, '-');
         const newTemplate: Template = {
