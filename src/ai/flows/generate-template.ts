@@ -1,4 +1,3 @@
-'use server';
 /**
  * @fileOverview Defines the AI prompt and schemas for generating resume template styles.
  * This file is used by the /api/generate-template API route.
