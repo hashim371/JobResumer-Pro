@@ -1,3 +1,4 @@
+
 "use client"
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -34,16 +35,14 @@ import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage, FormLabel } from '@/components/ui/form';
 import { ResumePreview } from '@/components/ResumePreview';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Template, TemplateStyle } from '@/lib/templates';
+import type { Template } from '@/lib/templates';
 import { db } from '@/lib/firebase';
 import { ref, set } from 'firebase/database';
 import { generateTemplateStyle } from '@/ai/flows/generate-template';
+import { GenerateTemplateInputSchema } from '@/lib/schema/template';
 
 
-const templateSchema = z.object({
-  name: z.string().min(1, 'Template name is required.'),
-  category: z.string().min(1, 'Category is required.'),
-});
+const templateSchema = GenerateTemplateInputSchema;
 
 export default function AdminTemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -88,7 +87,7 @@ export default function AdminTemplatesPage() {
   
   const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
       try {
-        const style: TemplateStyle = await generateTemplateStyle(values);
+        const style = await generateTemplateStyle(values);
 
         const templateId = values.name.toLowerCase().replace(/\s+/g, '-');
         const newTemplate: Template = {
