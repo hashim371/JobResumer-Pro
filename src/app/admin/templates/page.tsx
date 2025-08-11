@@ -87,6 +87,7 @@ export default function AdminTemplatesPage() {
   };
   
   const handleAddSubmit = async (values: z.infer<typeof templateSchema>) => {
+      addForm.formState.isSubmitting = true;
       try {
         const response = await fetch('/api/generate-template', {
           method: 'POST',
@@ -127,6 +128,7 @@ export default function AdminTemplatesPage() {
       } finally {
         addForm.reset();
         setIsAddModalOpen(false);
+        addForm.formState.isSubmitting = false;
       }
   };
   
@@ -249,4 +251,3 @@ export default function AdminTemplatesPage() {
     </div>
   );
 }
-
